@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Historical map</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">	
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg==" crossorigin=""></script>
+    <script src="js/proj4.js"></script>
+    <!--<script src="js/proj4leaflet.js"></script> -->
+    <!--<script src="https://d3js.org/d3.v4.min.js"></script> -->
+    <!--<script src="https://npmcdn.com/@turf/turf/turf.min.js"></script> -->
+
+    <!--<script src="https://npmcdn.com/@turf/turf@3.5.1/turf.min.js"></script> -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+    <script src="js/nouislider.min.js"></script>
+
+    <link href="css/nouislider.min.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+	
+</head>
+<body>
+	<form class="timeline whiteback">
+	    <input class="whiteback" type="range" id="timeline" min="1876" max="1911" value="1876" />
+	</form>
+	<div id='map'>
+		<script src="app.js"></script>
+	</div>
+</body>
+</html>
