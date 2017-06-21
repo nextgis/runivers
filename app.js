@@ -41,7 +41,8 @@ function getLayerIdByYear(layers, year) {
     var filteredLayer = layers.filter(function(d) {
         return ((year >= d.from) && (year < d.to))
     });
-    return filteredLayer[0].id;
+    var layerId = (filteredLayer.length != 0) ? filteredLayer[0].id : undefined;
+    return layerId;
 };
 
 function loadGeoJSON(layersMeta) {
@@ -66,7 +67,13 @@ function loadGeoJSON(layersMeta) {
   	var year = $(this).val();
   	console.log(year);
   	var layerId = getLayerIdByYear(layersDescription, +year);
-  	updateLayer(layerId);
+  	if (layerId) {
+  		updateLayer(layerId);
+  	} else {
+  		map.removeLayer(currentLayer);
+  		console.log('No data for this year');
+  		Materialize.toast('Нет данных за этот год', 4000);
+  	}
   });
 };
 
@@ -109,18 +116,11 @@ function updateLayer(layerId) {
 	        		//console.log(layer);
 	        		var props = layer.feature.properties;
 	        		var toolTip = 'Слой №' + layer.feature.id + '</br>' +
-								  'cat: ' + props.cat + '</br>' +
 								  'LwDate: ' + props.LwDate + '</br>' +
-								  'LwDtAppr: ' + props.LwDtAppr + '</br>' +
 								  'SrcData: ' + props.SrcData + '</br>' +
-								  'UpDtAD: ' + props.UpDtAD + '</br>' +
 								  'EventStart: ' + props.EventStart + '</br>' +
-								  'UpperDat: ' + props.UpperDat + '</br>' +
-								  'LineType: ' + props.LineType + '</br>' +
 								  'UpDtRl: ' + props.UpDtRl + '</br>' +
-								  'LineComnt: ' + props.LineComnt + '</br>' +
-								  'LwDtAD: ' + props.LwDtAD + '</br>' +
-								  'UpDtAppr: ' + props.UpDtAppr + '</br>';
+								  'LineComnt: ' + props.LineComnt + '</br>';
 	        		return toolTip;
 	        	});
 	        	if (!map.hasLayer(updatedLayer)) {
