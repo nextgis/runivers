@@ -29,8 +29,11 @@
 	<form class="timeline whiteback">
 	    <input class="whiteback" type="range" id="timeline" min="862" max="1914" value="1876" />
 	</form>
-	<div id='map'>
-		<script src="app_mvt.js"></script>
-	</div>
+	<div id='map'></div>
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
+    <script src="app_mvt.js"></script>
 </body>
 </html>

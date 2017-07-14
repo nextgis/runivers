@@ -11,7 +11,25 @@ $.ajax({
         }
 });
 
+var popupContainer = document.getElementById('popup');
+var popupContent = document.getElementById('popup-content');
+var popupCloseBtn = document.getElementById('popup-closer');
+
 var osmSource = new ol.source.OSM();
+
+var overlay = new ol.Overlay({
+  element: popupContainer,
+  autoPan: true,
+  autoPanAnimation: {
+    duration: 250
+  }
+});
+
+popupCloseBtn.onclick = function() {
+      overlay.setPosition(undefined);
+      popupCloseBtn.blur();
+      return false;
+};
 
 var map = new ol.Map({
     target: 'map',
@@ -21,15 +39,28 @@ var map = new ol.Map({
             source: osmSource
         })
     ],
+    overlays: [overlay],
     view: new ol.View({
         center: ol.proj.fromLonLat([45, 45]),
         zoom: 2
     })
 });
 
+
 map.on('singleclick', function(evt) {
     map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-        console.log(feature.getProperties());
+	    var props = feature.getProperties();
+	    //console.log(props);
+	    var toolTip = 'Слой №' + props.layer + '</br>' +
+			  		  'LwDate: ' + props.LwDate + '</br>' +
+			  		  'SrcData: ' + props.SrcData + '</br>' +
+			  		  'EventStart: ' + props.EventStart + '</br>' +
+			  		  'UpDtRl: ' + props.UpDtRl + '</br>' +
+			  		  'LineComnt: ' + props.LineComnt + '</br>';
+
+        var coordinate = evt.coordinate;
+        popupContent.innerHTML = toolTip;
+        overlay.setPosition(coordinate);
     });
 });
 
