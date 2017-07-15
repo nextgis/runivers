@@ -78,6 +78,15 @@ function loadGeoJSON(layersMeta) {
     return layer;
   });
   //console.log(layersDescription);
+  var fromYears = layersDescription.map(function(x) { return x.from; });
+  var toYears = layersDescription.map(function(x) { return x.to; });
+  var minYear = (fromYears.sort(function(a, b) { return a - b;}))[0];
+  var maxYear = (toYears.sort(function(a, b) { return b - a;}))[0];
+  console.log('[min: '+minYear+', '+'max: '+maxYear+']');
+
+  // Set timeline to extent
+  $('#timeline').attr('min', minYear);
+  $('#timeline').attr('max', maxYear);
 
   // Filter by year
   var initLayerId = getLayerIdByYear(layersDescription, 1876);
@@ -100,7 +109,7 @@ function loadGeoJSON(layersMeta) {
 
 function getLayerIdByYear(layers, year) {
     var filteredLayer = layers.filter(function(d) {
-        return ((year >= d.from) && (year < d.to))
+        return ((year >= d.from) && (year <= d.to))
     });
     var layerId = (filteredLayer.length != 0) ? filteredLayer[0].id : undefined;
     return layerId;
