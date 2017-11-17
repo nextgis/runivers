@@ -1,6 +1,6 @@
 /* Bad globals =( */
 var ngwUrl = 'http://dev.nextgis.com/practice2',
-    sourceGroupId = 217,
+    sourceGroupId = 562,
     currentLayer;
 
 $.ajax({
