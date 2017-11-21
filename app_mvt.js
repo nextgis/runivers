@@ -52,11 +52,11 @@ map.on('singleclick', function(evt) {
 	    var props = feature.getProperties();
 	    //console.log(props);
 	    var toolTip = 'Слой №' + props.layer + '</br>' +
-			  		  'LwDate: ' + props.LwDate + '</br>' +
-			  		  'SrcData: ' + props.SrcData + '</br>' +
-			  		  'EventStart: ' + props.EventStart + '</br>' +
-			  		  'UpDtRl: ' + props.UpDtRl + '</br>' +
-			  		  'LineComnt: ' + props.LineComnt + '</br>';
+			  		  'LwDate: ' + props.lwdate + '</br>' +
+			  		  'SrcData: ' + props.srcdata + '</br>' +
+			  		  'EventStart: ' + props.eventstart + '</br>' +
+			  		  'UpDtRl: ' + props.updtappr + '</br>' +
+			  		  'LineComnt: ' + props.linecomnt + '</br>';
 
         var coordinate = evt.coordinate;
         popupContent.innerHTML = toolTip;
