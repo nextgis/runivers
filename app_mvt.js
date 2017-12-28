@@ -116,7 +116,7 @@ function getLayerIdByYear(layers, year) {
 };
 
 function updateLayer(layerId) {
-  var layerUrl = 'http://dev.nextgis.com/practice2/api/resource/' + layerId + '/{z}/{x}/{y}.mvt';
+  var layerUrl = ngwUrl+'/api/resource/' + layerId + '/{z}/{x}/{y}.mvt';
   var style = [
       new ol.style.Style({
           fill: new ol.style.Fill({
