@@ -1,5 +1,5 @@
 /* Bad globals =( */
-var ngwUrl = 'http://http://213.248.47.89',
+var ngwUrl = 'http://213.248.47.89',
     sourceGroupId = 343,
     currentLayer;
 
