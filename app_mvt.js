@@ -1,17 +1,6 @@
 /* Bad globals =( */
 var ngwUrl = 'http://213.248.47.89',
     sourceGroupId = 343,
-<<<<<<< Updated upstream
-    currentLayer;
-
-$.ajax({
-        url: ngwUrl+'/api/resource/?parent='+sourceGroupId,
-        dataType: 'JSON',
-        success: function(data){
-            loadGeoJSON(data);
-        }
-});
-=======
     currentLayer, highlightLayer;
 
 //http://213.248.47.89/api/resource/?parent=343
@@ -75,7 +64,6 @@ function ready(error, territoriesStat, periodsData, layersMetaData) {
     .call(timeline);
 };
 
->>>>>>> Stashed changes
 
 var popupContainer = document.getElementById('popup');
 var popupContent = document.getElementById('popup-content');
@@ -114,31 +102,19 @@ var map = new ol.Map({
 
 
 map.on('singleclick', function(evt) {
-<<<<<<< Updated upstream
-    map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-	    var props = feature.getProperties();
-	    //console.log(props);
-	    var toolTip = 'Слой №' + props.layer + '</br>' +
-			  		  'LwDate: ' + props.lwdate + '</br>' +
-			  		  'SrcData: ' + props.srcdata + '</br>' +
-			  		  'EventStart: ' + props.eventstart + '</br>' +
-			  		  'UpDtRl: ' + props.updtappr + '</br>' +
-			  		  'LineComnt: ' + props.linecomnt + '</br>';
-=======
     var features = map.getFeaturesAtPixel(evt.pixel);
     var feature = features[0];
     console.log(feature);
     var props = feature.getProperties();
-	  //console.log(layer);
+    //console.log(layer);
     //console.log(props);
-	  var clickedId = props.id;
-	  var toolTip = 'Слой №' + props.layer + '</br>' +
-			  		  'LwDate: ' + props.LwDate + '</br>' +
-			  		  'SrcData: ' + props.SrcData + '</br>' +
-			  		  'EventStart: ' + props.EventStart + '</br>' +
-			  		  'UpDtRl: ' + props.UpDtRl + '</br>' +
-			  		  'LineComnt: ' + props.LineComnt + '</br>';
->>>>>>> Stashed changes
+    var clickedId = props.id;
+    var toolTip = 'Слой №' + props.layer + '</br>' +
+              'LwDate: ' + props.LwDate + '</br>' +
+              'SrcData: ' + props.SrcData + '</br>' +
+              'EventStart: ' + props.EventStart + '</br>' +
+              'UpDtRl: ' + props.UpDtRl + '</br>' +
+              'LineComnt: ' + props.LineComnt + '</br>';
 
     var coordinate = evt.coordinate;
     popupContent.innerHTML = toolTip;
@@ -250,8 +226,6 @@ function updateLayer(layerId) {
         }
     }
 };
-<<<<<<< Updated upstream
-=======
 
 function debounce(func, wait, immediate) {
   var timeout;
@@ -267,4 +241,3 @@ function debounce(func, wait, immediate) {
     if (callNow) func.apply(context, args);
   };
 };
->>>>>>> Stashed changes
