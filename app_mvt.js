@@ -1,6 +1,7 @@
 /* Bad globals =( */
 var ngwUrl = 'http://213.248.47.89',
     sourceGroupId = 343,
+<<<<<<< Updated upstream
     currentLayer;
 
 $.ajax({
@@ -10,6 +11,71 @@ $.ajax({
             loadGeoJSON(data);
         }
 });
+=======
+    currentLayer, highlightLayer;
+
+//http://213.248.47.89/api/resource/?parent=343
+
+var overlay = d3.select("#md-overlay");
+//overlay.classed('md-show', true);
+
+queue()
+  .defer(d3.csv, "data/years_stat.csv")
+  .defer(d3.csv, "data/periods.csv")
+  .defer(d3.json, ngwUrl+'/api/resource/?parent='+sourceGroupId)
+  .await(ready);
+
+function ready(error, territoriesStat, periodsData, layersMetaData) {
+  if (error) throw error;
+
+  territoriesStat.forEach(function (d) {
+    d.year = +d.year;
+    d.date = new Date(d.year, 0, 1);
+    d.territories_gained = +d.territories_gained;
+    d.territories_lost = +d.territories_lost;
+  });
+
+  periodsData.forEach(function (d) {
+    d.start = new Date(+d.start, 0, 1);
+    d.end = new Date(+d.end + 1, 0, 1);
+  });
+
+  var layers = processLayersMeta(layersMetaData);
+  console.log(layers);
+
+  currentLayerId = getLayerIdByYear(layers, 1462);
+
+  var timeline = chroniton()
+    .domain([new Date('1/1/1462'), new Date('1/1/2018')])
+    .width(1100)
+    .height(80)
+    .playbackRate(0.02)
+    //.setData(territoriesStat)
+    //.setPeriods(periodsData)
+    .labelFormat(d3.time.format("%Y"))
+    .playButton(true);
+
+  var timelineChange = function(d) {
+    var year = d.getFullYear();
+    //console.log(year);
+
+    var layerId = getLayerIdByYear(layers, +year);
+    if (layerId) {
+        updateLayer(layerId);
+    } else {
+        console.log('No data for this year');
+        Materialize.toast('Нет данных за этот год', 4000);
+    }
+  };
+
+  timeline.on('change', timelineChange);
+  timeline.on('changeDrag', debounce(timelineChange, 50));
+
+  d3.select('#timeline')
+    .call(timeline);
+};
+
+>>>>>>> Stashed changes
 
 var popupContainer = document.getElementById('popup');
 var popupContent = document.getElementById('popup-content');
@@ -48,6 +114,7 @@ var map = new ol.Map({
 
 
 map.on('singleclick', function(evt) {
+<<<<<<< Updated upstream
     map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
 	    var props = feature.getProperties();
 	    //console.log(props);
@@ -57,15 +124,28 @@ map.on('singleclick', function(evt) {
 			  		  'EventStart: ' + props.eventstart + '</br>' +
 			  		  'UpDtRl: ' + props.updtappr + '</br>' +
 			  		  'LineComnt: ' + props.linecomnt + '</br>';
+=======
+    var features = map.getFeaturesAtPixel(evt.pixel);
+    var feature = features[0];
+    console.log(feature);
+    var props = feature.getProperties();
+	  //console.log(layer);
+    //console.log(props);
+	  var clickedId = props.id;
+	  var toolTip = 'Слой №' + props.layer + '</br>' +
+			  		  'LwDate: ' + props.LwDate + '</br>' +
+			  		  'SrcData: ' + props.SrcData + '</br>' +
+			  		  'EventStart: ' + props.EventStart + '</br>' +
+			  		  'UpDtRl: ' + props.UpDtRl + '</br>' +
+			  		  'LineComnt: ' + props.LineComnt + '</br>';
+>>>>>>> Stashed changes
 
-        var coordinate = evt.coordinate;
-        popupContent.innerHTML = toolTip;
-        overlay.setPosition(coordinate);
-    });
+    var coordinate = evt.coordinate;
+    popupContent.innerHTML = toolTip;
+    overlay.setPosition(coordinate);
 });
 
-
-function loadGeoJSON(layersMeta) {
+function processLayersMeta(layersMeta) {
   var layersDescription = layersMeta.map(function(d) {
     var layer = {},
         resource = d.resource,
@@ -84,27 +164,14 @@ function loadGeoJSON(layersMeta) {
   var maxYear = (toYears.sort(function(a, b) { return b - a;}))[0];
   console.log('[min: '+minYear+', '+'max: '+maxYear+']');
 
-  // Set timeline to extent
-  $('#timeline').attr('min', minYear);
-  $('#timeline').attr('max', maxYear);
+  return layersDescription;
+};
 
+function initMap(layersDescription, initYear) {
   // Filter by year
-  var initLayerId = getLayerIdByYear(layersDescription, 1876);
-
+  var initLayerId = getLayerIdByYear(layersDescription, initYear);
   // Add initial layer to map
   updateLayer(initLayerId);
-  $('#timeline').on('change', function(e) {
-    var year = $(this).val();
-    console.log(year);
-    var layerId = getLayerIdByYear(layersDescription, +year);
-    if (layerId) {
-        updateLayer(layerId);
-    } else {
-        //map.removeLayer(currentLayer);
-        console.log('No data for this year');
-        Materialize.toast('Нет данных за этот год', 4000);
-    }
-  });
 };
 
 function getLayerIdByYear(layers, year) {
@@ -120,37 +187,84 @@ function updateLayer(layerId) {
   var style = [
       new ol.style.Style({
           fill: new ol.style.Fill({
-              color: 'rgba(255,255,255,0.4)'
+              color: [255, 255, 255, 1]
           }),
           stroke: new ol.style.Stroke({
-              color: '#3399CC',
+              color: [51, 153, 204, 1],
               width: 1.25
           })
       })];
 
-      var updatedLayer = new ol.layer.VectorTile({
-          source: new ol.source.VectorTile({
+  var oldStyle = [
+      new ol.style.Style({
+          fill: new ol.style.Fill({
+              color: [255, 255, 255, 0.4]
+          }),
+          stroke: new ol.style.Stroke({
+              color: [51, 153, 204, 1],//[102, 204, 51, 0.4],
+              width: 1.25
+          })
+      })];
+
+      var vectorSource = new ol.source.VectorTile({
               format: new ol.format.MVT(),
               tileGrid: ol.tilegrid.createXYZ({maxZoom: 22}),
               tilePixelRatio: 16,
               url: layerUrl,
               wrapX: false
-          }),
-          style: style
       });
 
+      var updatedLayer = new ol.layer.VectorTile({
+          source: vectorSource,
+          style: style
+      });
+      updatedLayer.setZIndex(10);
+
       if (!currentLayer) {
+        map.addLayer(updatedLayer);
         currentLayer = updatedLayer;
-        map.addLayer(currentLayer);
-        //console.log('layer added');
+        prevLayer = currentLayer;
       } else {
         var updatedLayerProps = updatedLayer.getProperties(),
         currentLayerProps = currentLayer.getProperties();
         if (updatedLayerProps.source.urls[0] != currentLayerProps.source.urls[0]) {
-            map.removeLayer(currentLayer);
+            updatedLayer.setZIndex(10);
+            //console.log('updateLayer', updatedLayer.getProperties());
+            map.addLayer(updatedLayer);
+            oldLayer = prevLayer;
+            prevLayer = currentLayer;
+            oldLayer.setZIndex(1);
+            prevLayer.setZIndex(2);
+            prevLayer.setStyle(oldStyle);
+            oldLayer.setStyle(oldStyle);
             currentLayer = updatedLayer;
-            map.addLayer(currentLayer);
-            //console.log('layer updated');
+            // Remove rest old layers
+            map.getLayers().forEach(function(layer, i) {
+              if (layer) {
+                var idx = layer.getZIndex();
+                console.log(idx);
+                if (idx == 1) { map.removeLayer(layer) };
+              }
+            });
+            console.log('updated-current', currentLayer);
         }
     }
 };
+<<<<<<< Updated upstream
+=======
+
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this, args = arguments;
+    var later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};
+>>>>>>> Stashed changes

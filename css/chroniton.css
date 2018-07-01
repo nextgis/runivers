@@ -1,0 +1,83 @@
+.chroniton {
+  font: 11px sans-serif;
+  outline:none;
+  z-index: 100;
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 90%;
+  height: 70px;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.chroniton .play-button {
+  fill:#b3432c;
+}
+.play-button-circle {
+  fill:#4a4a4a;
+  opacity: 0.3;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+.x.axis, .slider text {
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  user-select:none;
+  fill: #fff;
+}
+.x.axis path.domain {
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke:#fff;
+}
+.x.axis path.halo {
+  stroke-width:12;
+  stroke-linecap:round;
+  stroke:#ccc;
+}
+.tick line {
+  stroke:#fff;
+  stroke-width:1;
+}
+.tick text {
+  stroke:#fff;
+  stroke-width:1;
+  transform:translate(0px, 5px);
+}
+.slider .handle {
+  fill: #fff;
+  stroke-width:1;
+  stroke:#333;
+}
+.slider .handleHalo {
+  fill: #D52D0B;
+}
+.slider .pointer {
+  fill: #fff;
+}
+.slider .pointerRed {
+  fill: #D52D0B;
+  color: #D52D0B;
+}
+.slider .handle, .slider text {
+  cursor: move;
+  cursor: -webkit-grab;
+  fill: #fff;
+  transition:fill 200ms ease-in-out;
+}
+.handle:active, .slider text:active {
+  cursor: move;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+.slider.brushing .handle {
+  fill: #eee;
+}
+.label {
+  font:bold 12px sans-serif;
+}
+

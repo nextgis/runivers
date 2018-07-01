@@ -6,18 +6,31 @@ body { margin:0; padding:0; }
 	width:100%;
 	z-index: 10;
 }
-.timeline {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	z-index: 100;
-}
+
 .whiteback {
 	/*color: #fff;*/
 	background-color: #fff;
 	opacity: 0.75;
 	outline: none;
 	border: none;
+}
+
+.md-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.25s;
+  background-color: black;
+  z-index: 1000;
+}
+
+.md-show.md-overlay {
+  opacity: 0.7;
+  visibility: visible;
 }
 
 /* popup */
