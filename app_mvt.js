@@ -32,10 +32,10 @@ function ready(error, territoriesStat, periodsData, layersMetaData) {
   var layers = processLayersMeta(layersMetaData);
   console.log(layers);
 
-  currentLayerId = getLayerIdByYear(layers, 1462);
+  currentLayerId = getLayerIdByYear(layers, 1301);
 
   var timeline = chroniton()
-    .domain([new Date('1/1/1462'), new Date('1/1/2018')])
+    .domain([new Date('1/1/1301'), new Date('1/1/2018')])
     .width(1100)
     .height(80)
     .playbackRate(0.02)
