@@ -1,0 +1,7 @@
+# Dependencies
+bower_components
+node_modules
+
+dist
+#build
+.vscode

@@ -1,0 +1,38 @@
+{
+  "name": "russia-history",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "webpack-dev-server --progress",
+    "build": "webpack --progress",
+    "watch": "rimraf ./build && npm run build -- --watch",
+    "dev": "rimraf ./build && npm run build",
+    "prod": "rimraf ./build && npm run build -- --mode=production"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mapbox-gl": "^0.47.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.0.0",
+    "css-loader": "^1.0.0",
+    "eslint": "^5.2.0",
+    "eslint-loader": "^2.1.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^3.2.0",
+    "image-webpack-loader": "^4.3.1",
+    "node-sass": "^4.9.2",
+    "postcss-loader": "^2.1.6",
+    "precss": "^3.1.2",
+    "proj4leaflet": "^1.0.2",
+    "sass-loader": "^7.0.3",
+    "style-loader": "^0.21.0",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.16.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
+  }
+}
