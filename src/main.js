@@ -86,7 +86,6 @@ connector.makeQuery('/api/resource/?parent={id}', function (data) {
         var next = function () {
           callback(year);
         }
-        console.log(year, nextYearLayerId);
         _preloadLayer(nextYearLayerId);
         var isLoading = _loadedSources[nextYearLayerId];
         if (isLoading) {
@@ -121,7 +120,7 @@ function _preloadLayer(layerId) {
   _loadedSources[layerId] = _loadedSources[layerId] || false;
   if (!_loadedSources[layerId]) {
     _showLayer(layerId);
-    map.setPaintProperty(layerId, 'fill-opacity', 0.1);
+    map.setPaintProperty(layerId, 'fill-opacity', 0);
   }
 }
 
