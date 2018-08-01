@@ -19,6 +19,7 @@ var maxYear;
 // already registered layers, if true - it means on the map
 var _layers = {};
 var _loadedSources = {};
+var _onDataLoadEvents = [];
 var LOADED = false;
 
 var connector = new Ngw({
@@ -45,6 +46,8 @@ var map = new Map({
 
 map.addControl(new NavigationControl());
 
+map.on('data', _onData);
+
 function onMapLoad(cb, context) {
   if (LOADED) { // map.loaded()
     cb.call(context);
@@ -59,7 +62,40 @@ connector.makeQuery('/api/resource/?parent={id}', function (data) {
   onMapLoad(function () {
     layers = _processLayersMeta(data);
     updateLayerByYear(currentYear)
-    slider = new SliderControl({ min: minYear, max: maxYear, step: 1, value: currentLayerId })
+    slider = new SliderControl({
+      min: minYear,
+      max: maxYear,
+      step: 1,
+      animationStep: 10,
+      value: currentLayerId,
+      animationDelay: 100,
+      nextStepReady: function (year, callback) {
+        var nextYearLayerId = _getLayerIdByYear(year);
+        // if no layer for year get next layer from available
+        if (!nextYearLayerId) {
+          for (var fry = 0; fry < layers.length; fry++) {
+            var l = layers[fry];
+            if (l.to >= year) {
+              year = l.to;
+              nextYearLayerId = l.id;
+              break;
+            }
+          }
+        }
+
+        var next = function () {
+          callback(year);
+        }
+        console.log(year, nextYearLayerId);
+        _preloadLayer(nextYearLayerId);
+        var isLoading = _loadedSources[nextYearLayerId];
+        if (isLoading) {
+          next();
+        } else {
+          _onDataLoadEvents.push(next);
+        }
+      }
+    })
     slider.emitter.on('change', function (year) {
       currentYear = year;
       updateLayerByYear(year);
@@ -71,28 +107,53 @@ connector.makeQuery('/api/resource/?parent={id}', function (data) {
 });
 
 function updateLayerByYear(year) {
-  var layerId = _getLayerIdByYear(layers, year);
+  var layerId = _getLayerIdByYear(year);
   updateLayer(layerId);
 }
 
 function updateLayer(layerId) {
+  var fromId = currentLayerId;
   currentLayerId = layerId;
-  _switchLayer(currentLayerId, layerId);
+  _switchLayer(fromId, layerId);
+}
+
+function _preloadLayer(layerId) {
+  _loadedSources[layerId] = _loadedSources[layerId] || false;
+  if (!_loadedSources[layerId]) {
+    _showLayer(layerId);
+    map.setPaintProperty(layerId, 'fill-opacity', 0.1);
+  }
 }
 
 function _switchLayer(fromId, toId) {
-  map.on('data', _onData);
-  _showLayer(toId);
-  map.setPaintProperty(currentLayerId, 'fill-opacity', 0);
+  if (fromId !== toId || !_loadedSources[toId]) {
+    _showLayer(toId);
+    map.setPaintProperty(currentLayerId, 'fill-opacity', 0);
+  }
+}
+
+function _isHistoryLayer(layerId) {
+  // hardcode to exclude baselayer from loading
+  // TODO: make checking is layer is not baselayer
+  return layerId !== 'osm';
 }
 
 function _onData(data) {
   if (data.dataType === 'source') {
-    const isLoaded = data.isSourceLoaded;
-    _loadedSources[data.sourceId] = isLoaded;
-    if (isLoaded) {
-      _hideNotCurrentLayers();
-      map.setPaintProperty(currentLayerId, 'fill-opacity', 0.8);
+    if (_isHistoryLayer(data.sourceId)) {
+
+      const isLoaded = data.isSourceLoaded;
+      _loadedSources[data.sourceId] = isLoaded;
+      if (isLoaded) {
+        _hideNotCurrentLayers();
+        map.setPaintProperty(currentLayerId, 'fill-opacity', 0.8);
+        // map.off('data', _onData);
+        for (var fry = 0; fry < _onDataLoadEvents.length; fry++) {
+          var event = _onDataLoadEvents[fry];
+          event();
+        }
+        _onDataLoadEvents = [];
+      }
     }
   }
 }
@@ -101,7 +162,7 @@ function _onData(data) {
 //   for (var s in _loadedSources) {
 //     if (_loadedSources.hasOwnProperty(s)) {
 //       var source = _loadedSources[s];
-//       if (!source) { // || map.getLayer(s)
+//       if (_isHistoryLayer(s) && !source) { // || map.getLayer(s)
 //         return false;
 //       }
 //     }
@@ -140,7 +201,7 @@ function _toggleLayer(layerId, status) {
 
 function _addMvtLayer(layerId) {
 
-  // red about https://blog.mapbox.com/vector-tile-specification-version-2-whats-changed-259d4cd73df6
+  // read about https://blog.mapbox.com/vector-tile-specification-version-2-whats-changed-259d4cd73df6
   // var layerUrl = ngwUrl+'/api/resource/LAYER_ID/{z}/{x}/{y}.mvt';
   var layerUrl = ngwUrl + '/api/resource/' + layerId + '/{z}/{x}/{y}.mvt';
 
@@ -196,7 +257,7 @@ function _addTileLayer(layerName, url, params) {
   });
 }
 
-function _getLayerIdByYear(layers, year) {
+function _getLayerIdByYear(year) {
   var filteredLayer = layers.filter(function (d) {
     return ((year >= d.from) && (year <= d.to))
   });
