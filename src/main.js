@@ -18,6 +18,7 @@ var maxYear;
 
 // already registered layers, if true - it means on the map
 var _layers = {};
+var _loadedSources = {};
 var LOADED = false;
 
 var connector = new Ngw({
@@ -44,12 +45,12 @@ var map = new Map({
 
 map.addControl(new NavigationControl());
 
-function onMapLoad(calback, context) {
+function onMapLoad(cb, context) {
   if (LOADED) { // map.loaded()
-    calback.call(context);
+    cb.call(context);
   } else {
     map.once('load', function () {
-      calback.call(context);
+      cb.call(context);
     });
   }
 }
@@ -75,54 +76,97 @@ function updateLayerByYear(year) {
 }
 
 function updateLayer(layerId) {
-
-  var currentLayer = _layers[currentLayerId];
-  if (currentLayer) {
-    _hideLayer(currentLayerId);
-    _layers[currentLayerId] = false;
-  }
-  var exist = _layers[layerId];
   currentLayerId = layerId;
-  if (exist !== undefined) {
-    // if exist - layer already on the map
-    if (!exist) {
-      _showLayer(layerId);
-      _layers[layerId] = true;
-    }
-  } else {
-    _addMvtlayer(layerId);
-    _layers[layerId] = true;
-  }
+  _switchLayer(currentLayerId, layerId);
+}
 
+function _switchLayer(fromId, toId) {
+  map.on('data', _onData);
+  _showLayer(toId);
+  map.setPaintProperty(currentLayerId, 'fill-opacity', 0);
+}
+
+function _onData(data) {
+  if (data.dataType === 'source') {
+    const isLoaded = data.isSourceLoaded;
+    _loadedSources[data.sourceId] = isLoaded;
+    if (isLoaded) {
+      _hideNotCurrentLayers();
+      map.setPaintProperty(currentLayerId, 'fill-opacity', 0.8);
+    }
+  }
+}
+
+// function _checkLoading() {
+//   for (var s in _loadedSources) {
+//     if (_loadedSources.hasOwnProperty(s)) {
+//       var source = _loadedSources[s];
+//       if (!source) { // || map.getLayer(s)
+//         return false;
+//       }
+//     }
+//   }
+//   return true;
+// }
+
+function _hideNotCurrentLayers() {
+  for (var l in _layers) {
+    if (_layers.hasOwnProperty(l)) {
+      if (l !== String(currentLayerId) && _layers[l]) {
+        _hideLayer(l);
+      }
+    }
+  }
 }
 
 function _hideLayer(layerId) {
-  map.setLayoutProperty(layerId, 'visibility', 'none');
+  _toggleLayer(layerId, false)
 }
 
 function _showLayer(layerId) {
-  map.setLayoutProperty(layerId, 'visibility', 'visible');
+  _toggleLayer(layerId, true)
 }
 
-function _addMvtlayer(layerId) {
+function _toggleLayer(layerId, status) {
+  var exist = _layers[layerId];
+  if (exist === undefined) {
+    exist = _addMvtLayer(layerId);
+  }
+  if (exist !== status) {
+    map.setLayoutProperty(layerId, 'visibility', status ? 'visible' : 'none');
+    _layers[layerId] = status;
+  }
+}
+
+function _addMvtLayer(layerId) {
 
   // red about https://blog.mapbox.com/vector-tile-specification-version-2-whats-changed-259d4cd73df6
   // var layerUrl = ngwUrl+'/api/resource/LAYER_ID/{z}/{x}/{y}.mvt';
   var layerUrl = ngwUrl + '/api/resource/' + layerId + '/{z}/{x}/{y}.mvt';
 
+  var idString = String(layerId);
   map.addLayer({
-    'id': String(currentLayerId),
+    'id': idString,
     'type': 'fill',
-    'source-layer': String(currentLayerId),
+    'source-layer': idString,
     'source': {
       'type': 'vector',
       'tiles': [layerUrl]
     },
+    'layout': {
+      'visibility': 'none'
+    },
     'paint': {
       'fill-color': 'red',
-      'fill-opacity': 0.8
+      'fill-opacity': 0.8,
+      'fill-opacity-transition': {
+        'duration': 0
+      },
+      'fill-outline-color': '#8b0000' // darkred
     }
   });
+  _layers[layerId] = false;
+  return _layers[layerId];
 }
 
 function _addTileLayer(layerName, url, params) {
