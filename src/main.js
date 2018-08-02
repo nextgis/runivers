@@ -68,32 +68,8 @@ connector.makeQuery('/api/resource/?parent={id}', function (data) {
       step: 1,
       animationStep: 10,
       value: currentLayerId,
-      animationDelay: 100,
-      nextStepReady: function (year, callback) {
-        var nextYearLayerId = _getLayerIdByYear(year);
-        // if no layer for year get next layer from available
-        if (!nextYearLayerId) {
-          for (var fry = 0; fry < layers.length; fry++) {
-            var l = layers[fry];
-            if (l.to >= year) {
-              year = l.to;
-              nextYearLayerId = l.id;
-              break;
-            }
-          }
-        }
-
-        var next = function () {
-          callback(year);
-        }
-        _preloadLayer(nextYearLayerId);
-        var isLoading = _loadedSources[nextYearLayerId];
-        if (isLoading) {
-          next();
-        } else {
-          _onDataLoadEvents.push(next);
-        }
-      }
+      animationDelay: 200,
+      nextStepReady: _nextStepReady
     })
     slider.emitter.on('change', function (year) {
       currentYear = year;
@@ -114,6 +90,32 @@ function updateLayer(layerId) {
   var fromId = currentLayerId;
   currentLayerId = layerId;
   _switchLayer(fromId, layerId);
+}
+
+function _nextStepReady (year, callback) {
+  var nextYearLayerId = _getLayerIdByYear(year);
+  // if no layer for year get next layer from available
+  if (!nextYearLayerId) {
+    for (var fry = 0; fry < layers.length; fry++) {
+      var l = layers[fry];
+      if (l.to >= year) {
+        year = l.to;
+        nextYearLayerId = l.id;
+        break;
+      }
+    }
+  }
+
+  var next = function () {
+    callback(year);
+  }
+  _preloadLayer(nextYearLayerId);
+  var isLoading = _loadedSources[nextYearLayerId];
+  if (isLoading) {
+    next();
+  } else {
+    _onDataLoadEvents.push(next);
+  }
 }
 
 function _preloadLayer(layerId) {
