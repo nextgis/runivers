@@ -67,7 +67,7 @@ connector.makeQuery('/api/resource/?parent={id}', function (data) {
       max: maxYear,
       step: 1,
       animationStep: 10,
-      value: currentLayerId,
+      value: currentYear,
       animationDelay: 10,
       nextStepReady: _nextStepReady
     })

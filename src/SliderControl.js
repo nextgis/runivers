@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+import './SliderControl.css'
 
 var OPTIONS = {
   type: 'range',
@@ -17,6 +18,8 @@ export var SliderControl = function (options) {
   this.map = null;
   this._container = null;
   this._range = null;
+  this._input = null;
+  this._animationStepInput = null;
   this._animationStatus = false;
   this._playerControl = null;
   this._nextStepTimeoutId = null;
@@ -39,21 +42,83 @@ SliderControl.prototype._createContainer = function () {
 
   element.appendChild(this._createPlayerContainer());
   element.appendChild(this._createSliderContainer());
+  element.appendChild(this._createValueInput());
+  element.appendChild(this._createAnimationStepInput());
+  element.appendChild(this._createAnimationDelayInput());
   return element;
 }
+
+
+SliderControl.prototype._createValueInput = function () {
+  var self = this;
+  var inputObj = this._createLabeledInput({
+    type: 'number',
+    label: 'value',
+    value: this.options.value
+  });
+  var input = inputObj.input;
+  input.onchange = function () {
+    self._onChange(self._getAllowedValue(input.value));
+  }
+  this._input = input;
+  return inputObj.label;
+}
+
+SliderControl.prototype._createAnimationStepInput = function () {
+  var self = this;
+  var inputObj = this._createLabeledInput({
+    type: 'number',
+    label: 'animation step',
+    value: this.options.animationStep}
+  );
+  var input = inputObj.input;
+  input.onchange = function () {
+    var value = input.value;
+    value = value <= 0 ? self.options.animationStep :
+      value > self.options.max ? self.options.max : value;
+    input.value = value
+    self.options.animationStep = parseInt(value);
+  }
+  this._animationStepInput = input;
+  return inputObj.label;
+}
+
+SliderControl.prototype._createAnimationDelayInput = function () {
+  var self = this;
+  var inputObj = this._createLabeledInput({
+    type: 'number',
+    label: 'amimation delay',
+    value: this.options.animationDelay
+  });
+  var input = inputObj.input
+  input.onchange = function () {
+    var value = input.value;
+    value = value <= 0 ? 1 : value;
+    self.options.animationDelay = value;
+  }
+  return inputObj.label;
+}
+
 
 SliderControl.prototype._createSliderContainer = function () {
   var self = this;
   var range = document.createElement('INPUT');
-
+  range.className = 'slider-control-range';
   // set input attributes
-  for (var o in this.options) {
-    if (this.options.hasOwnProperty(o)) {
-      range.setAttribute(o, this.options[o]);
+
+  var allowed = ['min', 'max', 'value', 'step', 'type'];
+
+  for (var fry = 0; fry < allowed.length; fry++) {
+    var option = this.options[allowed[fry]];
+    if (option) {
+      range.setAttribute(allowed[fry], option);
     }
   }
 
+
+
   range.onchange = function () {
+
     self._onChange(range.value);
   }
   this._range = range;
@@ -62,8 +127,8 @@ SliderControl.prototype._createSliderContainer = function () {
 
 SliderControl.prototype._createPlayerContainer = function () {
   var self = this;
-  var player = document.createElement('span');
-  var playerControl = document.createElement('button');
+  var player = document.createElement('SPAN');
+  var playerControl = document.createElement('BUTTON');
 
   playerControl.innerHTML = this._getPlayerControlLabel();
 
@@ -71,11 +136,29 @@ SliderControl.prototype._createPlayerContainer = function () {
     self._toggleAnimation();
   }
 
-  // set input attributes
-
   player.appendChild(playerControl);
   this._playerControl = playerControl;
   return player;
+}
+
+SliderControl.prototype._createLabeledInput = function (opt) {
+  opt = opt || {};
+  var label = document.createElement('LABEL');
+  label.className = 'slider-control-block';
+  label.innerHTML = opt.label + ':';
+  var input = document.createElement('INPUT');
+  input.className = 'slider-control-input';
+  if (opt.type) {
+    input.setAttribute('type', opt.type);
+  }
+  if (opt.value) {
+    input.value = opt.value;
+  }
+  label.appendChild(input);
+  return {
+    label: label,
+    input: input
+  }
 }
 
 SliderControl.prototype.stopAnimation = function () {
@@ -83,6 +166,8 @@ SliderControl.prototype.stopAnimation = function () {
 }
 
 SliderControl.prototype._onChange = function (value) {
+  this._range.value = value;
+  this._input.value = value;
   this.emitter.emit('change', value);
 }
 
@@ -136,10 +221,19 @@ SliderControl.prototype._nextStepReady = function (callback) {
   }
 }
 
+SliderControl.prototype._getAllowedValue = function (value) {
+  if (value < this.options.min) {
+    return this.options.min;
+  } else if (value > this.options.max) {
+    return this.options.max;
+  }
+  return value;
+}
+
 SliderControl.prototype._getNextValue = function () {
   var current = parseInt(this._range.value, 10);
-  var next = current + this.options.step;
-  return next > this.options.max ? this.options.max : next;
+  var next = current + this.options.animationStep;
+  return this._getAllowedValue(next);
 }
 
 SliderControl.prototype._stopAnimation = function () {
