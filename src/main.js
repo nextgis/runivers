@@ -1,6 +1,6 @@
 import './css/style.css';
 import { Map, NavigationControl } from 'mapbox-gl';
-import { Ngw } from '../../ngw-connector/index';
+import { Ngw } from 'ngw-connector';
 import { SliderControl } from './SliderControl';
 
 /* Bad globals =( */
@@ -132,9 +132,7 @@ function _switchLayer(fromId, toId) {
 }
 
 function _isHistoryLayer(layerId) {
-  // hardcode to exclude baselayer from loading
-  // TODO: make checking is layer is not baselayer
-  return layerId !== 'osm';
+  return _layers[layerId] !== undefined;
 }
 
 function _onData(data) {
