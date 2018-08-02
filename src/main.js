@@ -68,7 +68,7 @@ connector.makeQuery('/api/resource/?parent={id}', function (data) {
       step: 1,
       animationStep: 10,
       value: currentLayerId,
-      animationDelay: 200,
+      animationDelay: 10,
       nextStepReady: _nextStepReady
     })
     slider.emitter.on('change', function (year) {
@@ -93,24 +93,13 @@ function updateLayer(layerId) {
 }
 
 function _nextStepReady (year, callback) {
-  var nextYearLayerId = _getLayerIdByYear(year);
-  // if no layer for year get next layer from available
-  if (!nextYearLayerId) {
-    for (var fry = 0; fry < layers.length; fry++) {
-      var l = layers[fry];
-      if (l.to >= year) {
-        year = l.to;
-        nextYearLayerId = l.id;
-        break;
-      }
-    }
-  }
+  var nextLayerId = _getLayerIdByYear(year);
 
   var next = function () {
     callback(year);
   }
-  _preloadLayer(nextYearLayerId);
-  var isLoading = _loadedSources[nextYearLayerId];
+  _preloadLayer(nextLayerId);
+  var isLoading = currentLayerId === nextLayerId || _loadedSources[nextLayerId];
   if (isLoading) {
     next();
   } else {
