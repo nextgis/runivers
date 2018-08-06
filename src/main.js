@@ -1,17 +1,16 @@
 import './css/style.css';
 import { Map, NavigationControl } from 'mapbox-gl';
-import { Ngw } from 'ngw-connector';
-import { SliderControl } from './SliderControl';
 
-/* Bad globals =( */
-var ngwUrl = 'http://213.248.47.89';
-var sourceGroupId = 343;
-// var currentLayer, highlightLayer;
+import { SliderControl } from './SliderControl';
+import config from '../config.json';
+import { getLayers } from './services/GetLayersService';
+
+var ngwUrl = config.baseUrl;
 
 var currentLayerId = 974;
 var currentYear = 1301;
 
-var layers = [];
+var LAYERS = [];
 var slider;
 var minYear;
 var maxYear;
@@ -21,10 +20,6 @@ var _layers = {};
 var _loadedSources = {};
 var _onDataLoadEvents = [];
 var LOADED = false;
-
-var connector = new Ngw({
-  baseUrl: ngwUrl
-});
 
 var map = new Map({
   container: 'map',
@@ -58,9 +53,9 @@ function onMapLoad(cb, context) {
   }
 }
 
-connector.makeQuery('/api/resource/?parent={id}', function (data) {
+getLayers(function (data) {
   onMapLoad(function () {
-    layers = _processLayersMeta(data);
+    LAYERS = _processLayersMeta(data);
     updateLayerByYear(currentYear)
     slider = new SliderControl({
       min: minYear,
@@ -77,8 +72,6 @@ connector.makeQuery('/api/resource/?parent={id}', function (data) {
     })
     map.addControl(slider, 'bottom-left');
   });
-}, {
-  id: sourceGroupId
 });
 
 function updateLayerByYear(year) {
@@ -190,7 +183,6 @@ function _toggleLayer(layerId, status) {
 function _addMvtLayer(layerId) {
 
   // read about https://blog.mapbox.com/vector-tile-specification-version-2-whats-changed-259d4cd73df6
-  // var layerUrl = ngwUrl+'/api/resource/LAYER_ID/{z}/{x}/{y}.mvt';
   var layerUrl = ngwUrl + '/api/resource/' + layerId + '/{z}/{x}/{y}.mvt';
 
   var idString = String(layerId);
@@ -246,7 +238,7 @@ function _addTileLayer(layerName, url, params) {
 }
 
 function _getLayerIdByYear(year) {
-  var filteredLayer = layers.filter(function (d) {
+  var filteredLayer = LAYERS.filter(function (d) {
     return ((year >= d.from) && (year <= d.to))
   });
   var layerId = (filteredLayer.length != 0) ? filteredLayer[0].id : undefined;
@@ -256,9 +248,9 @@ function _getLayerIdByYear(year) {
 
 function _processLayersMeta(layersMeta) {
   var layersDescription = layersMeta.map(function (d) {
-    var layer = {},
-      resource = d.resource,
-      re = new RegExp('from_(\\d{4})_to_(\\d{4}).*$');
+    var layer = {};
+    var resource = d.resource;
+    var re = new RegExp('from_(\\d{4})_to_(\\d{4}).*$');
     var layerName = resource.display_name;
     layer.name = resource.display_name;
     layer.id = resource.id;

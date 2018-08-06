@@ -1,6 +1,6 @@
 {
   "name": "russia-history",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "src/app.js",
   "scripts": {
@@ -8,13 +8,14 @@
     "build": "webpack --progress",
     "watch": "rimraf ./dist && npm run build -- --watch",
     "dev": "rimraf ./dist && npm run build",
+    "data": "node ./scripts/generator.js",
     "prod": "rimraf ./dist && npm run build -- --mode=production"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "mapbox-gl": "^0.47.0",
-    "ngw-connector": "git+https://github.com/rendrom/ngw-connector.git#66cbef2"
+    "ngw-connector": "git+https://github.com/rendrom/ngw-connector.git#bd0250b"
   },
   "devDependencies": {
     "autoprefixer": "^9.0.2",
