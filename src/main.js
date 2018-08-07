@@ -25,12 +25,6 @@ var map = new Map({
   container: 'map',
   center: [96, 63], // initial map center in [lon, lat]
   zoom: 2,
-  // transformRequest: function (url, type) {
-  //   if (type === 'Vector', url.match('.mvt')) {
-  //     url = url.replace('LAYER_ID', currentLayerId);
-  //   }
-  //   return {url: url};
-  // },
   style: {
     version: 8,
     name: 'Empty style',
@@ -283,5 +277,3 @@ map.on('load', function () {
     subdomains: 'abc'
   });
 })
-
-window.map = map;

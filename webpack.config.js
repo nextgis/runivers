@@ -11,9 +11,19 @@ module.exports = (env, argv) => {
     entry: {
       // "vendor": ["babel-polyfill", "./common/polyfill.js", "./common/vendor.js",],
       'main': [
+        '@babel/polyfill',
         './src/main.js'
       ],
     },
+
+    // optimization: {
+    //   splitChunks: {
+    //     // include all types of chunks
+    //     chunks: 'all',
+    //     minSize: 3000,
+    //     maxSize: 20000,
+    //   }
+    // },
 
     output: {
       filename: '[name][hash:7].js',
@@ -34,24 +44,24 @@ module.exports = (env, argv) => {
             fix: true
           }
         },
-        // {
-        //     test: /\.js$/,
-        //     exclude: /(node_modules|bower_components)/,
-        //     use: [{
-        //         loader: "babel-loader",
-        //         options: {
-        //             cacheDirectory: true,
-        //             presets: [
-        //                 "@babel/preset-env",
-        //             ],
-        //             plugins: [
-        //                 "@babel/plugin-syntax-dynamic-import",
-        //                 "@babel/plugin-proposal-class-properties",
-        //                 "@babel/plugin-proposal-object-rest-spread"
-        //             ]
-        //         }
-        //     }]
-        // },
+        {
+          test: /\.js$/,
+          exclude: /(node_modules|bower_components)/,
+          use: [{
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+              presets: [
+                ['@babel/preset-env', { 'useBuiltIns': 'usage' }]
+              ],
+              plugins: [
+                '@babel/plugin-syntax-dynamic-import',
+                '@babel/plugin-proposal-class-properties',
+                '@babel/plugin-proposal-object-rest-spread'
+              ]
+            }
+          }]
+        },
         {
           test: /\.css$/,
           use: ExtractTextPlugin.extract({
