@@ -116,6 +116,15 @@ module.exports = (env, argv) => {
             'file-loader?name=images/[name].[ext]',
             'image-webpack-loader?bypassOnDebug'
           ]
+        },
+        {
+          test: /\.csv$/,
+          loader: 'csv-loader',
+          options: {
+            dynamicTyping: true,
+            header: true,
+            skipEmptyLines: true
+          }
         }
       ]
     },

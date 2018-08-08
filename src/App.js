@@ -1,10 +1,11 @@
-import './css/style.css';
+import './App.css';
 
 import { SliderControl } from './SliderControl';
 
 import { getLayers } from './services/GetLayersService';
 import { WebMap } from './WebMap';
 import { doNotRepeat } from './utils/doNotRepeat';
+import { Panel } from './PanelControl';
 
 export class App {
 
@@ -13,15 +14,18 @@ export class App {
     this.currentYear = this.options.currentYear;
 
     this.slider;
+    this.periodsPanelControl = new Panel({ headerText: 'Правители' })
     this.webMap = this.createWebMap();
-
     this.currentLayerId = null;
+
     this._minYear;
     this._maxYear;
 
     this._layersConfig = [];
     this._loadedSources = {};
     this._onDataLoadEvents = [];
+
+    this._buildApp();
 
   }
 
@@ -39,34 +43,14 @@ export class App {
       });
     })
 
-    getLayers((data) => {
-      webMap.onMapLoad(() => {
-
-        this._layersConfig = this._processLayersMeta(data);
-        this.updateLayerByYear(this.currentYear)
-        this.slider = new SliderControl({
-          min: this.minYear,
-          max: this.maxYear,
-          step: 1,
-          animationStep: 10,
-          value: this.currentYear,
-          animationDelay: 10,
-          nextStepReady: (year, callback) => this._nextStepReady(year, callback)
-        })
-        this.slider.emitter.on('change', (year) => {
-          this.currentYear = year;
-          this.updateLayerByYear(year);
-        })
-        webMap.map.addControl(this.slider, 'bottom-left');
-      });
-    });
-
     return webMap;
   }
 
   updateLayerByYear(year) {
     var layerId = this._getLayerIdByYear(year);
     this.updateLayer(layerId);
+
+    this._updatePeriodBlockByYear(year);
   }
 
   updateLayer(layerId) {
@@ -75,6 +59,76 @@ export class App {
     this._switchLayer(fromId, layerId);
   }
 
+  // region App control
+  _buildApp() {
+    getLayers((data) => {
+      this._layersConfig = this._processLayersMeta(data);
+
+      this.slider = this._createSlider();
+      this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
+
+      this._headerElement = this._createHeader();
+
+      this.webMap.onMapLoad(() => {
+        this.updateLayerByYear(this.currentYear)
+      });
+    });
+  }
+
+  _createSlider() {
+    const slider = new SliderControl({
+      min: this.minYear,
+      max: this.maxYear,
+      step: 1,
+      animationStep: 10,
+      value: this.currentYear,
+      animationDelay: 10,
+      nextStepReady: (year, callback) => this._nextStepReady(year, callback)
+    });
+    slider.emitter.on('change', (year) => {
+      this.currentYear = year;
+      this.updateLayerByYear(year);
+    });
+
+    this.webMap.map.addControl(slider, 'bottom-left');
+    return slider;
+  }
+
+  _createHeader() {
+    const header = document.createElement('div');
+    header.className = 'app-header';
+    header.innerHTML = `Границы России ${this.minYear}-${this.maxYear} гг.`;
+    const mapContainer = this.webMap.map.getContainer();
+    mapContainer.appendChild(header);
+    return header;
+  }
+
+  _updatePeriodBlockByYear(year) {
+    const period = this._findPeriodByYear(year);
+    const exist = this.periodsPanelControl.period;
+    if (period) {
+      if (exist !== period) {
+        this.periodsPanelControl.updateBody(`
+
+        <div class='panel-body__period period'>${period.period}</div>
+        `);
+        this.periodsPanelControl.period = period;
+      }
+    } else {
+      this.periodsPanelControl.updateBody('<div class="panel-body__period empty">Данные не предоставленны</div>');
+      this.periodsPanelControl.period = null;
+    }
+  }
+
+  _findPeriodByYear(year) {
+    const periods = this.options.periods || [];
+    const period = periods.find((x) => (year >= x.start) && (year <= x.end));
+    return period;
+  }
+
+  // endregion
+
+  //region Map control
   _switchLayer(fromId, toId) {
     if (fromId !== toId) {
       this._showLayer(toId);
@@ -188,6 +242,7 @@ export class App {
 
     return layersDescription;
   }
+  // endregion
 }
 
 

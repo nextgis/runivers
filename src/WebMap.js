@@ -25,7 +25,7 @@ export class WebMap {
       }
     });
 
-    this.map.addControl(new NavigationControl());
+    this.map.addControl(new NavigationControl(), 'top-left');
     this.map.once('load', () => {
       this.isLoaded = true;
     });
