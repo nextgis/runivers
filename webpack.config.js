@@ -1,12 +1,15 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin')
 
 module.exports = (env, argv) => {
 
-  return {
+  const isProd = argv.mode === 'production';
+
+  const config = {
     mode: 'development',
 
-    devtool: argv.mode === 'production' ? 'none' : '#eval-source-map',
+    devtool: isProd ? 'none' : '#eval-source-map',
 
     entry: {
       // "vendor": ["babel-polyfill", "./common/polyfill.js", "./common/vendor.js",],
@@ -122,4 +125,10 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({ template: 'src/index.html' })
     ]
   }
+
+  if (isProd) {
+    config.plugins.push(new CompressionPlugin());
+  }
+
+  return config;
 };

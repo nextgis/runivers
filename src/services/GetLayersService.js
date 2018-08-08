@@ -4,7 +4,7 @@ import layers from '../data/layers.json';
 
 export function getLayers(callback) {
   if (layers) {
-    setTimeout(function () {callback(layers)}, 1000);
+    setTimeout(function () {callback(layers)});
   } else {
     connector.makeQuery('/api/resource/?parent={id}', callback, {
       id: config.sourceGroupId
