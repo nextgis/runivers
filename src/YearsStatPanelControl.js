@@ -51,7 +51,7 @@ export class YearsStatPanelControl extends Panel {
     if (lost) {
       element.appendChild(this._createGainBlock(lost, true))
     }
-
+    element.appendChild(this.createRefButton(`https://www.google.ru/search?q=${yearStat.year}+изменение+в++территориальной+целостности+России`))
 
     return element;
   }

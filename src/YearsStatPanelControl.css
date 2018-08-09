@@ -1,5 +1,9 @@
-.panel-body__yearstat--gain {
+.panel-body__yearstat {
   text-align: center;
+}
+
+.panel-body__yearstat--gain {
+
   font-size: 1.3rem;
   color: green;
 }
