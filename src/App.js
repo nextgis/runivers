@@ -5,7 +5,8 @@ import { SliderControl } from './SliderControl';
 import { getLayers } from './services/GetLayersService';
 import { WebMap } from './WebMap';
 import { doNotRepeat } from './utils/doNotRepeat';
-import { Panel } from './PanelControl';
+import { PeriodPanelControl } from './PeriodPanelControl';
+import { YearsStatPanelControl } from './YearsStatPanelControl';
 
 export class App {
 
@@ -14,7 +15,8 @@ export class App {
     this.currentYear = this.options.currentYear;
 
     this.slider;
-    this.periodsPanelControl = new Panel({ headerText: 'Правители' })
+    this.periodsPanelControl = new PeriodPanelControl()
+    this.yearsStatPanelControl = new YearsStatPanelControl()
     this.webMap = this.createWebMap();
     this.currentLayerId = null;
 
@@ -51,6 +53,7 @@ export class App {
     this.updateLayer(layerId);
 
     this._updatePeriodBlockByYear(year);
+    this._updateYearStatBlockByYear(year);
   }
 
   updateLayer(layerId) {
@@ -66,6 +69,7 @@ export class App {
 
       this.slider = this._createSlider();
       this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
+      this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
 
       this._headerElement = this._createHeader();
 
@@ -105,26 +109,29 @@ export class App {
 
   _updatePeriodBlockByYear(year) {
     const period = this._findPeriodByYear(year);
-    const exist = this.periodsPanelControl.period;
-    if (period) {
-      if (exist !== period) {
-        this.periodsPanelControl.updateBody(`
-
-        <div class='panel-body__period period'>${period.period}</div>
-        `);
-        this.periodsPanelControl.period = period;
-      }
-    } else {
-      this.periodsPanelControl.updateBody('<div class="panel-body__period empty">Данные не предоставленны</div>');
-      this.periodsPanelControl.period = null;
-    }
+    this.periodsPanelControl.updatePeriod(period);
   }
 
   _findPeriodByYear(year) {
+    year = parseInt(year, 10);
     const periods = this.options.periods || [];
     const period = periods.find((x) => (year >= x.start) && (year <= x.end));
     return period;
   }
+
+  _updateYearStatBlockByYear(year) {
+    const yearStat = this._findYearStatByYear(year);
+    this.yearsStatPanelControl.updateYearStat(yearStat);
+  }
+
+  _findYearStatByYear(year) {
+    year = parseInt(year, 10);
+    const yearsStat = this.options.yearsStat || [];
+    const yearStat = yearsStat.find((x) => x.year === year);
+    return yearStat;
+  }
+
+
 
   // endregion
 

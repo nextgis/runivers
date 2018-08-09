@@ -37,7 +37,7 @@ export class SliderControl {
   }
 
   _createContainer() {
-    var element = document.createElement('DIV');
+    var element = document.createElement('div');
     element.className = 'mapboxgl-ctrl';
     element.appendChild(this._createPlayerContainer());
     element.appendChild(this._createSliderContainer());
@@ -99,7 +99,7 @@ export class SliderControl {
 
   _createSliderContainer() {
     var self = this;
-    var range = document.createElement('INPUT');
+    var range = document.createElement('input');
     range.className = 'slider-control-range';
     // set input attributes
     var allowed = ['min', 'max', 'value', 'step', 'type'];
@@ -118,7 +118,7 @@ export class SliderControl {
 
   _createPlayerContainer() {
     var self = this;
-    var player = document.createElement('SPAN');
+    var player = document.createElement('span');
     var playerControl = document.createElement('BUTTON');
     playerControl.innerHTML = this._getPlayerControlLabel();
     playerControl.onclick = function () {
@@ -134,7 +134,7 @@ export class SliderControl {
     var label = document.createElement('LABEL');
     label.className = 'slider-control-block';
     label.innerHTML = opt.label + ':';
-    var input = document.createElement('INPUT');
+    var input = document.createElement('input');
     input.className = 'slider-control-input';
     if (opt.type) {
       input.setAttribute('type', opt.type);

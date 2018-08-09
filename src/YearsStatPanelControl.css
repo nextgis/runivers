@@ -1,0 +1,9 @@
+.panel-body__yearstat--gain {
+  text-align: center;
+  font-size: 1.3rem;
+  color: green;
+}
+
+.panel-body__yearstat--gain.lost {
+  color: darkred;
+}

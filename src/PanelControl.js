@@ -27,8 +27,20 @@ export class Panel {
     if (typeof content === 'string') {
       this._body.innerHTML = content;
     } else if (content instanceof HTMLElement) {
-      this.content.appendChild(content);
+      this._body.appendChild(content);
     }
+  }
+
+  createControlButton(text, onclick) {
+    const element = document.createElement('button');
+    element.className = 'panel-button';
+    element.innerHTML = text;
+    element.onclick = onclick
+    return element;
+  }
+
+  createRefButton(url, text = 'Подробнее') {
+    return this.createControlButton(text, () => window.open(url, '_blank'));
   }
 
   _cleanBody() {
@@ -36,7 +48,7 @@ export class Panel {
   }
 
   _createContainer() {
-    var element = document.createElement('DIV');
+    var element = document.createElement('div');
     element.className = 'mapboxgl-ctrl panel';
 
     element.appendChild(this._createHeader());
@@ -46,7 +58,7 @@ export class Panel {
   }
 
   _createHeader() {
-    const element = document.createElement('DIV');
+    const element = document.createElement('div');
     element.className = 'panel-header';
 
     element.innerHTML = this.options.headerText;
@@ -56,7 +68,7 @@ export class Panel {
   }
 
   _createBody() {
-    const element = document.createElement('DIV');
+    const element = document.createElement('div');
     element.className = 'panel-body';
 
 
