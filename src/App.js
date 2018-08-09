@@ -4,7 +4,7 @@ import { SliderControl } from './SliderControl';
 
 import { getLayers } from './services/GetLayersService';
 import { WebMap } from './WebMap';
-import { doNotRepeat } from './utils/doNotRepeat';
+// import { doNotRepeat } from './utils/doNotRepeat';
 import { PeriodPanelControl } from './PeriodPanelControl';
 import { YearsStatPanelControl } from './YearsStatPanelControl';
 
@@ -179,8 +179,9 @@ export class App {
         const isLoaded = data.isSourceLoaded;
         if (isLoaded) {
           this._loadedSources[data.sourceId] = isLoaded;
+          this._onSourceIsLoaded();
           // use this delay do remove layer switch blinking
-          doNotRepeat('onSourceIsLoaded', () => this._onSourceIsLoaded(), 200);
+          // doNotRepeat('onSourceIsLoaded', () => this._onSourceIsLoaded(), 200);
         }
       }
     }
