@@ -49,7 +49,7 @@ export class App {
   }
 
   updateLayerByYear(year) {
-    var layerId = this._getLayerIdByYear(year);
+    let layerId = this._getLayerIdByYear(year);
     this.updateLayer(layerId);
 
     this._updatePeriodBlockByYear(year);
@@ -57,7 +57,7 @@ export class App {
   }
 
   updateLayer(layerId) {
-    var fromId = this.currentLayerId;
+    let fromId = this.currentLayerId;
     this.currentLayerId = layerId;
     this._switchLayer(fromId, layerId);
   }
@@ -139,8 +139,8 @@ export class App {
   _switchLayer(fromId, toId) {
     if (fromId !== toId) {
       this._showLayer(toId);
-      // do not hide unloded layer if it first
-      if (fromId && !this.webMap.map.isSourceLoaded(toId)) {
+      // do not hide unloaded layer if it first
+      if (fromId) {
         this.webMap.map.setPaintProperty(toId, 'fill-opacity', 0);
       } else {
         this._loadedSources[toId] = true;
@@ -155,13 +155,13 @@ export class App {
   }
 
   _nextStepReady(year, callback) {
-    var nextLayerId = this._getLayerIdByYear(year);
+    let nextLayerId = this._getLayerIdByYear(year);
 
-    var next = () => {
+    let next = () => {
       callback(year);
     }
     this._preloadLayer(nextLayerId);
-    var isLoading = this.currentLayerId === nextLayerId || this._loadedSources[nextLayerId];
+    let isLoading = this.currentLayerId === nextLayerId;
     if (isLoading) {
       next();
     } else {
@@ -190,8 +190,8 @@ export class App {
   _onSourceIsLoaded() {
     this._hideNotCurrentLayers();
     this.webMap.map.setPaintProperty(this.currentLayerId, 'fill-opacity', 0.8);
-    for (var fry = 0; fry < this._onDataLoadEvents.length; fry++) {
-      var event = this._onDataLoadEvents[fry];
+    for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
+      let event = this._onDataLoadEvents[fry];
       event();
     }
     this._onDataLoadEvents = [];
@@ -199,7 +199,7 @@ export class App {
 
   _hideNotCurrentLayers() {
     const layers = this.webMap._layers;
-    for (var l in layers) {
+    for (let l in layers) {
       if (layers.hasOwnProperty(l)) {
         if (l !== String(this.currentLayerId) && layers[l]) {
           this._hideLayer(l);
@@ -217,44 +217,19 @@ export class App {
   }
 
   _getLayerIdByYear(year) {
-    var filteredLayer = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
-    var layerId = (filteredLayer.length != 0) ? filteredLayer[0].id : undefined;
+    const filteredLayer = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
+    const layerId = (filteredLayer.length != 0) ? filteredLayer[0].id : undefined;
     return layerId;
   }
 
   _processLayersMeta(layersMeta) {
-    var layersDescription = layersMeta.map((d) => {
-      var layer = {};
-      var resource = d.resource;
-      var re = new RegExp('from_(\\d{4})_to_(\\d{4}).*$');
-      var layerName = resource.display_name;
-      layer.name = resource.display_name;
-      layer.id = resource.id;
-      layer.from = +layerName.replace(re, '$1');
-      layer.to = +layerName.replace(re, '$2');
-      return layer;
+    return layersMeta.map(({ resource }) => {
+      const name = resource.display_name;
+      const [from, to] = name.match('from_(\\d{4})_to_(\\d{4}).*$').slice(1).map((x) => Number(x));
+      this.minYear = (this.minYear > from ? from : this.minYear) || from;
+      this.maxYear = (this.maxYear < to ? to : this.maxYear) || to;
+      return { name, from, to, id: resource.id };
     });
-
-    var fromYears = layersDescription.map((x) => {
-      return x.from;
-    });
-    var toYears = layersDescription.map((x) => {
-      return x.to;
-    });
-    this.minYear = (fromYears.sort((a, b) => {
-      return a - b;
-    }))[0];
-    this.maxYear = (toYears.sort((a, b) => {
-      return b - a;
-    }))[0];
-
-    return layersDescription;
   }
   // endregion
 }
-
-
-
-
-
-
