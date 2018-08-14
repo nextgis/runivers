@@ -33,23 +33,16 @@ export class App {
   }
 
   createWebMap() {
-    const options = Object.assign({}, this.options, {
+    const options = Object.assign({}, this.options);
+    const webMap = new WebMap({
       mapAdapter: new MapboxglAdapter()
     });
-    const webMap = new WebMap(options);
-    webMap.create();
+    webMap.create(options);
 
-    webMap.map.addBaseLayer('osm');
+    webMap.map.addBaseLayer('osm', 'OSM');
+    webMap.map.showLayer('osm');
 
-    // webMap.map.on('data', (data) => this._onData(data));
-
-    // // set base layers
-    // webMap.onMapLoad(() => {
-    //   webMap.addTileLayer('osm', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //     attribution: '&copy; <a href="http://osm.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-    //     subdomains: 'abc'
-    //   });
-    // })
+    webMap.map.map.on('data', (data) => this._onData(data));
 
     return webMap;
   }
@@ -74,14 +67,14 @@ export class App {
       this._layersConfig = this._processLayersMeta(data);
 
       this.slider = this._createSlider();
-      // this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
-      // this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
+      this.webMap.map.map.addControl(this.periodsPanelControl, 'top-right');
+      this.webMap.map.map.addControl(this.yearsStatPanelControl, 'top-right');
 
       this._headerElement = this._createHeader();
 
-      // this.webMap.onMapLoad(() => {
-      //   this.updateLayerByYear(this.currentYear)
-      // });
+      this.webMap.map.onMapLoad(() => {
+        this.updateLayerByYear(this.currentYear)
+      });
     });
   }
 
@@ -100,7 +93,7 @@ export class App {
       this.updateLayerByYear(year);
     });
 
-    // this.webMap.map.addControl(slider, 'bottom-left');
+    this.webMap.map.map.addControl(slider, 'bottom-left');
     return slider;
   }
 
@@ -136,9 +129,6 @@ export class App {
     const yearStat = yearsStat.find((x) => x.year === year);
     return yearStat;
   }
-
-
-
   // endregion
 
   //region Map control
@@ -147,7 +137,7 @@ export class App {
       this._showLayer(toId);
       // do not hide unloaded layer if it first
       if (fromId) {
-        this.webMap.map.setPaintProperty(toId, 'fill-opacity', 0);
+        this.webMap.map.map.setPaintProperty(toId, 'fill-opacity', 0);
       } else {
         this._loadedSources[toId] = true;
       }
@@ -157,7 +147,7 @@ export class App {
   _preloadLayer(layerId) {
     this._loadedSources[layerId] = this._loadedSources[layerId] || false;
     this._showLayer(layerId);
-    this.webMap.map.setPaintProperty(layerId, 'fill-opacity', 0);
+    this.webMap.map.map.setPaintProperty(layerId, 'fill-opacity', 0);
   }
 
   _nextStepReady(year, callback) {
@@ -176,7 +166,7 @@ export class App {
   }
 
   _isHistoryLayer(layerId) {
-    return this.webMap._layers[layerId] !== undefined;
+    return this.webMap.map._baseLayers.indexOf(layerId) === -1;
   }
 
   _onData(data) {
@@ -195,7 +185,7 @@ export class App {
 
   _onSourceIsLoaded() {
     this._hideNotCurrentLayers();
-    this.webMap.map.setPaintProperty(this.currentLayerId, 'fill-opacity', 0.8);
+    this.webMap.map.map.setPaintProperty(this.currentLayerId, 'fill-opacity', 0.8);
     for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
       let event = this._onDataLoadEvents[fry];
       event();
@@ -204,22 +194,30 @@ export class App {
   }
 
   _hideNotCurrentLayers() {
-    const layers = this.webMap._layers;
+    const layers = this.webMap.map._layers;
     for (let l in layers) {
       if (layers.hasOwnProperty(l)) {
-        if (l !== String(this.currentLayerId) && layers[l]) {
-          this._hideLayer(l);
+        if (this.webMap.map._baseLayers.indexOf(l) === -1) {
+          if (l !== String(this.currentLayerId) && layers[l]) {
+            this._hideLayer(l);
+          }
         }
       }
     }
   }
 
   _hideLayer(layerId) {
-    this.webMap.toggleLayer(layerId, false)
+    this.webMap.map.toggleLayer(layerId, false)
   }
 
   _showLayer(layerId) {
-    this.webMap.toggleLayer(layerId, true)
+    const exist = this.webMap.map._layers[layerId] !== undefined;
+    if (!exist) {
+      const url = this.options.baseUrl + '/api/resource/' + layerId + '/{z}/{x}/{y}.mvt';
+      this.webMap.map.addLayer(layerId, 'MVT', { url })
+    }
+    this.webMap.map.toggleLayer(layerId, true)
+
   }
 
   _getLayerIdByYear(year) {
