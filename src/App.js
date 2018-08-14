@@ -3,7 +3,8 @@ import './App.css';
 import { SliderControl } from './SliderControl';
 
 import { getLayers } from './services/GetLayersService';
-import { WebMap } from './WebMap';
+import { WebMap } from '../nextgisweb_frontend/packages/webmap';
+import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter';
 // import { doNotRepeat } from './utils/doNotRepeat';
 import { PeriodPanelControl } from './PeriodPanelControl';
 import { YearsStatPanelControl } from './YearsStatPanelControl';
@@ -32,18 +33,23 @@ export class App {
   }
 
   createWebMap() {
+    const options = Object.assign({}, this.options, {
+      mapAdapter: new MapboxglAdapter()
+    });
+    const webMap = new WebMap(options);
+    webMap.create();
 
-    const webMap = new WebMap(this.options);
+    webMap.map.addBaseLayer('osm');
 
-    webMap.map.on('data', (data) => this._onData(data));
+    // webMap.map.on('data', (data) => this._onData(data));
 
-    // set base layers
-    webMap.onMapLoad(() => {
-      webMap.addTileLayer('osm', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://osm.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-        subdomains: 'abc'
-      });
-    })
+    // // set base layers
+    // webMap.onMapLoad(() => {
+    //   webMap.addTileLayer('osm', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //     attribution: '&copy; <a href="http://osm.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+    //     subdomains: 'abc'
+    //   });
+    // })
 
     return webMap;
   }
@@ -68,14 +74,14 @@ export class App {
       this._layersConfig = this._processLayersMeta(data);
 
       this.slider = this._createSlider();
-      this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
-      this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
+      // this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
+      // this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
 
       this._headerElement = this._createHeader();
 
-      this.webMap.onMapLoad(() => {
-        this.updateLayerByYear(this.currentYear)
-      });
+      // this.webMap.onMapLoad(() => {
+      //   this.updateLayerByYear(this.currentYear)
+      // });
     });
   }
 
@@ -94,7 +100,7 @@ export class App {
       this.updateLayerByYear(year);
     });
 
-    this.webMap.map.addControl(slider, 'bottom-left');
+    // this.webMap.map.addControl(slider, 'bottom-left');
     return slider;
   }
 
@@ -102,8 +108,8 @@ export class App {
     const header = document.createElement('div');
     header.className = 'app-header';
     header.innerHTML = `Границы России ${this.minYear}-${this.maxYear} гг.`;
-    const mapContainer = this.webMap.map.getContainer();
-    mapContainer.appendChild(header);
+    // const mapContainer = this.webMap.map.map.getContainer();
+    // mapContainer.appendChild(header);
     return header;
   }
 
