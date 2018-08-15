@@ -39,10 +39,12 @@ export class App {
     });
     webMap.create(options);
 
-    webMap.map.addBaseLayer('osm', 'OSM');
+    webMap.addBaseLayer('osm', 'OSM');
     webMap.map.showLayer('osm');
 
-    webMap.map.map.on('data', (data) => this._onData(data));
+    webMap.map.addControl('ZOOM', 'top-left');
+
+    webMap.map.emitter.on('data-loaded', (data) => this._onData(data));
 
     return webMap;
   }
@@ -67,8 +69,8 @@ export class App {
       this._layersConfig = this._processLayersMeta(data);
 
       this.slider = this._createSlider();
-      this.webMap.map.map.addControl(this.periodsPanelControl, 'top-right');
-      this.webMap.map.map.addControl(this.yearsStatPanelControl, 'top-right');
+      this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
+      this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
 
       this._headerElement = this._createHeader();
 
@@ -93,7 +95,7 @@ export class App {
       this.updateLayerByYear(year);
     });
 
-    this.webMap.map.map.addControl(slider, 'bottom-left');
+    this.webMap.map.addControl(slider, 'bottom-left');
     return slider;
   }
 
@@ -101,8 +103,8 @@ export class App {
     const header = document.createElement('div');
     header.className = 'app-header';
     header.innerHTML = `Границы России ${this.minYear}-${this.maxYear} гг.`;
-    // const mapContainer = this.webMap.map.map.getContainer();
-    // mapContainer.appendChild(header);
+    const mapContainer = this.webMap.map.getContainer();
+    mapContainer.appendChild(header);
     return header;
   }
 
@@ -137,7 +139,7 @@ export class App {
       this._showLayer(toId);
       // do not hide unloaded layer if it first
       if (fromId) {
-        this.webMap.map.map.setPaintProperty(toId, 'fill-opacity', 0);
+        this.webMap.map.setLayerOpacity(toId, 0);
       } else {
         this._loadedSources[toId] = true;
       }
@@ -147,7 +149,7 @@ export class App {
   _preloadLayer(layerId) {
     this._loadedSources[layerId] = this._loadedSources[layerId] || false;
     this._showLayer(layerId);
-    this.webMap.map.map.setPaintProperty(layerId, 'fill-opacity', 0);
+    this.webMap.map.setLayerOpacity(layerId, 0);
   }
 
   _nextStepReady(year, callback) {
@@ -166,26 +168,20 @@ export class App {
   }
 
   _isHistoryLayer(layerId) {
-    return this.webMap.map._baseLayers.indexOf(layerId) === -1;
+    return !this.webMap.isBaseLayer(layerId);
   }
 
   _onData(data) {
-    if (data.dataType === 'source') {
-      if (this._isHistoryLayer(data.sourceId)) {
-        const isLoaded = data.isSourceLoaded;
-        if (isLoaded) {
-          this._loadedSources[data.sourceId] = isLoaded;
-          this._onSourceIsLoaded();
-          // use this delay do remove layer switch blinking
-          // doNotRepeat('onSourceIsLoaded', () => this._onSourceIsLoaded(), 200);
-        }
-      }
+    if (this._isHistoryLayer(data.target)) {
+      this._loadedSources[data.target] = true;
+      this._onSourceIsLoaded();
     }
+
   }
 
   _onSourceIsLoaded() {
     this._hideNotCurrentLayers();
-    this.webMap.map.map.setPaintProperty(this.currentLayerId, 'fill-opacity', 0.8);
+    this.webMap.map.setLayerOpacity(this.currentLayerId, 0.8);
     for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
       let event = this._onDataLoadEvents[fry];
       event();
@@ -197,7 +193,7 @@ export class App {
     const layers = this.webMap.map._layers;
     for (let l in layers) {
       if (layers.hasOwnProperty(l)) {
-        if (this.webMap.map._baseLayers.indexOf(l) === -1) {
+        if (!this.webMap.isBaseLayer(l)) {
           if (l !== String(this.currentLayerId) && layers[l]) {
             this._hideLayer(l);
           }
