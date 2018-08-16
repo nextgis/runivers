@@ -16,7 +16,9 @@
   "dependencies": {
     "mapbox-gl": "^0.47.0",
     "ngw-connector": "git+https://github.com/rendrom/ngw-connector.git#bd0250b",
-    "reset-css": "^4.0.1"
+    "nouislider": "^11.1.0",
+    "reset-css": "^4.0.1",
+    "wnumb": "^1.1.0"
   },
   "devDependencies": {
     "@types/mapbox-gl": "^0.47.0",

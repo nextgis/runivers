@@ -1,11 +1,53 @@
+.slider-control {
+  position: absolute;
+  bottom: 40px;
+  width: 80%;
+  margin: auto;
+  right: 0px;
+  left: 0;
+}
+
 .slider-control-input {
   max-width: 50px;
 }
 
 .slider-control-block {
-  margin-left: 5px;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 .slider-control-range {
-  width: 300px;
+  width: 100%;
+}
+
+.slider-control-player {
+  position: absolute;
+  margin-left: -55px;
+}
+
+
+.player-button {
+  border: 0;
+  background: transparent;
+  box-sizing: border-box;
+  width: 0;
+  height: 30px;
+  border-color: transparent transparent transparent #202020bf;
+  transition: 100ms all ease;
+  cursor: pointer;
+  border-style: solid;
+  border-width: 15px 0 15px 30px;
+}
+
+.player-button:focus {
+  outline: none;
+}
+
+.player-button.paused {
+  border-style: double;
+  border-width: 0px 0 0px 30px;
+}
+
+.player-button:hover {
+  border-color: transparent transparent transparent #404040;
 }

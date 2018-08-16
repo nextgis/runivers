@@ -1,11 +1,10 @@
 import './App.css';
 
 import { SliderControl } from './SliderControl';
-
+import { Popup } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
 import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
 import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/MapboxglAdapter';
-// import { doNotRepeat } from './utils/doNotRepeat';
 import { PeriodPanelControl, Period } from './PeriodPanelControl';
 import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';
 
@@ -18,6 +17,19 @@ export interface AppOptions {
   version: string;
 }
 
+export interface HistoryLayerProperties {
+  cat: number;
+  fid: number;
+  id: number;
+  linecomnt: string;
+  lwdate: string;
+  lwdtappr: number;
+  status: number;
+  updtappr: number;
+  updtrl: string;
+  upperdat: string;
+}
+
 export class App {
 
   options: AppOptions;
@@ -28,17 +40,17 @@ export class App {
   yearsStatPanelControl = new YearsStatPanelControl();
   webMap: WebMap;
 
-  currentLayerId = null;
+  currentLayerId: string;
 
   _headerElement: HTMLElement;
 
   private _minYear: number;
   private _maxYear: number;
+  private _popup: Popup;
 
   private _layersConfig = [];
   private _loadedSources = {};
   private _onDataLoadEvents = [];
-
 
   constructor(options: AppOptions) {
     this.options = Object.assign({}, this.options, options);
@@ -72,7 +84,7 @@ export class App {
     this._updateYearStatBlockByYear(year);
   }
 
-  updateLayer(layerId) {
+  updateLayer(layerId: string) {
     const fromId = this.currentLayerId;
     this.currentLayerId = layerId;
     this._switchLayer(fromId, layerId);
@@ -110,7 +122,9 @@ export class App {
       this.updateLayerByYear(year);
     });
 
-    this.webMap.map.addControl(slider, 'bottom-left');
+    const container = this.webMap.map.getContainer();
+    container.appendChild(slider.onAdd(this.webMap));
+    // this.webMap.map.addControl(slider, 'bottom-left');
     return slider;
   }
 
@@ -149,11 +163,13 @@ export class App {
   // endregion
 
   // region Map control
-  _switchLayer(fromId, toId) {
+  _switchLayer(fromId: string, toId: string) {
     if (toId && fromId !== toId) {
       this._showLayer(toId);
+      this._addLayerListeners(toId);
       // do not hide unloaded layer if it first
       if (fromId) {
+        this._removeLayerListeners(fromId);
         this.webMap.map.setLayerOpacity(toId, 0);
       } else {
         this._loadedSources[toId] = true;
@@ -232,12 +248,12 @@ export class App {
         'fill-color': [
           'match',
           ['get', 'status'],
-          1, '#fbb03b',
-          2, '#223b53',
-          3, '#e55e5e',
-          4, '#3bb2d0',
-          5, '#3bb2d0',
-          /* other */ 'red'
+          1, '#cd403a',
+          2, '#ec908d',
+          3, '#e19c4b',
+          4, '#e1774b',
+          5, '#e14b90',
+          /* other */ '#ccc'
         ]
       };
       this.webMap.map.addLayer('MVT', { url, id, paint });
@@ -245,10 +261,10 @@ export class App {
     this.webMap.map.toggleLayer(id, true);
   }
 
-  _getLayerIdByYear(year) {
+  _getLayerIdByYear(year): string {
     const filteredLayer = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
     const layerId = (filteredLayer.length !== 0) ? filteredLayer[0].id : undefined;
-    return layerId;
+    return String(layerId);
   }
 
   _processLayersMeta(layersMeta) {
@@ -260,5 +276,88 @@ export class App {
       return { name, from, to, id: resource.id };
     });
   }
+
+  _createPopupContent(props: HistoryLayerProperties): HTMLElement {
+    const block = document.createElement('div');
+
+    const fields = [
+      { name: 'Наименование территории', field: 'name' },
+      { name: 'Дата возникновения территориального образования', field: 'lwdate' },
+      { name: 'Дата исчезновения территориального образования', field: 'updtrl' },
+      { name: 'Комментарий', field: 'linecomnt' },
+    ];
+    fields.forEach((x) => {
+      const prop = props[x.field];
+      if (prop) {
+        const propBlock = document.createElement('div');
+        propBlock.className = 'popup__propertyblock';
+        propBlock.innerHTML = `
+        <div class="popup__property-name">${x.name}</div>
+        <div class="popup__property-value">${prop}</div>
+        `;
+        block.appendChild(propBlock);
+      }
+    });
+    return block;
+  }
   // endregion
+
+  private _addLayerListeners(layerId: string) {
+    const map = this.webMap.map.map;
+
+    map.on('click', layerId, (e) => {
+      const point = e.point;
+      const width = 5;
+      const height = 5;
+      // Find all features within a bounding box around a point
+
+      const features = map.queryRenderedFeatures([
+        [point.x - width / 2, point.y - height / 2],
+        [point.x + width / 2, point.y + height / 2],
+      ], { layers: [layerId] });
+      const feature = features[0];
+      if (feature.properties.status && feature.properties.status < 6) {
+        const html = this._createPopupContent(feature.properties);
+        const str = html.innerHTML;
+        if (str) {
+          this._popup = new Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(str)
+            .addTo(map);
+        }
+      }
+    });
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', layerId, (e) => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', layerId, () => {
+      map.getCanvas().style.cursor = '';
+      // this._removePopup();
+    });
+  }
+
+  private _removePopup() {
+    if (this._popup) {
+      this._popup.remove();
+      this._popup = null;
+    }
+  }
+
+  private _removeLayerListeners(layerId: string) {
+    const map = this.webMap.map.map;
+    // map.off('click', layerId);
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.off('mouseenter', layerId);
+
+    // Change it back to a pointer when it leaves.
+    map.off('mouseleave', layerId);
+
+    map.getCanvas().style.cursor = '';
+    this._removePopup();
+  }
 }
