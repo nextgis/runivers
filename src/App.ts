@@ -3,8 +3,8 @@ import './App.css';
 import { SliderControl } from './SliderControl';
 
 import { getLayers } from './services/GetLayersService';
-import { WebMap } from '../nextgisweb_frontend/packages/webmap';
-import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter';
+import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
+import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/MapboxglAdapter';
 // import { doNotRepeat } from './utils/doNotRepeat';
 import { PeriodPanelControl, Period } from './PeriodPanelControl';
 import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';
@@ -219,14 +219,30 @@ export class App {
     this.webMap.map.toggleLayer(layerId, false);
   }
 
-  _showLayer(layerId) {
-    const exist = this.webMap.map.getLayer(layerId);
+  _showLayer(id) {
+    const exist = this.webMap.map.getLayer(id);
     if (!exist) {
-      const url = this.options.baseUrl + '/api/resource/' + layerId + '/{z}/{x}/{y}.mvt';
-      this.webMap.map.addLayer(layerId, 'MVT', { url });
+      const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
+      const paint = {
+        'fill-opacity': 0.8,
+        'fill-opacity-transition': {
+          duration: 0
+        },
+        // 'fill-outline-color': '#8b0000', // darkred
+        'fill-color': [
+          'match',
+          ['get', 'status'],
+          1, '#fbb03b',
+          2, '#223b53',
+          3, '#e55e5e',
+          4, '#3bb2d0',
+          5, '#3bb2d0',
+          /* other */ 'red'
+        ]
+      };
+      this.webMap.map.addLayer('MVT', { url, id, paint });
     }
-    this.webMap.map.toggleLayer(layerId, true);
-
+    this.webMap.map.toggleLayer(id, true);
   }
 
   _getLayerIdByYear(year) {
