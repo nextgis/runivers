@@ -6,12 +6,21 @@ import { getLayers } from './services/GetLayersService';
 import { WebMap } from '../nextgisweb_frontend/packages/webmap';
 import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter';
 // import { doNotRepeat } from './utils/doNotRepeat';
-import { PeriodPanelControl } from './PeriodPanelControl';
-import { YearsStatPanelControl } from './YearsStatPanelControl';
+import { PeriodPanelControl, Period } from './PeriodPanelControl';
+import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';
+
+export interface AppOptions {
+  baseUrl: string;
+  target: string;
+  currentYear: number;
+  periods: Period[];
+  yearsStat: YearStat[];
+  version: string;
+}
 
 export class App {
 
-  options;
+  options: AppOptions;
   currentYear: number;
   slider: SliderControl;
 
@@ -21,6 +30,8 @@ export class App {
 
   currentLayerId = null;
 
+  _headerElement: HTMLElement;
+
   private _minYear: number;
   private _maxYear: number;
 
@@ -28,16 +39,12 @@ export class App {
   private _loadedSources = {};
   private _onDataLoadEvents = [];
 
-  private _headerElement: HTMLElement;
 
-  constructor(options) {
+  constructor(options: AppOptions) {
     this.options = Object.assign({}, this.options, options);
-
+    this.currentYear = options.currentYear;
     this.webMap = this.createWebMap();
-
-
     this._buildApp();
-
   }
 
   createWebMap() {
@@ -133,8 +140,8 @@ export class App {
     this.yearsStatPanelControl.updateYearStat(yearStat);
   }
 
-  _findYearStatByYear(year) {
-    year = parseInt(year, 10);
+  _findYearStatByYear(year: number) {
+    year = Number(year);
     const yearsStat = this.options.yearsStat || [];
     const yearStat = yearsStat.find((x) => x.year === year);
     return yearStat;
@@ -143,7 +150,7 @@ export class App {
 
   // region Map control
   _switchLayer(fromId, toId) {
-    if (fromId !== toId) {
+    if (toId && fromId !== toId) {
       this._showLayer(toId);
       // do not hide unloaded layer if it first
       if (fromId) {

@@ -7,8 +7,8 @@ export class Panel {
 
   map: WebMap;
 
+  _header: HTMLElement;
   private _container: HTMLElement;
-  private _header: HTMLElement;
   private _body: HTMLElement;
 
   constructor(options?) {

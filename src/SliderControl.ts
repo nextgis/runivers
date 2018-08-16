@@ -30,10 +30,10 @@ export class SliderControl {
   emitter = new EventEmitter();
   map: WebMap;
 
+  _animationStepInput: HTMLInputElement;
   private _container: HTMLElement;
   private _range: HTMLInputElement;
   private _input: HTMLInputElement;
-  private _animationStepInput: HTMLInputElement;
   private _animationStatus: HTMLInputElement;
   private _playerControl: HTMLElement;
   private _nextStepTimeoutId: number;

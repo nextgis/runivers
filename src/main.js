@@ -10,9 +10,9 @@ const app = new App({
   baseUrl: config.baseUrl,
   target: 'map',
   currentYear: 1301,
-  periods,
-  yearsStat,
-  version
+  periods: periods,
+  yearsStat: yearsStat,
+  version: version
 });
 
 // for testing and debug

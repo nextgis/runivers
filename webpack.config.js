@@ -15,7 +15,7 @@ module.exports = (env, argv) => {
     entry: {
       // "vendor": ["babel-polyfill", "./common/polyfill.js", "./common/vendor.js",],
       'main': [
-        './src/main.ts'
+        './src/main.js'
       ],
     },
 
@@ -33,11 +33,21 @@ module.exports = (env, argv) => {
     },
 
     resolve: {
-      extensions: ['.ts', '.json'],
+      extensions: ['.js', '.ts', '.json'],
     },
 
     module: {
       rules: [
+        {
+          test: /\.ts$/,
+          enforce: 'pre',
+          use: [
+            {
+              loader: 'tslint-loader',
+              options: { fix: true }
+            }
+          ]
+        },
         {
           test: /\.tsx?$/,
           exclude: /node_modules/,
@@ -49,38 +59,8 @@ module.exports = (env, argv) => {
                 transpileOnly: true,
               }
             },
-            {
-              loader: 'tslint-loader',
-            }
           ]
         },
-        // {
-        //   enforce: 'pre',
-        //   test: /\.js$/,
-        //   exclude: /node_modules/,
-        //   loader: 'eslint-loader',
-        //   options: {
-        //     fix: true
-        //   }
-        // },
-        // {
-        //   test: /\.js$/,
-        //   exclude: /(node_modules|bower_components)/,
-        //   use: [{
-        //     loader: 'babel-loader',
-        //     options: {
-        //       cacheDirectory: true,
-        //       presets: [
-        //         ['@babel/preset-env', { 'useBuiltIns': 'usage' }]
-        //       ],
-        //       plugins: [
-        //         '@babel/plugin-syntax-dynamic-import',
-        //         '@babel/plugin-proposal-class-properties',
-        //         '@babel/plugin-proposal-object-rest-spread'
-        //       ]
-        //     }
-        //   }]
-        // },
         {
           test: /\.css$/,
           use: ExtractTextPlugin.extract({
