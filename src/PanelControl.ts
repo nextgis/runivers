@@ -1,8 +1,17 @@
 import './PanelControl.css';
+import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
 
 export class Panel {
 
-  constructor(options) {
+  options;
+
+  map: WebMap;
+
+  private _container: HTMLElement;
+  private _header: HTMLElement;
+  private _body: HTMLElement;
+
+  constructor(options?) {
     this.options = Object.assign({}, this.options, options);
     this._container = null;
     this._header = null;
@@ -35,7 +44,7 @@ export class Panel {
     const element = document.createElement('button');
     element.className = 'panel-button';
     element.innerHTML = text;
-    element.onclick = onclick
+    element.onclick = onclick;
     return element;
   }
 
@@ -48,7 +57,7 @@ export class Panel {
   }
 
   _createContainer() {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl panel';
 
     element.appendChild(this._createHeader());

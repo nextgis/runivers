@@ -1,7 +1,20 @@
 import EventEmitter from 'events';
-import './SliderControl.css'
+import './SliderControl.css';
+import { WebMap } from '../nextgisweb_frontend/packages/webmap';
 
-var OPTIONS = {
+export interface SliderOptions {
+  type: string;
+  min: number;
+  max: number;
+  step: number;
+  animationStep: number;
+  value: number;
+  animationDelay: number;
+
+  nextStepReady?(nextValue: number, callback: (value: number) => void): void;
+}
+
+const OPTIONS: SliderOptions = {
   type: 'range',
   min: 0,
   max: 100,
@@ -9,22 +22,25 @@ var OPTIONS = {
   animationStep: 1,
   value: 50,
   animationDelay: 100
-}
+};
 
 export class SliderControl {
+
+  options: SliderOptions;
+  emitter = new EventEmitter();
+  map: WebMap;
+
+  private _container: HTMLElement;
+  private _range: HTMLInputElement;
+  private _input: HTMLInputElement;
+  private _animationStepInput: HTMLInputElement;
+  private _animationStatus: HTMLInputElement;
+  private _playerControl: HTMLElement;
+  private _nextStepTimeoutId: number;
 
   constructor(options) {
     this.options = Object.assign({}, OPTIONS, options);
     this.options.animationStep = this.options.animationStep || this.options.step;
-    this.emitter = new EventEmitter();
-    this.map = null;
-    this._container = null;
-    this._range = null;
-    this._input = null;
-    this._animationStepInput = null;
-    this._animationStatus = false;
-    this._playerControl = null;
-    this._nextStepTimeoutId = null;
   }
 
   onAdd(map) {
@@ -34,10 +50,11 @@ export class SliderControl {
   }
 
   onRemove() {
+    // ignore
   }
 
   _createContainer() {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl';
     element.appendChild(this._createPlayerContainer());
     element.appendChild(this._createSliderContainer());
@@ -48,14 +65,14 @@ export class SliderControl {
   }
 
   _createValueInput() {
-    var self = this;
-    var inputObj = this._createLabeledInput({
+    const self = this;
+    const inputObj = this._createLabeledInput({
       type: 'number',
       label: 'value',
       value: this.options.value
     });
-    var input = inputObj.input;
-    input.onchange = function () {
+    const input = inputObj.input;
+    input.onchange = function() {
       self._onChange(self._getAllowedValue(input.value));
     };
     this._input = input;
@@ -63,66 +80,65 @@ export class SliderControl {
   }
 
   _createAnimationStepInput() {
-    var self = this;
-    var inputObj = this._createLabeledInput({
+    const inputObj = this._createLabeledInput({
       type: 'number',
       label: 'animation step',
       value: this.options.animationStep
     });
-    var input = inputObj.input;
-    input.onchange = function () {
-      var value = input.value;
-      value = value <= 0 ? self.options.animationStep :
-        value > self.options.max ? self.options.max : value;
-      input.value = value;
-      self.options.animationStep = parseInt(value);
+    const input = inputObj.input;
+    const opt = this.options;
+
+    input.onchange = () => {
+      let val = Number(input.value);
+      val = val <= 0 ? opt.animationStep :
+      val > opt.max ? opt.max : val;
+      input.value = String(val);
+      opt.animationStep = val;
     };
     this._animationStepInput = input;
     return inputObj.label;
   }
 
   _createAnimationDelayInput() {
-    var self = this;
-    var inputObj = this._createLabeledInput({
+
+    const inputObj = this._createLabeledInput({
       type: 'number',
       label: 'amimation delay',
       value: this.options.animationDelay
     });
-    var input = inputObj.input;
-    input.onchange = function () {
-      var value = input.value;
+    const input = inputObj.input;
+    input.onchange = () => {
+      let value = Number(input.value);
       value = value <= 0 ? 1 : value;
-      self.options.animationDelay = value;
+      this.options.animationDelay = value;
     };
     return inputObj.label;
   }
 
   _createSliderContainer() {
-    var self = this;
-    var range = document.createElement('input');
+    const range = document.createElement('input');
     range.className = 'slider-control-range';
     // set input attributes
-    var allowed = ['min', 'max', 'value', 'step', 'type'];
-    for (var fry = 0; fry < allowed.length; fry++) {
-      var option = this.options[allowed[fry]];
+    const allowed = ['min', 'max', 'value', 'step', 'type'];
+    for (let fry = 0; fry < allowed.length; fry++) {
+      const option = this.options[allowed[fry]];
       if (option) {
         range.setAttribute(allowed[fry], option);
       }
     }
-    range.onchange = function () {
-      self._onChange(range.value);
+    range.onchange = () => {
+      this._onChange(range.value);
     };
     this._range = range;
     return range;
   }
 
   _createPlayerContainer() {
-    var self = this;
-    var player = document.createElement('span');
-    var playerControl = document.createElement('BUTTON');
+    const player = document.createElement('span');
+    const playerControl = document.createElement('BUTTON');
     playerControl.innerHTML = this._getPlayerControlLabel();
-    playerControl.onclick = function () {
-      self._toggleAnimation();
+    playerControl.onclick = () => {
+      this._toggleAnimation();
     };
     player.appendChild(playerControl);
     this._playerControl = playerControl;
@@ -131,10 +147,10 @@ export class SliderControl {
 
   _createLabeledInput(opt) {
     opt = opt || {};
-    var label = document.createElement('LABEL');
+    const label = document.createElement('LABEL');
     label.className = 'slider-control-block';
     label.innerHTML = opt.label + ':';
-    var input = document.createElement('input');
+    const input = document.createElement('input');
     input.className = 'slider-control-input';
     if (opt.type) {
       input.setAttribute('type', opt.type);
@@ -144,8 +160,8 @@ export class SliderControl {
     }
     label.appendChild(input);
     return {
-      label: label,
-      input: input
+      label,
+      input
     };
   }
 
@@ -163,30 +179,27 @@ export class SliderControl {
     return this._animationStatus ? 'stop' : 'start';
   }
 
-  _toggleAnimation(status) {
+  _toggleAnimation(status?) {
     status = status !== undefined ? status : !this._animationStatus;
     this._animationStatus = status;
     this._playerControl.innerHTML = this._getPlayerControlLabel();
     if (status) {
       this._startAnimation();
-    }
-    else {
+    } else {
       this._stopAnimation();
     }
   }
 
   _startAnimation() {
-    var self = this;
-    this._nextStepReady(function (step) {
-      var isReady = typeof step !== 'boolean';
-      if (isReady && self._animationStatus) {
-        self._nextStepTimeoutId = setTimeout(function () {
-          self._nextStep(step);
-          self._startAnimation();
-        }, self.options.animationDelay);
-      }
-      else {
-        self.stopAnimation();
+    this._nextStepReady((step) => {
+      const isReady = typeof step !== 'boolean';
+      if (isReady && this._animationStatus) {
+        this._nextStepTimeoutId = setTimeout(() => {
+          this._nextStep(step);
+          this._startAnimation();
+        }, this.options.animationDelay);
+      } else {
+        this.stopAnimation();
       }
     });
   }
@@ -197,16 +210,14 @@ export class SliderControl {
   }
 
   _nextStepReady(callback) {
-    var nextValue = this._getNextValue();
+    const nextValue = this._getNextValue();
     if (nextValue && (nextValue < this.options.max)) {
       if (this.options.nextStepReady) {
         this.options.nextStepReady(nextValue, callback);
-      }
-      else {
+      } else {
         callback(nextValue);
       }
-    }
-    else {
+    } else {
       callback(false);
     }
   }
@@ -214,16 +225,15 @@ export class SliderControl {
   _getAllowedValue(value) {
     if (value < this.options.min) {
       return this.options.min;
-    }
-    else if (value > this.options.max) {
+    } else if (value > this.options.max) {
       return this.options.max;
     }
     return value;
   }
 
   _getNextValue() {
-    var current = parseInt(this._range.value, 10);
-    var next = current + this.options.animationStep;
+    const current = parseInt(this._range.value, 10);
+    const next = current + this.options.animationStep;
     return this._getAllowedValue(next);
   }
 

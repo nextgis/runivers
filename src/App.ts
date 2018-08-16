@@ -11,22 +11,30 @@ import { YearsStatPanelControl } from './YearsStatPanelControl';
 
 export class App {
 
+  options;
+  currentYear: number;
+  slider: SliderControl;
+
+  periodsPanelControl = new PeriodPanelControl();
+  yearsStatPanelControl = new YearsStatPanelControl();
+  webMap: WebMap;
+
+  currentLayerId = null;
+
+  private _minYear: number;
+  private _maxYear: number;
+
+  private _layersConfig = [];
+  private _loadedSources = {};
+  private _onDataLoadEvents = [];
+
+  private _headerElement: HTMLElement;
+
   constructor(options) {
     this.options = Object.assign({}, this.options, options);
-    this.currentYear = this.options.currentYear;
 
-    this.slider;
-    this.periodsPanelControl = new PeriodPanelControl()
-    this.yearsStatPanelControl = new YearsStatPanelControl()
     this.webMap = this.createWebMap();
-    this.currentLayerId = null;
 
-    this._minYear;
-    this._maxYear;
-
-    this._layersConfig = [];
-    this._loadedSources = {};
-    this._onDataLoadEvents = [];
 
     this._buildApp();
 
@@ -50,7 +58,7 @@ export class App {
   }
 
   updateLayerByYear(year) {
-    let layerId = this._getLayerIdByYear(year);
+    const layerId = this._getLayerIdByYear(year);
     this.updateLayer(layerId);
 
     this._updatePeriodBlockByYear(year);
@@ -58,7 +66,7 @@ export class App {
   }
 
   updateLayer(layerId) {
-    let fromId = this.currentLayerId;
+    const fromId = this.currentLayerId;
     this.currentLayerId = layerId;
     this._switchLayer(fromId, layerId);
   }
@@ -75,15 +83,15 @@ export class App {
       this._headerElement = this._createHeader();
 
       this.webMap.map.onMapLoad(() => {
-        this.updateLayerByYear(this.currentYear)
+        this.updateLayerByYear(this.currentYear);
       });
     });
   }
 
   _createSlider() {
     const slider = new SliderControl({
-      min: this.minYear,
-      max: this.maxYear,
+      min: this._minYear,
+      max: this._maxYear,
       step: 1,
       animationStep: 10,
       value: this.currentYear,
@@ -102,7 +110,7 @@ export class App {
   _createHeader() {
     const header = document.createElement('div');
     header.className = 'app-header';
-    header.innerHTML = `Границы России ${this.minYear}-${this.maxYear} гг.`;
+    header.innerHTML = `Границы России ${this._minYear}-${this._maxYear} гг.`;
     const mapContainer = this.webMap.map.getContainer();
     mapContainer.appendChild(header);
     return header;
@@ -133,7 +141,7 @@ export class App {
   }
   // endregion
 
-  //region Map control
+  // region Map control
   _switchLayer(fromId, toId) {
     if (fromId !== toId) {
       this._showLayer(toId);
@@ -153,13 +161,13 @@ export class App {
   }
 
   _nextStepReady(year, callback) {
-    let nextLayerId = this._getLayerIdByYear(year);
+    const nextLayerId = this._getLayerIdByYear(year);
 
-    let next = () => {
+    const next = () => {
       callback(year);
-    }
+    };
     this._preloadLayer(nextLayerId);
-    let isLoading = this.currentLayerId === nextLayerId;
+    const isLoading = this.currentLayerId === nextLayerId;
     if (isLoading) {
       next();
     } else {
@@ -183,42 +191,40 @@ export class App {
     this._hideNotCurrentLayers();
     this.webMap.map.setLayerOpacity(this.currentLayerId, 0.8);
     for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
-      let event = this._onDataLoadEvents[fry];
+      const event = this._onDataLoadEvents[fry];
       event();
     }
     this._onDataLoadEvents = [];
   }
 
   _hideNotCurrentLayers() {
-    const layers = this.webMap.map._layers;
-    for (let l in layers) {
-      if (layers.hasOwnProperty(l)) {
-        if (!this.webMap.isBaseLayer(l)) {
-          if (l !== String(this.currentLayerId) && layers[l]) {
-            this._hideLayer(l);
-          }
+    const layers = this.webMap.map.getLayers();
+    layers.forEach((l) => {
+      if (!this.webMap.isBaseLayer(l)) {
+        if (l !== String(this.currentLayerId) && this.webMap.map.isLayerOnTheMap(l)) {
+          this._hideLayer(l);
         }
       }
-    }
+    });
   }
 
   _hideLayer(layerId) {
-    this.webMap.map.toggleLayer(layerId, false)
+    this.webMap.map.toggleLayer(layerId, false);
   }
 
   _showLayer(layerId) {
-    const exist = this.webMap.map._layers[layerId] !== undefined;
+    const exist = this.webMap.map.getLayer(layerId);
     if (!exist) {
       const url = this.options.baseUrl + '/api/resource/' + layerId + '/{z}/{x}/{y}.mvt';
-      this.webMap.map.addLayer(layerId, 'MVT', { url })
+      this.webMap.map.addLayer(layerId, 'MVT', { url });
     }
-    this.webMap.map.toggleLayer(layerId, true)
+    this.webMap.map.toggleLayer(layerId, true);
 
   }
 
   _getLayerIdByYear(year) {
     const filteredLayer = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
-    const layerId = (filteredLayer.length != 0) ? filteredLayer[0].id : undefined;
+    const layerId = (filteredLayer.length !== 0) ? filteredLayer[0].id : undefined;
     return layerId;
   }
 
@@ -226,8 +232,8 @@ export class App {
     return layersMeta.map(({ resource }) => {
       const name = resource.display_name;
       const [from, to] = name.match('from_(\\d{4})_to_(\\d{4}).*$').slice(1).map((x) => Number(x));
-      this.minYear = (this.minYear > from ? from : this.minYear) || from;
-      this.maxYear = (this.maxYear < to ? to : this.maxYear) || to;
+      this._minYear = (this._minYear > from ? from : this._minYear) || from;
+      this._maxYear = (this._maxYear < to ? to : this._maxYear) || to;
       return { name, from, to, id: resource.id };
     });
   }

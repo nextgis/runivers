@@ -2,19 +2,27 @@ import { Panel } from './PanelControl';
 import './PeriodPanelControl.css';
 
 /**
- * @typedef {Object} Period - information about Gov
- * @prop {string} period
- * @prop {number} start
- * @prop {number} end
- * @prop {string} description
+ * @typedef Period - information about Gov
+ * @prop period
+ * @prop start
+ * @prop end
+ * @prop description
  */
+export interface Period {
+  period: string;
+  start: number;
+  end: number;
+  description: string;
+}
 
 const OPTIONS = { headerText: 'Правители' };
 
 
 export class PeriodPanelControl extends Panel {
 
-  constructor(options) {
+  period: Period;
+
+  constructor(options?) {
     super(Object.assign({}, OPTIONS, options));
     /** @type {Period} */
     this.period = null;
@@ -51,7 +59,7 @@ export class PeriodPanelControl extends Panel {
     periodElement.innerHTML = period.period;
     element.appendChild(periodElement);
 
-    element.appendChild(this.createRefButton(`https://www.google.ru/search?q=${period.period.split(' ').join('+')}`))
+    element.appendChild(this.createRefButton(`https://www.google.ru/search?q=${period.period.split(' ').join('+')}`));
 
     return element;
   }

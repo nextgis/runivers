@@ -11,9 +11,9 @@ const app = new App({
   target: 'map',
   currentYear: 1301,
   periods,
-  yearsStat
+  yearsStat,
+  version
 });
 
 // for testing and debug
-app.version = version;
 window.app = app;

@@ -1,6 +1,7 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-const CompressionPlugin = require('compression-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = (env, argv) => {
 
@@ -14,8 +15,7 @@ module.exports = (env, argv) => {
     entry: {
       // "vendor": ["babel-polyfill", "./common/polyfill.js", "./common/vendor.js",],
       'main': [
-        '@babel/polyfill',
-        './src/main.js'
+        './src/main.ts'
       ],
     },
 
@@ -33,38 +33,54 @@ module.exports = (env, argv) => {
     },
 
     resolve: {
-      extensions: ['.js', '.json'],
+      extensions: ['.ts', '.json'],
     },
 
     module: {
       rules: [
         {
-          enforce: 'pre',
-          test: /\.js$/,
+          test: /\.tsx?$/,
           exclude: /node_modules/,
-          loader: 'eslint-loader',
-          options: {
-            fix: true
-          }
-        },
-        {
-          test: /\.js$/,
-          exclude: /(node_modules|bower_components)/,
-          use: [{
-            loader: 'babel-loader',
-            options: {
-              cacheDirectory: true,
-              presets: [
-                ['@babel/preset-env', { 'useBuiltIns': 'usage' }]
-              ],
-              plugins: [
-                '@babel/plugin-syntax-dynamic-import',
-                '@babel/plugin-proposal-class-properties',
-                '@babel/plugin-proposal-object-rest-spread'
-              ]
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                // disable type checker - we will use it in fork plugin
+                transpileOnly: true,
+              }
+            },
+            {
+              loader: 'tslint-loader',
             }
-          }]
+          ]
         },
+        // {
+        //   enforce: 'pre',
+        //   test: /\.js$/,
+        //   exclude: /node_modules/,
+        //   loader: 'eslint-loader',
+        //   options: {
+        //     fix: true
+        //   }
+        // },
+        // {
+        //   test: /\.js$/,
+        //   exclude: /(node_modules|bower_components)/,
+        //   use: [{
+        //     loader: 'babel-loader',
+        //     options: {
+        //       cacheDirectory: true,
+        //       presets: [
+        //         ['@babel/preset-env', { 'useBuiltIns': 'usage' }]
+        //       ],
+        //       plugins: [
+        //         '@babel/plugin-syntax-dynamic-import',
+        //         '@babel/plugin-proposal-class-properties',
+        //         '@babel/plugin-proposal-object-rest-spread'
+        //       ]
+        //     }
+        //   }]
+        // },
         {
           test: /\.css$/,
           use: ExtractTextPlugin.extract({
@@ -130,6 +146,7 @@ module.exports = (env, argv) => {
     },
 
     plugins: [
+      new ForkTsCheckerWebpackPlugin({ vue: true }),
       new ExtractTextPlugin({ filename: '[name][hash:7].css', allChunks: true }),
       new HtmlWebpackPlugin({ template: 'src/index.html' })
     ]
