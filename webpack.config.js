@@ -10,7 +10,7 @@ module.exports = (env, argv) => {
   const config = {
     mode: 'development',
 
-    devtool: isProd ? 'none' : '#eval-source-map',
+    devtool: isProd ? 'none' : 'inline-source-map',
 
     entry: {
       // "vendor": ["babel-polyfill", "./common/polyfill.js", "./common/vendor.js",],
