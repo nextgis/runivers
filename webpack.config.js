@@ -15,6 +15,7 @@ module.exports = (env, argv) => {
     entry: {
       // "vendor": ["babel-polyfill", "./common/polyfill.js", "./common/vendor.js",],
       'main': [
+        '@babel/polyfill',
         './src/main.js'
       ],
     },

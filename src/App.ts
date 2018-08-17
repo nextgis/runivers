@@ -12,6 +12,8 @@ export interface AppOptions {
   baseUrl: string;
   target: string;
   currentYear: number;
+  animationStep: number;
+  animationDelay: number;
   periods: Period[];
   yearsStat: YearStat[];
   version: string;
@@ -29,6 +31,14 @@ export interface HistoryLayerProperties {
   updtrl: string;
   upperdat: string;
 }
+
+export interface LayerMeta {
+  name: string;
+  from: number;
+  to: number;
+  id: number;
+}
+
 
 export class App {
 
@@ -48,9 +58,9 @@ export class App {
   private _maxYear: number;
   private _popup: Popup;
 
-  private _layersConfig = [];
-  private _loadedSources = {};
-  private _onDataLoadEvents = [];
+  private _layersConfig: LayerMeta[] = [];
+  private _loadedSources: { [x: string]: boolean } = {};
+  private _onDataLoadEvents: Array<() => void> = [];
 
   constructor(options: AppOptions) {
     this.options = Object.assign({}, this.options, options);
@@ -94,6 +104,7 @@ export class App {
   _buildApp() {
     getLayers((data) => {
       this._layersConfig = this._processLayersMeta(data);
+      this._layersConfig.sort((a, b) => a.from < b.from ? -1 : 1);
 
       this.slider = this._createSlider();
       this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
@@ -112,10 +123,10 @@ export class App {
       min: this._minYear,
       max: this._maxYear,
       step: 1,
-      animationStep: 10,
+      animationStep: this.options.animationStep,
       value: this.currentYear,
-      animationDelay: 10,
-      nextStepReady: (year, callback) => this._nextStepReady(year, callback)
+      animationDelay: this.options.animationDelay,
+      stepReady: (year, callback, previous) => this._stepReady(year, callback, previous)
     });
     slider.emitter.on('change', (year) => {
       this.currentYear = year;
@@ -183,18 +194,23 @@ export class App {
     this.webMap.map.setLayerOpacity(layerId, 0);
   }
 
-  _nextStepReady(year, callback) {
-    const nextLayerId = this._getLayerIdByYear(year);
+  _stepReady(year: number, callback: (year: number) => void, previous?: boolean) {
+    const nextLayer = this._getNextLayer(year, previous);
 
-    const next = () => {
-      callback(year);
-    };
-    this._preloadLayer(nextLayerId);
-    const isLoading = this.currentLayerId === nextLayerId;
-    if (isLoading) {
-      next();
+    if (nextLayer) {
+      const nextLayerId = String(nextLayer.id);
+      const next = () => {
+        callback(nextLayer.from);
+      };
+      this._preloadLayer(nextLayerId);
+      const isLoading = this.currentLayerId === nextLayerId;
+      if (isLoading) {
+        next();
+      } else {
+        this._onDataLoadEvents.push(next);
+      }
     } else {
-      this._onDataLoadEvents.push(next);
+      callback(year);
     }
   }
 
@@ -261,10 +277,26 @@ export class App {
     this.webMap.map.toggleLayer(id, true);
   }
 
+  _getLayerByYear(year): LayerMeta {
+    return this._layersConfig.find((d) => ((year >= d.from) && (year <= d.to)));
+  }
+
   _getLayerIdByYear(year): string {
-    const filteredLayer = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
-    const layerId = (filteredLayer.length !== 0) ? filteredLayer[0].id : undefined;
-    return String(layerId);
+    const filteredLayer = this._getLayerByYear(year);
+    return filteredLayer && String(filteredLayer.id);
+  }
+
+  // get next or previous territory changed layer
+  _getNextLayer(year: number, previous?: boolean): LayerMeta | false {
+    const filteredLayer = this._getLayerByYear(year);
+    if (filteredLayer) {
+      const index = this._layersConfig.indexOf(filteredLayer);
+      if (index !== -1) {
+        const nextLayer = this._layersConfig[previous ? index - 1 : index + 1];
+        return nextLayer;
+      }
+    }
+    return false;
   }
 
   _processLayersMeta(layersMeta) {

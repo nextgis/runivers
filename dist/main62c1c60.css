@@ -107,12 +107,12 @@ table {
   background: transparent;
   box-sizing: border-box;
   width: 0;
-  height: 30px;
-  border-color: transparent transparent transparent #202020bf;
+  height: 24px;
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(95, 86, 86, 0.8);
   transition: 100ms all ease;
   cursor: pointer;
   border-style: solid;
-  border-width: 15px 0 15px 30px;
+  border-width: 12px 0 12px 24px;
 }
 
 .player-button:focus {
@@ -121,11 +121,11 @@ table {
 
 .player-button.paused {
   border-style: double;
-  border-width: 0px 0 0px 30px;
+  border-width: 0px 0 0px 24px;
 }
 
 .player-button:hover {
-  border-color: transparent transparent transparent #404040;
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0.8);
 }
 /*! nouislider - 11.1.0 - 2018-04-02 11:18:13 */
 /* Functional styling;
@@ -454,16 +454,11 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 * { padding: 0; margin: 0 }
 
 body {
-	font: .75em Verdana, Arial, Sans-Serif;
 	line-height: 1.4em;
 	color : #454545
 }
 
 
-#header h1 {  font: 1.2em "Tahoma",Verdana, Arial, Sans-Serif; color: #FFF; font-weight: bold; padding-top: 25px; background: inherit }
-#header h2 {  font: 1.0em "Tahoma",Verdana, Arial, Sans-Serif; color: #FFF; padding-top: 25px; background: inherit }
-
-p  {margin: 0 0 10px 0; padding: 0px;}
 .clear { clear: both; }
 .alignright {margin-top: 0; text-align: right;}
 .small {font-size: .9em;}
@@ -474,22 +469,13 @@ img { float: left; padding: 0 10px 10px 0}
 /* END CONTENT */
 
 
-/*** Main area *****/
-a { color: #0066B3; background: inherit; text-decoration: none;}
-a:hover { text-decoration: underline }
-h1 { font: bold 1.9em Arial, Arial, Sans-Serif  }
-h2 { font: bold 1.2em Arial, Arial, Sans-Serif; padding: 0; margin: 0 0 5px 0 }
-ul {  padding: 0; margin: 0 }
-li { list-style-type: none }
-
-/* SNEWS */
-fieldset { border: 1px solid #ddd; padding: 10px 8px; margin: 0 0 8px 0; background: #f5f5f5; color: #000 }
-input { padding: 3px; margin: 0; border: 1px solid #BBB;  }
-textarea { width: 97%; height: 20em; padding: 3px; border: 1px solid #BBB }
-.comment { background: #eee; color: #808080; padding: 10px; margin: 0 0 10px 0; border-top: 1px solid #ccc }
-.commentsbox { background: #f5f5f5; color: #808080; padding: 10px; margin: 0 0 10px 0; border: 1px solid #ddd }
-
 /* CUSTOMIZATION */
+
+/* SLIDER */
+
+.slider-control {
+  bottom: 20px;
+}
 
 .mapboxgl-map {
   font-family: 'PT Serif', serif !important;
@@ -503,6 +489,7 @@ textarea { width: 97%; height: 20em; padding: 3px; border: 1px solid #BBB }
 
 .noUi-target {
   height: 24px;
+  border-radius: 7px;
 }
 
 .noUi-handle {
@@ -544,7 +531,8 @@ textarea { width: 97%; height: 20em; padding: 3px; border: 1px solid #BBB }
 
 
 .noUi-value {
-  top: 13px;
+  top: 16px;
+  color: #000;
 }
 
 .noUi-marker-normal {

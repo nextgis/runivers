@@ -15,7 +15,7 @@ export interface SliderOptions {
   value: number;
   animationDelay: number;
 
-  nextStepReady?(nextValue: number, callback: (value: number) => void): void;
+  stepReady?(nextValue: number, callback: (value: number) => void, previous?: boolean): void;
 }
 
 const OPTIONS: SliderOptions = {
@@ -225,7 +225,7 @@ export class SliderControl {
   }
 
   _startAnimation() {
-    this._nextStepReady((step) => {
+    this._stepReady((step) => {
       const isReady = typeof step !== 'boolean';
       if (isReady && this._animationStatus) {
         this._nextStepTimeoutId = setTimeout(() => {
@@ -243,11 +243,11 @@ export class SliderControl {
     this._onChange(step);
   }
 
-  _nextStepReady(callback) {
+  _stepReady(callback, previous?: boolean) {
     const nextValue = this._getNextValue();
     if (nextValue && (nextValue < this.options.max)) {
-      if (this.options.nextStepReady) {
-        this.options.nextStepReady(nextValue, callback);
+      if (this.options.stepReady) {
+        this.options.stepReady(nextValue, callback);
       } else {
         callback(nextValue);
       }
