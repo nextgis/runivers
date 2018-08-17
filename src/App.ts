@@ -200,7 +200,7 @@ export class App {
     if (nextLayer) {
       const nextLayerId = String(nextLayer.id);
       const next = () => {
-        callback(nextLayer.from);
+        callback(previous ? nextLayer.to : nextLayer.from);
       };
       this._preloadLayer(nextLayerId);
       const isLoading = this.currentLayerId === nextLayerId;

@@ -65,6 +65,7 @@ export class SliderControl {
     element.appendChild(this._createPlayerContainer());
     // element.appendChild(this._createValueInput());
     element.appendChild(this._createSliderContainer());
+    element.appendChild(this._createNavigationContainer());
     // element.appendChild(this._createAnimationStepInput());
     // element.appendChild(this._createAnimationDelayInput());
     return element;
@@ -143,7 +144,7 @@ export class SliderControl {
         max
       },
       step,
-      tooltips: [wNumb({decimals: 0})],
+      tooltips: [wNumb({ decimals: 0 })],
       start: [this.options.value],
       pips: { mode: 'count', values: 5 }
     });
@@ -169,6 +170,30 @@ export class SliderControl {
     player.appendChild(playerControl);
     this._playerControl = playerControl;
     return player;
+  }
+
+  _createNavigationContainer() {
+    const playerSteps = document.createElement('div');
+    playerSteps.className = 'slider-control-block slider-control-steps';
+
+    const createStepBtn = (previous?: boolean) => {
+      const btn = document.createElement('button');
+      btn.className = 'slider-control-steps-btn ' + (previous ? 'previous' : 'next');
+      playerSteps.appendChild(btn);
+      btn.onclick = () => {
+        this._stepReady((step) => {
+          if (typeof step !== 'boolean') {
+            this._nextStep(step);
+          }
+        }, previous);
+      };
+      return btn;
+    };
+    createStepBtn();
+    createStepBtn(true);
+    // playerControl.innerHTML = this._getPlayerControlLabel();
+
+    return playerSteps;
   }
 
   _createLabeledInput(opt) {
@@ -244,10 +269,10 @@ export class SliderControl {
   }
 
   _stepReady(callback, previous?: boolean) {
-    const nextValue = this._getNextValue();
-    if (nextValue && (nextValue < this.options.max)) {
+    const nextValue = this._getNextValue(previous);
+    if (nextValue && (nextValue <= this.options.max) && (nextValue >= this.options.min)) {
       if (this.options.stepReady) {
-        this.options.stepReady(nextValue, callback);
+        this.options.stepReady(nextValue, callback, previous);
       } else {
         callback(nextValue);
       }
@@ -265,9 +290,11 @@ export class SliderControl {
     return value;
   }
 
-  _getNextValue() {
+  _getNextValue(previous?: boolean) {
     const current = parseInt(this._slider.get(), 10);
-    const next = current + this.options.animationStep;
+    const next = previous ?
+      current - this.options.animationStep :
+      current + this.options.animationStep;
     return this._getAllowedValue(next);
   }
 
