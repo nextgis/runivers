@@ -250,8 +250,8 @@ export class SliderControl {
   }
 
   _startAnimation() {
-    this._stepReady((step) => {
-      const isReady = typeof step !== 'boolean';
+    this._stepReady((step: number) => {
+      const isReady = typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
       if (isReady && this._animationStatus) {
         this._nextStepTimeoutId = setTimeout(() => {
           this._nextStep(step);

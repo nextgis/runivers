@@ -210,7 +210,7 @@ export class App {
         this._onDataLoadEvents.push(next);
       }
     } else {
-      callback(year);
+      callback(previous ? this._minYear : this._maxYear);
     }
   }
 
