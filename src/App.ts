@@ -9,12 +9,12 @@ import { PeriodPanelControl, Period } from './PeriodPanelControl';
 import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';
 
 export interface AppOptions {
-  baseUrl: string;
+  baseUrl?: string;
   target: string;
-  currentYear: number;
-  periods: Period[];
-  yearsStat: YearStat[];
-  version: string;
+  currentYear?: number;
+  periods?: Period[];
+  yearsStat?: YearStat[];
+  version?: string;
 }
 
 export interface HistoryLayerProperties {
@@ -55,7 +55,7 @@ export class App {
   constructor(options: AppOptions) {
     this.options = Object.assign({}, this.options, options);
     this.currentYear = options.currentYear;
-    this.webMap = this.createWebMap();
+    this.createWebMap();
     this._buildApp();
   }
 
@@ -72,6 +72,8 @@ export class App {
     webMap.map.addControl('ZOOM', 'top-left');
 
     webMap.map.emitter.on('data-loaded', (data) => this._onData(data));
+
+    this.webMap = webMap;
 
     return webMap;
   }
