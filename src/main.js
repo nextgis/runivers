@@ -7,14 +7,28 @@ import yearsStat from './data/years_stat.csv';
 
 import './css/style.css';
 
+// mapbox style and fonts from index.html <link>
 
 const app = new App({
   baseUrl: config.baseUrl,
   target: 'map',
   currentYear: 1301,
+  animationDelay: 100,
+  animationStep: 1,
   periods: periods,
   yearsStat: yearsStat,
   version: version
+});
+
+// remove first and last slider pips
+app.webMap.map.onMapLoad(function () {
+  const pips = document.getElementsByClassName('noUi-marker-large');
+  if (pips.length) {
+    const firstLast = [pips[0], pips[pips.length - 1]];
+    firstLast.forEach(function(x) {
+      x.style.display = 'none';
+    });
+  }
 });
 
 // for testing and debug
