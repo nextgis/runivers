@@ -216,13 +216,9 @@ export class App {
       const next = () => {
         callback(previous ? nextLayer.to : nextLayer.from);
       };
-      this._preloadLayer(nextLayerId);
-      const isLoading = this.currentLayerId === nextLayerId;
-      if (isLoading) {
-        next();
-      } else {
-        this._onDataLoadEvents.push(next);
-      }
+      // this._preloadLayer(nextLayerId);
+      this.updateLayer(nextLayerId);
+      this._onDataLoadEvents.push(next);
     } else {
       callback(previous ? this._minYear : this._maxYear);
     }
@@ -233,7 +229,7 @@ export class App {
   }
 
   _onData(data) {
-    if (this._isHistoryLayer(data.target)) {
+    if (this._isHistoryLayer(data.target) && data.target === this.currentLayerId) {
       this._loadedSources[data.target] = true;
       this._onSourceIsLoaded();
     }

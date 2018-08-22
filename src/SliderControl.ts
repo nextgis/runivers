@@ -189,8 +189,8 @@ export class SliderControl {
       };
       return btn;
     };
-    createStepBtn();
     createStepBtn(true);
+    createStepBtn();
     // playerControl.innerHTML = this._getPlayerControlLabel();
 
     return playerSteps;
