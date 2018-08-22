@@ -5,8 +5,10 @@ import { Popup } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
 import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
 import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/MapboxglAdapter';
+import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
 import { PeriodPanelControl, Period } from './PeriodPanelControl';
 import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';
+import { EventEmitter } from 'events';
 
 export interface AppOptions {
   baseUrl?: string;
@@ -51,6 +53,8 @@ export class App {
 
   currentLayerId: string;
 
+  emitter = new EventEmitter();
+
   _headerElement: HTMLElement;
 
   private _minYear: number;
@@ -71,17 +75,23 @@ export class App {
   createWebMap() {
     const options = Object.assign({}, this.options);
     const webMap = new WebMap({
-      mapAdapter: new MapboxglAdapter()
+      mapAdapter: new MapboxglAdapter(),
+      starterKits: [new QmsKit()],
     });
-    webMap.create(options);
+    webMap.create(options).then(() => {
 
-    webMap.addBaseLayer('osm', 'OSM');
+      // webMap.addBaseLayer('osm', 'OSM');
+      webMap.addBaseLayer('sputnik', 'QMS', {
+        qmsid: 487
+      }).then((layer) => {
+        webMap.map.showLayer(layer.name);
+      });
 
-    webMap.map.addControl('ZOOM', 'top-left');
+      webMap.map.addControl('ZOOM', 'top-left');
 
-    webMap.map.emitter.on('data-loaded', (data) => this._onData(data));
+      webMap.map.emitter.on('data-loaded', (data) => this._onData(data));
 
-    webMap.map.showLayer('osm');
+    });
 
     this.webMap = webMap;
 
@@ -117,6 +127,8 @@ export class App {
       this.webMap.map.onMapLoad(() => {
         this.updateLayerByYear(this.currentYear);
       });
+
+      this.emitter.emit('build');
     });
   }
 
@@ -273,9 +285,12 @@ export class App {
           /* other */ '#ccc'
         ]
       };
-      this.webMap.map.addLayer('MVT', { url, id, paint });
+      this.webMap.map.addLayer('MVT', { url, id, paint }).then(() => {
+        this.webMap.map.toggleLayer(id, true);
+      });
+    } else {
+      this.webMap.map.toggleLayer(id, true);
     }
-    this.webMap.map.toggleLayer(id, true);
   }
 
   _getLayerByYear(year): LayerMeta {

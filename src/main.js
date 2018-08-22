@@ -21,7 +21,7 @@ const app = new App({
 });
 
 // remove first and last slider pips
-app.webMap.map.onMapLoad(function () {
+app.emitter.on('build', function () {
   const pips = document.getElementsByClassName('noUi-marker-large');
   if (pips.length) {
     const firstLast = [pips[0], pips[pips.length - 1]];
