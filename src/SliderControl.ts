@@ -42,7 +42,7 @@ export class SliderControl {
   private _input: HTMLInputElement;
   private _animationStatus: HTMLInputElement;
   private _playerControl: HTMLElement;
-  private _nextStepTimeoutId: number;
+  // private _nextStepTimeoutId: number;
 
   constructor(options) {
     this.options = Object.assign({}, OPTIONS, options);
@@ -250,17 +250,22 @@ export class SliderControl {
   }
 
   _startAnimation() {
-    this._stepReady((step: number) => {
-      const isReady = typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
-      if (isReady && this._animationStatus) {
-        this._nextStepTimeoutId = setTimeout(() => {
-          this._nextStep(step);
-          this._startAnimation();
-        }, this.options.animationDelay);
-      } else {
-        this.stopAnimation();
-      }
-    });
+    if (this._animationStatus) {
+      this._stepReady((step: number) => {
+        const isReady = typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
+        if (isReady) {
+          // this._nextStepTimeoutId = setTimeout(() => {
+          setTimeout(() => {
+            this._nextStep(step);
+            this._startAnimation();
+          }, this.options.animationDelay);
+        } else {
+          this.stopAnimation();
+        }
+      });
+    } else {
+      this.stopAnimation();
+    }
   }
 
   _nextStep(step) {
@@ -299,7 +304,7 @@ export class SliderControl {
   }
 
   _stopAnimation() {
-    clearTimeout(this._nextStepTimeoutId);
+    // clearTimeout(this._nextStepTimeoutId);
   }
 
 }

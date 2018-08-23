@@ -62,7 +62,6 @@ export class App {
   private _popup: Popup;
 
   private _layersConfig: LayerMeta[] = [];
-  private _loadedSources: { [x: string]: boolean } = {};
   private _onDataLoadEvents: Array<() => void> = [];
 
   constructor(options: AppOptions) {
@@ -196,14 +195,11 @@ export class App {
       if (fromId) {
         this._removeLayerListeners(fromId);
         this.webMap.map.setLayerOpacity(toId, 0);
-      } else {
-        this._loadedSources[toId] = true;
       }
     }
   }
 
   _preloadLayer(layerId) {
-    this._loadedSources[layerId] = this._loadedSources[layerId] || false;
     this._showLayer(layerId);
     this.webMap.map.setLayerOpacity(layerId, 0);
   }
@@ -230,7 +226,6 @@ export class App {
 
   _onData(data) {
     if (this._isHistoryLayer(data.target) && data.target === this.currentLayerId) {
-      this._loadedSources[data.target] = true;
       this._onSourceIsLoaded();
     }
   }
