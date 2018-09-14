@@ -1,7 +1,12 @@
 .panel-body__period {
-  text-align: center
+  text-align: center;
+  line-height: 1.5rem
+}
+
+.panel-body__period--name {
+  font-size: 1.3rem;
 }
 
 .panel-body__period--period {
-  font-size: 1.3rem;
+  font-size: 1rem;
 }

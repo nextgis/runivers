@@ -447,15 +447,25 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 }
 
 .panel-header {
+  margin: 0.5rem;
   text-align: center;
   font-size: 0.8rem;
 }
+
+.panel-button {
+  margin: 0.5rem;
+}
 .panel-body__period {
-  text-align: center
+  text-align: center;
+  line-height: 1.5rem
+}
+
+.panel-body__period--name {
+  font-size: 1.3rem;
 }
 
 .panel-body__period--period {
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 .panel-body__yearstat {
   text-align: center;

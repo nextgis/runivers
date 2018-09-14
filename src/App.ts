@@ -142,8 +142,10 @@ export class App {
       stepReady: (year, callback, previous) => this._stepReady(year, callback, previous)
     });
     slider.emitter.on('change', (year) => {
-      this.currentYear = year;
-      this.updateLayerByYear(year);
+      if (year !== this.currentYear) {
+        this.currentYear = year;
+        this.updateLayerByYear(year);
+      }
     });
 
     const container = this.webMap.map.getContainer();
@@ -169,7 +171,7 @@ export class App {
   _findPeriodByYear(year) {
     year = parseInt(year, 10);
     const periods = this.options.periods || [];
-    const period = periods.find((x) => (year >= x.start) && (year <= x.end));
+    const period = periods.find((x) => (year >= x.years_from) && (year <= x.years_to));
     return period;
   }
 
@@ -199,29 +201,26 @@ export class App {
     }
   }
 
-  _preloadLayer(layerId) {
-    this._showLayer(layerId);
-    this.webMap.map.setLayerOpacity(layerId, 0);
-  }
-
   _stepReady(year: number, callback: (year: number) => void, previous?: boolean) {
     const nextLayer = this._getNextLayer(year, previous);
 
     if (nextLayer) {
+      const y = previous ? nextLayer.to : nextLayer.from;
+
       const nextLayerId = String(nextLayer.id);
       const next = () => {
-        callback(previous ? nextLayer.to : nextLayer.from);
+        this.currentYear = y;
+        callback(y);
       };
-      // this._preloadLayer(nextLayerId);
-      this.updateLayer(nextLayerId);
       this._onDataLoadEvents.push(next);
+      this.updateLayer(nextLayerId);
     } else {
       callback(previous ? this._minYear : this._maxYear);
     }
   }
 
   _isHistoryLayer(layerId) {
-    return !this.webMap.isBaseLayer(layerId);
+    return !this.webMap.isBaseLayer(layerId) && layerId.indexOf('-bound') === -1;
   }
 
   _onData(data) {
@@ -233,6 +232,8 @@ export class App {
   _onSourceIsLoaded() {
     this._hideNotCurrentLayers();
     this.webMap.map.setLayerOpacity(this.currentLayerId, 0.8);
+    this.webMap.map.setLayerOpacity(this.currentLayerId + '-bound', 0.8);
+    this._toggleLayer(this.currentLayerId + '-bound', true);
     for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
       const event = this._onDataLoadEvents[fry];
       event();
@@ -244,7 +245,8 @@ export class App {
     const layers = this.webMap.map.getLayers();
     layers.forEach((l) => {
       if (!this.webMap.isBaseLayer(l)) {
-        if (l !== String(this.currentLayerId) && this.webMap.map.isLayerOnTheMap(l)) {
+        const isSkipLayer = l === this.currentLayerId || l === this.currentLayerId + '-bound';
+        if (!isSkipLayer && this.webMap.map.isLayerOnTheMap(l)) {
           this._hideLayer(l);
         }
       }
@@ -252,36 +254,76 @@ export class App {
   }
 
   _hideLayer(layerId) {
-    this.webMap.map.toggleLayer(layerId, false);
+    this._toggleLayer(layerId, false);
   }
 
   _showLayer(id) {
     const exist = this.webMap.map.getLayer(id);
     if (!exist) {
       const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
-      const paint = {
-        'fill-opacity': 0.8,
-        'fill-opacity-transition': {
-          duration: 0
-        },
-        // 'fill-outline-color': '#8b0000', // darkred
-        'fill-color': [
-          'match',
-          ['get', 'status'],
-          1, '#cd403a',
-          2, '#ec908d',
-          3, '#e19c4b',
-          4, '#e1774b',
-          5, '#e14b90',
-          /* other */ '#ccc'
-        ]
-      };
-      this.webMap.map.addLayer('MVT', { url, id, paint }).then(() => {
-        this.webMap.map.toggleLayer(id, true);
+
+      this._addLayer(url, id).then(() => {
+        this._toggleLayer(id, true);
       });
     } else {
-      this.webMap.map.toggleLayer(id, true);
+      this._toggleLayer(id, true);
     }
+  }
+
+  _addLayer(url: string, id: string): Promise<any> {
+    const paint = {
+      'fill-opacity': 0.8,
+      'fill-opacity-transition': {
+        duration: 0
+      },
+      // 'fill-outline-color': '#8b0000', // darkred
+      'fill-color': [
+        'match',
+        ['get', 'status'],
+        1, '#cd403a',
+        2, '#d66460',
+        3, '#e19c4b',
+        4, '#e1774b',
+        5, '#e14b90',
+        6, '#a62f2b',
+        7, '#008000',
+        /* other */ '#ccc'
+      ]
+    };
+    const paintLine = {
+      'line-opacity': 0.8,
+      'line-opacity-transition': {
+        duration: 0
+      },
+      'line-width': 1,
+      'line-color': [
+        'match',
+        ['get', 'status'],
+        1, '#7d2420',
+        2, '#cd403a',
+        3, '#d68324',
+        4, '#d65a24',
+        5, '#d62477',
+        6, '#7d2420',
+        7, '#004d00',
+        /* other */ '#ccc'
+      ]
+    };
+    return Promise.all([
+      this.webMap.map.addLayer('MVT', { url, id, paint }),
+      this.webMap.map.addLayer('MVT', {
+        url,
+        'id': (id + '-bound'),
+        'paint': paintLine,
+        'type': 'line',
+        'source-layer': id
+      }),
+    ]);
+  }
+
+  _toggleLayer(id, status) {
+    this.webMap.map.toggleLayer(id, status);
+    this.webMap.map.toggleLayer(id + '-bound', status);
   }
 
   _getLayerByYear(year): LayerMeta {

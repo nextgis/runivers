@@ -9,10 +9,15 @@ import './PeriodPanelControl.css';
  * @prop description
  */
 export interface Period {
-  period: string;
-  start: number;
-  end: number;
-  description: string;
+  tech_number: number;
+  number: number;
+  name: string;
+  years_life: string;
+  years_from: number;
+  years_to?: number;
+  description?: string;
+  detail_link?: string;
+  img_link?: string;
 }
 
 const OPTIONS = { headerText: 'Правители' };
@@ -24,15 +29,10 @@ export class PeriodPanelControl extends Panel {
 
   constructor(options?) {
     super(Object.assign({}, OPTIONS, options));
-    /** @type {Period} */
     this.period = null;
   }
 
-  /**
-   *
-   * @param {Period} period
-   */
-  updatePeriod(period) {
+  updatePeriod(period: Period) {
     const exist = this.period;
     if (period) {
       if (exist !== period) {
@@ -45,21 +45,20 @@ export class PeriodPanelControl extends Panel {
     }
   }
 
-  /**
-   *
-   * @param {Period} period
-   */
-  _createPeriodBody(period) {
+
+  _createPeriodBody(period: Period) {
     const element = document.createElement('div');
     element.className = 'panel-body__period';
 
     // Gov name
     const periodElement = document.createElement('div');
-    periodElement.className = 'panel-body__period--period';
-    periodElement.innerHTML = period.period;
+    periodElement.innerHTML = `
+    <div class="panel-body__period--name">${period.name}</div>
+    <div class="panel-body__period--period">${period.years_from} – ${period.years_to}</div>
+    `;
     element.appendChild(periodElement);
 
-    element.appendChild(this.createRefButton(`https://www.google.ru/search?q=${period.period.split(' ').join('+')}`));
+    element.appendChild(this.createRefButton(`https://www.google.ru/search?q=${period.name.split(' ').join('+')}`));
 
     return element;
   }

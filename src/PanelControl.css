@@ -4,6 +4,11 @@
 }
 
 .panel-header {
+  margin: 0.5rem;
   text-align: center;
   font-size: 0.8rem;
+}
+
+.panel-button {
+  margin: 0.5rem;
 }
