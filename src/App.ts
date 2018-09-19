@@ -3,6 +3,7 @@ import './App.css';
 import { SliderControl } from './SliderControl';
 import { Popup } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
+import { getPoints } from './services/GetPointsService';
 import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
 import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/MapboxglAdapter';
 import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
@@ -130,6 +131,9 @@ export class App {
 
       this.emitter.emit('build');
     });
+    // getPoints((x) => {
+    //   console.log(x);
+    // });
   }
 
   _createSlider() {
