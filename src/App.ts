@@ -63,6 +63,7 @@ export class App {
 
   private _layersConfig: LayerMeta[] = [];
   private _onDataLoadEvents: Array<() => void> = [];
+  private _layersLoaded: { [layerId: string]: boolean } = {};
 
   constructor(options: AppOptions) {
     this.options = Object.assign({}, this.options, options);
@@ -196,7 +197,7 @@ export class App {
       // do not hide unloaded layer if it first
       if (fromId) {
         this._removeLayerListeners(fromId);
-        this.webMap.map.setLayerOpacity(toId, 0);
+        this._setLayerOpacity(toId, 0);
       }
     }
   }
@@ -220,25 +221,29 @@ export class App {
   }
 
   _isHistoryLayer(layerId) {
-    return !this.webMap.isBaseLayer(layerId) && layerId.indexOf('-bound') === -1;
+    return !this.webMap.isBaseLayer(layerId);
   }
 
   _onData(data) {
-    if (this._isHistoryLayer(data.target) && data.target === this.currentLayerId) {
+    const layerId = data.target;
+    const loadedYet = this._layersLoaded[layerId];
+    const isCurrentLayer = data.target === this.currentLayerId || data.target === this.currentLayerId + '-bound';
+    if (!loadedYet && this._isHistoryLayer(data.target) && isCurrentLayer) {
+      this._layersLoaded[layerId] = true;
       this._onSourceIsLoaded();
     }
   }
 
   _onSourceIsLoaded() {
-    this._hideNotCurrentLayers();
-    this.webMap.map.setLayerOpacity(this.currentLayerId, 0.8);
-    this.webMap.map.setLayerOpacity(this.currentLayerId + '-bound', 0.8);
-    this._toggleLayer(this.currentLayerId + '-bound', true);
-    for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
-      const event = this._onDataLoadEvents[fry];
-      event();
+    if (this._layersLoaded[this.currentLayerId] && this._layersLoaded[this.currentLayerId + '-bound']) {
+      this._hideNotCurrentLayers();
+      this._setLayerOpacity(this.currentLayerId, 0.8);
+      for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
+        const event = this._onDataLoadEvents[fry];
+        event();
+      }
+      this._onDataLoadEvents = [];
     }
-    this._onDataLoadEvents = [];
   }
 
   _hideNotCurrentLayers() {
@@ -258,16 +263,25 @@ export class App {
   }
 
   _showLayer(id) {
+    const toggle = () => {
+      this.webMap.map.toggleLayer(id, true);
+      this.webMap.map.toggleLayer(id + '-bound', true);
+    };
+
     const exist = this.webMap.map.getLayer(id);
     if (!exist) {
       const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
-
       this._addLayer(url, id).then(() => {
-        this._toggleLayer(id, true);
+        toggle();
       });
     } else {
-      this._toggleLayer(id, true);
+      toggle();
     }
+  }
+
+  _setLayerOpacity(id: string, value: number) {
+    this.webMap.map.setLayerOpacity(id, value);
+    this.webMap.map.setLayerOpacity(id + '-bound', value);
   }
 
   _addLayer(url: string, id: string): Promise<any> {
@@ -322,8 +336,16 @@ export class App {
   }
 
   _toggleLayer(id, status) {
-    this.webMap.map.toggleLayer(id, status);
-    this.webMap.map.toggleLayer(id + '-bound', status);
+    this._layersLoaded[id] = false;
+    this._layersLoaded[id + '-bound'] = false;
+    if (status) {
+      this._showLayer(id);
+      this._showLayer(id + '-bound');
+    } else {
+      this.webMap.map.removeLayer(id);
+      this.webMap.map.removeLayer(id + '-bound');
+    }
+
   }
 
   _getLayerByYear(year): LayerMeta {
