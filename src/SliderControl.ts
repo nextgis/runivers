@@ -275,7 +275,10 @@ export class SliderControl {
 
   _stepReady(callback, previous?: boolean) {
     const nextValue = this._getNextValue(previous);
-    if (nextValue && (nextValue <= this.options.max) && (nextValue >= this.options.min)) {
+    const inRange = (this.options.value <= this.options.max) &&
+      (this.options.value >= this.options.min);
+    if (nextValue && inRange) {
+      this.options.value = nextValue;
       if (this.options.stepReady) {
         this.options.stepReady(nextValue, callback, previous);
       } else {

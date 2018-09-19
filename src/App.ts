@@ -13,7 +13,6 @@ import { EventEmitter } from 'events';
 
 import proj4 from 'proj4';
 
-
 export interface AppOptions {
   baseUrl?: string;
   target: string;
@@ -114,10 +113,14 @@ export class App {
     return webMap;
   }
 
-  updateByYear(year) {
-    const layerId = this._getLayerIdByYear(year);
+  updateByYear(year, previous?) {
+    const layerId = this._getLayerIdByYear(year, previous);
     this.updateLayer(layerId);
 
+    this.updateDataByYear(year);
+  }
+
+  updateDataByYear(year: number) {
     const pointId = this._getPointIdByYear(year);
     this.updatePoint(pointId);
 
@@ -253,7 +256,9 @@ export class App {
         callback(y);
       };
       this._onDataLoadEvents.push(next);
-      this.updateByYear(y);
+
+      this.updateLayer(String(nextLayer.id));
+      this.updateDataByYear(y);
     } else {
       callback(previous ? this._minYear : this._maxYear);
     }
@@ -361,7 +366,7 @@ export class App {
           this._removePopup();
           this._popup = new Popup()
             .setLngLat(coordEPSG4326)
-            .setHTML(marker.properties.eventstart || marker.properties.linecomnt)
+            .setHTML((marker.properties.eventstart || marker.properties.linecomnt) + marker.properties.lwdate)
             .addTo(map);
         });
         m.addTo(map);
@@ -433,12 +438,13 @@ export class App {
 
   }
 
-  _getLayerByYear(year): LayerMeta {
-    return this._layersConfig.find((d) => ((year >= d.from) && (year <= d.to)));
+  _getLayerByYear(year: number, previous?: boolean): LayerMeta {
+    const layers = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
+    return previous ? layers[0] : layers[layers.length - 1];
   }
 
-  _getLayerIdByYear(year: number): string {
-    const filteredLayer = this._getLayerByYear(year);
+  _getLayerIdByYear(year: number, previous?: boolean): string {
+    const filteredLayer = this._getLayerByYear(year, previous);
     return filteredLayer && String(filteredLayer.id);
   }
 
@@ -455,10 +461,14 @@ export class App {
   _getNextLayer(year: number, previous?: boolean): LayerMeta | false {
     const filteredLayer = this._getLayerByYear(year);
     if (filteredLayer) {
-      const index = this._layersConfig.indexOf(filteredLayer);
-      if (index !== -1) {
-        const nextLayer = this._layersConfig[previous ? index - 1 : index + 1];
-        return nextLayer;
+      if (String(filteredLayer.id) === this.currentLayerId) {
+        const index = this._layersConfig.indexOf(filteredLayer);
+        if (index !== -1) {
+          const nextLayer = this._layersConfig[previous ? index - 1 : index + 1];
+          return nextLayer;
+        }
+      } else {
+        return filteredLayer;
       }
     }
     return false;
