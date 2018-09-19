@@ -1,15 +1,18 @@
 import './App.css';
 
 import { SliderControl } from './SliderControl';
-import { Popup } from 'mapbox-gl';
+import { Popup, Marker, Map } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
-import { getPoints } from './services/GetPointsService';
+import { getPoints, getPointGeojson } from './services/GetPointsService';
 import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
 import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/MapboxglAdapter';
 import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
 import { PeriodPanelControl, Period } from './PeriodPanelControl';
 import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';
 import { EventEmitter } from 'events';
+
+import proj4 from 'proj4';
+
 
 export interface AppOptions {
   baseUrl?: string;
@@ -42,6 +45,14 @@ export interface LayerMeta {
   id: number;
 }
 
+interface PointMeta {
+  name: string;
+  year: number;
+  month: number;
+  day: number;
+  id: string;
+}
+
 export class App {
 
   options: AppOptions;
@@ -53,6 +64,7 @@ export class App {
   webMap: WebMap;
 
   currentLayerId: string;
+  currentPointId: string;
 
   emitter = new EventEmitter();
 
@@ -65,6 +77,9 @@ export class App {
   private _layersConfig: LayerMeta[] = [];
   private _onDataLoadEvents: Array<() => void> = [];
   private _layersLoaded: { [layerId: string]: boolean } = {};
+
+  private _pointsConfig: PointMeta[] = [];
+  private _markers: Marker[] = [];
 
   constructor(options: AppOptions) {
     this.options = Object.assign({}, this.options, options);
@@ -99,9 +114,12 @@ export class App {
     return webMap;
   }
 
-  updateLayerByYear(year) {
+  updateByYear(year) {
     const layerId = this._getLayerIdByYear(year);
     this.updateLayer(layerId);
+
+    const pointId = this._getPointIdByYear(year);
+    this.updatePoint(pointId);
 
     this._updatePeriodBlockByYear(year);
     this._updateYearStatBlockByYear(year);
@@ -111,6 +129,21 @@ export class App {
     const fromId = this.currentLayerId;
     this.currentLayerId = layerId;
     this._switchLayer(fromId, layerId);
+  }
+
+  updatePoint(pointId: string) {
+    if (pointId !== this.currentPointId) {
+      if (this.currentPointId) {
+        // this._removePoint(this.currentPointId);
+        this._markers.forEach((x) => {
+          x.remove();
+        });
+      }
+      this.currentPointId = pointId;
+      if (pointId) {
+        this._addPoint(pointId);
+      }
+    }
   }
 
   // region App control
@@ -126,14 +159,16 @@ export class App {
       this._headerElement = this._createHeader();
 
       this.webMap.map.onMapLoad(() => {
-        this.updateLayerByYear(this.currentYear);
+        this.updateByYear(this.currentYear);
       });
-
       this.emitter.emit('build');
     });
-    // getPoints((x) => {
-    //   console.log(x);
-    // });
+    getPoints((points) => {
+      this._pointsConfig = this._processPointsMeta(points);
+      const pointId = this._getPointIdByYear(this.currentYear);
+      this.updatePoint(pointId);
+    });
+
   }
 
   _createSlider() {
@@ -147,15 +182,16 @@ export class App {
       stepReady: (year, callback, previous) => this._stepReady(year, callback, previous)
     });
     slider.emitter.on('change', (year) => {
+      // may be updated in _stepReady method
       if (year !== this.currentYear) {
         this.currentYear = year;
-        this.updateLayerByYear(year);
+        this.updateByYear(year);
       }
     });
 
     const container = this.webMap.map.getContainer();
     container.appendChild(slider.onAdd(this.webMap));
-    // this.webMap.map.addControl(slider, 'bottom-left');
+
     return slider;
   }
 
@@ -212,13 +248,12 @@ export class App {
     if (nextLayer) {
       const y = previous ? nextLayer.to : nextLayer.from;
 
-      const nextLayerId = String(nextLayer.id);
       const next = () => {
         this.currentYear = y;
         callback(y);
       };
       this._onDataLoadEvents.push(next);
-      this.updateLayer(nextLayerId);
+      this.updateByYear(y);
     } else {
       callback(previous ? this._minYear : this._maxYear);
     }
@@ -286,6 +321,52 @@ export class App {
   _setLayerOpacity(id: string, value: number) {
     this.webMap.map.setLayerOpacity(id, value);
     this.webMap.map.setLayerOpacity(id + '-bound', value);
+  }
+
+  _addPoint(id: string) {
+    const map: Map = this.webMap.map.map;
+
+    getPointGeojson(id, (data) => {
+      data.features.forEach((marker) => {
+
+        // properties example
+        // {
+        //    "status": 6,
+        //    "lwdate": "1945-06-29",
+        //    "lwdtappr": 0,
+        //    "srcdata": null,
+        //    "upperdat": "1946-06-29",
+        //    "eventstart": "по договору СССР с Чехословакией Украинской ССР передана Закарпатская область",
+        //    "cat": 342,
+        //    "fid": 547,
+        //    "updtrl": null,
+        //    "linecomnt": "Передача СССР Кенигсберга",
+        //    "updtappr": null,
+        //    "name": null
+        //   }
+
+        // create a DOM element for the marker
+        const el = document.createElement('div');
+        el.className = 'map-marker';
+        // el.style.backgroundImage = 'url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
+
+        const coordEPSG4326 = proj4('EPSG:3857').inverse(marker.geometry.coordinates);
+        // add marker to map
+        const m = new Marker(el);
+        this._markers.push(m);
+        m.setLngLat(coordEPSG4326);
+
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this._removePopup();
+          this._popup = new Popup()
+            .setLngLat(coordEPSG4326)
+            .setHTML(marker.properties.eventstart || marker.properties.linecomnt)
+            .addTo(map);
+        });
+        m.addTo(map);
+      });
+    });
   }
 
   _addLayer(url: string, id: string): Promise<any> {
@@ -356,9 +437,18 @@ export class App {
     return this._layersConfig.find((d) => ((year >= d.from) && (year <= d.to)));
   }
 
-  _getLayerIdByYear(year): string {
+  _getLayerIdByYear(year: number): string {
     const filteredLayer = this._getLayerByYear(year);
     return filteredLayer && String(filteredLayer.id);
+  }
+
+  _getPointByYear(year: number): PointMeta {
+    return this._pointsConfig.find((x) => x.year === year);
+  }
+
+  _getPointIdByYear(year: number): string {
+    const point = this._getPointByYear(year);
+    return point && point.id;
   }
 
   // get next or previous territory changed layer
@@ -381,6 +471,14 @@ export class App {
       this._minYear = (this._minYear > from ? from : this._minYear) || from;
       this._maxYear = (this._maxYear < to ? to : this._maxYear) || to;
       return { name, from, to, id: resource.id };
+    });
+  }
+
+  _processPointsMeta(pointsMeta): PointMeta[] {
+    return pointsMeta.map(({ resource }) => {
+      const name = resource.display_name;
+      const [year, month, day] = name.match('(\\d{4})-(\\d{2})-(\\d{2})*$').slice(1).map((x) => Number(x));
+      return { name, year, month, day, id: resource.id };
     });
   }
 

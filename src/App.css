@@ -22,3 +22,14 @@
 .popup__property-value {
   font-size: 1rem;
 }
+
+.map-marker {
+  display: block;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  background: green;
+  width: 15px;
+  height: 15px;
+}
