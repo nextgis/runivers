@@ -221,11 +221,28 @@ export class App {
     this.yearsStatPanelControl.updateYearStat(yearStat);
   }
 
+  _findYearInDateStr(dateStr: string): number {
+    const datePattern = /(\d{4})/;
+    const date = datePattern.exec(dateStr);
+    return Number(date[0]);
+  }
+
   _findYearStatByYear(year: number) {
     year = Number(year);
     const yearsStat = this.options.yearsStat || [];
-    const yearStat = yearsStat.find((x) => x.year === year);
-    return yearStat;
+    const yearStat = yearsStat.filter((x) => {
+      const from = this._findYearInDateStr(x.date_from);
+      let included = false;
+      if (x.date_to) {
+        const to = this._findYearInDateStr(x.date_to);
+        included = year >= from && year <= to;
+      } else {
+        included = year === from;
+      }
+      return included;
+    });
+    // console.log(yearStat);
+    return yearStat[0];
   }
   // endregion
 
