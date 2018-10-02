@@ -2,7 +2,7 @@
  * This node script allow to generate actual data for layer from http://213.248.47.89
  */
 const fs = require('fs');
-const { Ngw } = require('ngw-connector');
+const { NgwConnector } = require('../nextgisweb_frontend/packages/ngw-connector');
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 const baseUrl = config.baseUrl;
 
@@ -19,7 +19,7 @@ const adapterFor = (function () {
   }
 }());
 
-Ngw.prototype._getJson = function (url, callback, context, error) {
+NgwConnector.prototype._getJson = function (url, callback, context, error) {
   adapterFor(url).get(url, (resp) => {
     let data = '';
     resp.on('data', (chunk) => {
@@ -32,7 +32,7 @@ Ngw.prototype._getJson = function (url, callback, context, error) {
     error(err);
   });
 }
-const connector = new Ngw({baseUrl});
+const connector = new NgwConnector({baseUrl});
 
 connector.makeQuery('/api/resource/?parent={id}', generateData, {
   id: config.sourceGroupId

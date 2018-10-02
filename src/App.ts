@@ -5,7 +5,7 @@ import { Popup, Marker, Map } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
 import { getPoints, getPointGeojson } from './services/GetPointsService';
 import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
-import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/MapboxglAdapter';
+import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/mapbox-gl-adapter';
 import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
 import { PeriodPanelControl, Period } from './PeriodPanelControl';
 import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';

@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import './SliderControl.css';
 import { WebMap } from '../nextgisweb_frontend/packages/webmap';
 
