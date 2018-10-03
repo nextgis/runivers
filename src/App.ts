@@ -235,14 +235,15 @@ export class App {
     const yearsStat = this.options.yearsStat || [];
     const yearStat = yearsStat.filter((x) => {
       const from = this._findYearInDateStr(x.date_from);
-      let included = false;
-      if (x.date_to) {
-        const to = this._findYearInDateStr(x.date_to);
-        included = year >= from && year <= to;
-      } else {
-        included = year === from;
-      }
-      return included;
+      // let included = false;
+      // if (x.date_to) {
+      //   const to = this._findYearInDateStr(x.date_to);
+      //   included = year >= from && year <= to;
+      // } else {
+      //   included = year === from;
+      // }
+      // return included;
+      return year === from;
     });
     // console.log(yearStat);
     return yearStat[0];
@@ -251,6 +252,7 @@ export class App {
 
   // region Map control
   _switchLayer(fromId: string, toId: string) {
+    this._removePopup();
     if (toId && fromId !== toId) {
       this._showLayer(toId);
       this._addLayerListeners(toId);
@@ -513,10 +515,11 @@ export class App {
     const block = document.createElement('div');
 
     const fields = [
+      { name: 'Fid', field: 'fid' },
       { name: 'Наименование территории', field: 'name' },
-      { name: 'Дата возникновения территориального образования', field: 'lwdate' },
-      { name: 'Дата исчезновения территориального образования', field: 'updtrl' },
-      { name: 'Комментарий', field: 'linecomnt' },
+      { name: 'Дата возникновения', field: 'lwdate' },
+      { name: 'Дата исчезновения', field: 'updtrl' },
+      // { name: 'Комментарий', field: 'linecomnt' },
     ];
     fields.forEach((x) => {
       const prop = props[x.field];
