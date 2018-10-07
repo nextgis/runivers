@@ -52,9 +52,16 @@ export class PeriodPanelControl extends Panel {
 
     // Gov name
     const periodElement = document.createElement('div');
+
+    let imageHtml: string;
+    if (period.img_link) {
+      imageHtml = `<div class="panel-body__period--image"><img src="${period.img_link}"></div>`;
+    }
+
     periodElement.innerHTML = `
-    <div class="panel-body__period--name">${period.name}</div>
-    <div class="panel-body__period--period">${period.years_from} – ${period.years_to}</div>
+      ${imageHtml ? imageHtml : ''}
+      <div class="panel-body__period--name">${period.name}</div>
+      <div class="panel-body__period--period">${period.years_from} – ${period.years_to}</div>
     `;
     element.appendChild(periodElement);
 

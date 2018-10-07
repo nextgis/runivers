@@ -1,6 +1,7 @@
 .panel-body__period {
   text-align: center;
-  line-height: 1.5rem
+  line-height: 1.5rem;
+  padding: 10px;
 }
 
 .panel-body__period--name {
@@ -9,4 +10,13 @@
 
 .panel-body__period--period {
   font-size: 1rem;
+}
+
+.panel-body__period--image {
+  width: 100%;
+}
+
+.panel-body__period--image img {
+  max-width: 150px;
+  max-height: 150px;
 }

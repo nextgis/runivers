@@ -12,6 +12,7 @@ import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';
 import { EventEmitter } from 'events';
 
 import proj4 from 'proj4';
+import { Feature, MultiPoint, Point } from 'geojson';
 
 export interface AppOptions {
   baseUrl?: string;
@@ -50,6 +51,21 @@ interface PointMeta {
   month: number;
   day: number;
   id: string;
+}
+
+export interface PointProperties {
+  status: number; // 6
+  lwdate: string; // 1945-06-29,
+  lwdtappr: number; // 0,
+  srcdata: any;
+  upperdat: string; // 1946-06-29,
+  eventstart: string; // по договору СССР с Чехословакией Украинской ССР передана Закарпатская область,
+  cat: number; // 342,
+  fid: number; // 547,
+  updtrl: any;
+  linecomnt: string; // Передача СССР Кенигсберга,
+  updtappr: any;
+  name: any;
 }
 
 export class App {
@@ -265,19 +281,26 @@ export class App {
   }
 
   _stepReady(year: number, callback: (year: number) => void, previous?: boolean) {
-    const nextLayer = this._getNextLayer(year, previous);
+    let nextLayer = this._getLayerByYear(year, previous);
+    if (!nextLayer) {
+      nextLayer = this._getNextLayer(year, previous);
+    }
 
     if (nextLayer) {
-      const y = previous ? nextLayer.to : nextLayer.from;
+      const y = year;
+      // const y = previous ? nextLayer.to : nextLayer.from;
 
       const next = () => {
         this.currentYear = y;
         callback(y);
       };
-      this._onDataLoadEvents.push(next);
-
-      this.updateLayer(String(nextLayer.id));
-      this.updateDataByYear(y);
+      if (this.currentLayerId !== String(nextLayer.id)) {
+        this._onDataLoadEvents.push(next);
+        this.updateLayer(String(nextLayer.id));
+        this.updateDataByYear(y);
+      } else {
+        next();
+      }
     } else {
       callback(previous ? this._minYear : this._maxYear);
     }
@@ -347,50 +370,47 @@ export class App {
     this.webMap.map.setLayerOpacity(id + '-bound', value);
   }
 
+  // TODO: Mapboxgl specific method
   _addPoint(id: string) {
-    const map: Map = this.webMap.map.map;
 
     getPointGeojson(id, (data) => {
-      data.features.forEach((marker) => {
-
-        // properties example
-        // {
-        //    "status": 6,
-        //    "lwdate": "1945-06-29",
-        //    "lwdtappr": 0,
-        //    "srcdata": null,
-        //    "upperdat": "1946-06-29",
-        //    "eventstart": "по договору СССР с Чехословакией Украинской ССР передана Закарпатская область",
-        //    "cat": 342,
-        //    "fid": 547,
-        //    "updtrl": null,
-        //    "linecomnt": "Передача СССР Кенигсберга",
-        //    "updtappr": null,
-        //    "name": null
-        //   }
-
-        // create a DOM element for the marker
-        const el = document.createElement('div');
-        el.className = 'map-marker';
-        // el.style.backgroundImage = 'url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
-
-        const coordEPSG4326 = proj4('EPSG:3857').inverse(marker.geometry.coordinates);
-        // add marker to map
-        const m = new Marker(el);
-        this._markers.push(m);
-        m.setLngLat(coordEPSG4326);
-
-        el.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this._removePopup();
-          this._popup = new Popup()
-            .setLngLat(coordEPSG4326)
-            .setHTML((marker.properties.eventstart || marker.properties.linecomnt) + marker.properties.lwdate)
-            .addTo(map);
-        });
-        m.addTo(map);
+      data.features.forEach((marker: Feature<Point | MultiPoint, PointProperties>) => {
+        const type = marker && marker.geometry && marker.geometry.type;
+        if (type === 'MultiPoint') {
+          const coordinates = marker.geometry.coordinates as Array<[number, number]>;
+          coordinates.forEach((x) => {
+            this._addMarkerToMap(x, marker.properties);
+          });
+        } else if (type === 'Point') {
+          this._addMarkerToMap(marker.geometry.coordinates as [number, number], marker.properties);
+        }
       });
     });
+  }
+
+  // TODO: Mapboxgl specific method
+  _addMarkerToMap(coordinates: [number, number], properties: PointProperties) {
+    const map: Map = this.webMap.map.map;
+    // create a DOM element for the marker
+    const el = document.createElement('div');
+    el.className = 'map-marker';
+    // el.style.backgroundImage = 'url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
+
+    const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);
+    // add marker to map
+    const m = new Marker(el);
+    this._markers.push(m);
+    m.setLngLat(coordEPSG4326);
+
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this._removePopup();
+      this._popup = new Popup()
+        .setLngLat(coordEPSG4326)
+        .setHTML((properties.eventstart || properties.linecomnt) + properties.lwdate)
+        .addTo(map);
+    });
+    m.addTo(map);
   }
 
   _addLayer(url: string, id: string): Promise<any> {
@@ -457,7 +477,7 @@ export class App {
 
   }
 
-  _getLayerByYear(year: number, previous?: boolean): LayerMeta {
+  _getLayerByYear(year: number, previous?: boolean): LayerMeta | false {
     const layers = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
     return previous ? layers[0] : layers[layers.length - 1];
   }
@@ -488,6 +508,13 @@ export class App {
         }
       } else {
         return filteredLayer;
+      }
+    } else {
+      // if no layer for this year find nearest
+      if (previous) {
+        return this._layersConfig.slice().reverse().find((d) => d.to <= year);
+      } else {
+        return this._layersConfig.find((d) => d.from >= year);
       }
     }
     return false;

@@ -13,21 +13,11 @@ module.exports = (env, argv) => {
     devtool: isProd ? 'none' : 'inline-source-map',
 
     entry: {
-      // "vendor": ["babel-polyfill", "./common/polyfill.js", "./common/vendor.js",],
       'main': [
         '@babel/polyfill',
         './src/main.js'
       ],
     },
-
-    // optimization: {
-    //   splitChunks: {
-    //     // include all types of chunks
-    //     chunks: 'all',
-    //     minSize: 3000,
-    //     maxSize: 20000,
-    //   }
-    // },
 
     output: {
       filename: '[name][hash:7].js',
