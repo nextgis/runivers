@@ -2,11 +2,7 @@ import { Panel } from './PanelControl';
 import './PeriodPanelControl.css';
 
 /**
- * @typedef Period - information about Gov
- * @prop period
- * @prop start
- * @prop end
- * @prop description
+ * Information about the ruler in the time interval
  */
 export interface Period {
   tech_number: number;
@@ -34,6 +30,7 @@ export class PeriodPanelControl extends Panel {
 
   updatePeriod(period: Period) {
     const exist = this.period;
+    this.closeDialog();
     if (period) {
       if (exist !== period) {
         this.updateBody(this._createPeriodBody(period));
@@ -45,8 +42,7 @@ export class PeriodPanelControl extends Panel {
     }
   }
 
-
-  _createPeriodBody(period: Period) {
+  private _createPeriodBody(period: Period) {
     const element = document.createElement('div');
     element.className = 'panel-body__period';
 
@@ -65,7 +61,23 @@ export class PeriodPanelControl extends Panel {
     `;
     element.appendChild(periodElement);
 
-    element.appendChild(this.createRefButton(`https://www.google.ru/search?q=${period.name.split(' ').join('+')}`));
+    const detailLink  = period.detail_link && this.createRefButton(period.detail_link);
+
+    if (period.description) {
+
+      const template = document.createElement('div');
+      template.innerHTML = `<div class="panel-body__period--description">${period.description}</div>`;
+
+      if (detailLink) {
+        template.appendChild(detailLink);
+      }
+      element.appendChild(this.createControlButton(() => this.openDialog({template})));
+    } else if (detailLink) {
+      element.appendChild(detailLink);
+
+      // element.appendChild(this.createRefButton(
+      //   `https://www.google.ru/search?q=${period.name.split(' ').join('+')}`));
+    }
 
     return element;
   }

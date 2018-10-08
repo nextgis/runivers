@@ -1,14 +1,14 @@
 import './App.css';
 
-import { SliderControl } from './SliderControl';
+import { SliderControl } from './components/SliderControl';
 import { Popup, Marker, Map } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
 import { getPoints, getPointGeojson } from './services/GetPointsService';
 import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
 import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/mapbox-gl-adapter';
 import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
-import { PeriodPanelControl, Period } from './PeriodPanelControl';
-import { YearsStatPanelControl, YearStat } from './YearsStatPanelControl';
+import { PeriodPanelControl, Period } from './components/Panels/PeriodPanelControl';
+import { YearsStatPanelControl, YearStat } from './components/Panels/YearsStatPanelControl';
 import { EventEmitter } from 'events';
 
 import proj4 from 'proj4';
@@ -539,15 +539,19 @@ export class App {
   }
 
   _createPopupContent(props: HistoryLayerProperties): HTMLElement {
-    const block = document.createElement('div');
-
     const fields = [
-      { name: 'Fid', field: 'fid' },
+      // { name: 'Fid', field: 'fid' },
       { name: 'Наименование территории', field: 'name' },
-      { name: 'Дата возникновения', field: 'lwdate' },
-      { name: 'Дата исчезновения', field: 'updtrl' },
+      // { name: 'Дата возникновения', field: 'lwdate' },
+      // { name: 'Дата исчезновения', field: 'updtrl' },
       // { name: 'Комментарий', field: 'linecomnt' },
     ];
+    return this._createPropBlock(fields, props);
+  }
+
+  _createPropBlock(fields: Array<{name: string, field: string}>, props) {
+    const block = document.createElement('div');
+
     fields.forEach((x) => {
       const prop = props[x.field];
       if (prop) {
