@@ -297,10 +297,10 @@ export class App {
       if (this.currentLayerId !== String(nextLayer.id)) {
         this._onDataLoadEvents.push(next);
         this.updateLayer(String(nextLayer.id));
-        this.updateDataByYear(y);
       } else {
         next();
       }
+      this.updateDataByYear(y);
     } else {
       callback(previous ? this._minYear : this._maxYear);
     }
