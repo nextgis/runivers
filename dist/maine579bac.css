@@ -466,67 +466,10 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 .panel-button {
   margin: 0.5rem;
 }
-dialog {
-  position: absolute;
-  left: 0; right: 0;
-  width: -moz-fit-content;
-  width: -webkit-fit-content;
-  width: fit-content;
-  height: -moz-fit-content;
-  height: -webkit-fit-content;
-  height: fit-content;
-  margin: auto;
-  border: solid;
-  padding: 1em;
-  background: white;
-  color: black;
-  display: block;
-}
 
-dialog:not([open]) {
+.panel-hide {
   display: none;
 }
-
-dialog + .backdrop {
-  position: fixed;
-  top: 0; right: 0; bottom: 0; left: 0;
-  background: rgba(0,0,0,0.1);
-}
-
-._dialog_overlay {
-  position: fixed;
-  top: 0; right: 0; bottom: 0; left: 0;
-}
-
-dialog.fixed {
-  position: fixed;
-  top: 50%;
-  transform: translate(0, -50%);
-}.dialog-component {
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  text-align: center;
-}
-
-.dialog-component::backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.dialog-component__close {
-  margin-top: -2px;
-  float: right;
-  line-height: 1;
-  color: #000;
-  text-shadow: 0 1px 0 #fff;
-  filter: alpha(opacity=20);
-  opacity: .2;
-}
-
 .panel-body__period {
   text-align: center;
   line-height: 1.5rem;
@@ -539,6 +482,11 @@ dialog.fixed {
 
 .panel-body__period--period {
   font-size: 1rem;
+}
+
+.panel-body__period--description {
+  line-height: 1rem;
+  padding: 0.2rem;
 }
 
 .panel-body__period--image {
@@ -562,6 +510,12 @@ dialog.fixed {
 
 .panel-body__yearstat--gain.lost {
   color: darkred;
+}
+
+.state-switcher__flow {
+  display: inline-block;
+  cursor: pointer;
+  margin: 5px;
 }
 #map {
   position: absolute;
@@ -641,7 +595,7 @@ img {
 
 .noUi-handle:before {
   content: "";
-  background: #bb1010;
+  background: rgb(187, 16, 16);
   width: 10px;
   height: 10px;
   left: 4px;
@@ -712,9 +666,19 @@ img {
   border-radius: 4px;
 
   border-radius: 0;
-  color: #bb1010;
+  color: rgb(187, 16, 16);
   line-height: 1rem;
   font-family: initial;
-  border: 2px solid #bb1010;
+  border: 2px solid rgb(187, 16, 16);
   background: white;
+}
+
+.btn:focus {
+  outline-color: rgba(255, 255, 255, 0);
+  box-shadow: 0 0 0 0.1rem rgba(187, 16, 16,.5);
+}
+
+
+.dialog-component {
+  max-width: 600px;
 }

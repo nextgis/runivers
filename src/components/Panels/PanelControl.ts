@@ -1,6 +1,6 @@
 import './PanelControl.css';
-import { WebMap } from '../../../../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
-import { Dialog, DialogOptions } from '../Dialog';
+import { WebMap } from '../../../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
+import { Dialog, DialogAdapterOptions } from '../../../nextgisweb_frontend/packages/dialog/lib/dialog';
 
 export class Panel {
 
@@ -42,6 +42,14 @@ export class Panel {
     }
   }
 
+  hide() {
+    this._container.classList.add('panel-hide');
+  }
+
+  show() {
+    this._container.classList.remove('panel-hide');
+  }
+
   createControlButton(onclick, text = 'Подробнее') {
     const element = document.createElement('button');
     element.className = 'btn panel-button';
@@ -54,7 +62,7 @@ export class Panel {
     return this.createControlButton(() => window.open(url, '_blank'), text);
   }
 
-  openDialog(options?: DialogOptions) {
+  openDialog(options?: DialogAdapterOptions) {
     if (!this._dialog) {
       this._dialog = new Dialog(options);
     }
@@ -99,8 +107,6 @@ export class Panel {
   _createBody() {
     const element = document.createElement('div');
     element.className = 'panel-body';
-
-
 
     this._body = element;
     return element;

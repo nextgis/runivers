@@ -236,8 +236,8 @@ export class App {
   }
 
   _updateYearStatBlockByYear(year) {
-    const yearStat = this._findYearStatByYear(year);
-    this.yearsStatPanelControl.updateYearStat(yearStat);
+    const yearStat = this._findYearStatsByYear(year);
+    this.yearsStatPanelControl.updateYearStats(yearStat);
   }
 
   _findYearInDateStr(dateStr: string): number {
@@ -246,7 +246,7 @@ export class App {
     return Number(date[0]);
   }
 
-  _findYearStatByYear(year: number) {
+  _findYearStatsByYear(year: number) {
     year = Number(year);
     const yearsStat = this.options.yearsStat || [];
     const yearStat = yearsStat.filter((x) => {
@@ -262,7 +262,7 @@ export class App {
       return year === from;
     });
     // console.log(yearStat);
-    return yearStat[0];
+    return yearStat;
   }
   // endregion
 
@@ -297,10 +297,10 @@ export class App {
       if (this.currentLayerId !== String(nextLayer.id)) {
         this._onDataLoadEvents.push(next);
         this.updateLayer(String(nextLayer.id));
-        this.updateDataByYear(y);
       } else {
         next();
       }
+      this.updateDataByYear(y);
     } else {
       callback(previous ? this._minYear : this._maxYear);
     }
@@ -540,7 +540,7 @@ export class App {
 
   _createPopupContent(props: HistoryLayerProperties): HTMLElement {
     const fields = [
-      // { name: 'Fid', field: 'fid' },
+      { name: 'Fid', field: 'fid' },
       { name: 'Наименование территории', field: 'name' },
       // { name: 'Дата возникновения', field: 'lwdate' },
       // { name: 'Дата исчезновения', field: 'updtrl' },

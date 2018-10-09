@@ -12,6 +12,11 @@
   font-size: 1rem;
 }
 
+.panel-body__period--description {
+  line-height: 1rem;
+  padding: 0.2rem;
+}
+
 .panel-body__period--image {
   width: 100%;
 }

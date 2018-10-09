@@ -12,3 +12,7 @@
 .panel-button {
   margin: 0.5rem;
 }
+
+.panel-hide {
+  display: none;
+}

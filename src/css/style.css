@@ -76,7 +76,7 @@ img {
 
 .noUi-handle:before {
   content: "";
-  background: #bb1010;
+  background: rgb(187, 16, 16);
   width: 10px;
   height: 10px;
   left: 4px;
@@ -147,9 +147,19 @@ img {
   border-radius: 4px;
 
   border-radius: 0;
-  color: #bb1010;
+  color: rgb(187, 16, 16);
   line-height: 1rem;
   font-family: initial;
-  border: 2px solid #bb1010;
+  border: 2px solid rgb(187, 16, 16);
   background: white;
+}
+
+.btn:focus {
+  outline-color: rgba(255, 255, 255, 0);
+  box-shadow: 0 0 0 0.1rem rgba(187, 16, 16,.5);
+}
+
+
+.dialog-component {
+  max-width: 600px;
 }

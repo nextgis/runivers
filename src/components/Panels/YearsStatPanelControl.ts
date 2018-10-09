@@ -26,19 +26,28 @@ export class YearsStatPanelControl extends Panel {
 
   yearStat: YearStat;
 
+  yearStats: YearStat[];
+
   constructor(options?) {
     super(Object.assign({}, OPTIONS, options));
 
+  }
+
+  updateYearStats(yearStats: YearStat[]) {
+    this.yearStats = yearStats;
+    this.updateYearStat(this.yearStats[0]);
   }
 
   updateYearStat(yearStat: YearStat) {
     const exist = this.yearStat;
     if (yearStat) {
       if (exist !== yearStat) {
-        this.updateBody(this._createPeriodBody(yearStat));
+        this.show();
         this.yearStat = yearStat;
+        this.updateBody(this._createPeriodBody(yearStat));
       }
     } else {
+      this.hide();
       this.updateBody('<div class="panel-body__period empty">Данные не предоставленны</div>');
       this.yearStat = null;
     }
@@ -60,13 +69,52 @@ export class YearsStatPanelControl extends Panel {
     if (descrBlock) {
       element.appendChild(descrBlock);
     }
-    if (yearStat.description_long) {
-      const ref = `
-          https://www.google.ru/search?q=${yearStat.date_from}+изменение+в++территориальной+целостности+России
-      `;
-      element.appendChild(this.createRefButton(ref));
+    const descrLong = yearStat.description_long;
+    if (descrLong) {
+
+      const template = document.createElement('div');
+      template.innerHTML = `<div class="panel-body__period--description">${descrLong}</div>`;
+      element.appendChild(this.createControlButton(() => this.openDialog({ template })));
+
+    }
+
+    if (this.yearStats.length > 1) {
+      element.appendChild(this._createStateSwitcher());
     }
     return element;
+  }
+
+  private _createStateSwitcher(): Node {
+    const block = document.createElement('div');
+    const index = this.yearStats.indexOf(this.yearStat);
+    const isFirst = index === 0;
+    const length = this.yearStats.length;
+    const isLast = index === length - 1;
+
+    const createDirectionFlow = (previous?: boolean) => {
+      const flow = document.createElement('div');
+      flow.className = 'state-switcher__flow state-switcher__flow--' + (previous ? 'back' : 'forward');
+      flow.innerHTML = previous ? '<<' : '>>';
+      flow.onclick = (e) => {
+        e.preventDefault();
+        const directStat = this.yearStats[previous ? index - 1 : index + 1];
+        this.updateYearStat(directStat);
+      };
+      return flow;
+    };
+
+    if (!isFirst) {
+      block.appendChild(createDirectionFlow(true));
+    }
+
+    const flowCounter = document.createElement('div');
+    flowCounter.className = 'state-switcher__flow state-switcher__flow--counter';
+    flowCounter.innerHTML = `${index + 1} / ${length}`;
+    block.appendChild(flowCounter);
+    if (!isLast) {
+      block.appendChild(createDirectionFlow(false));
+    }
+    return block;
   }
 
   private _createDescriptionBlock(yearStat: YearStat): HTMLElement {

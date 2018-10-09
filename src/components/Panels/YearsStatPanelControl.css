@@ -12,3 +12,9 @@
 .panel-body__yearstat--gain.lost {
   color: darkred;
 }
+
+.state-switcher__flow {
+  display: inline-block;
+  cursor: pointer;
+  margin: 5px;
+}
