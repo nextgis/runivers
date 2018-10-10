@@ -85,10 +85,15 @@ table {
   width: 15px;
   height: 15px;
 }
+
+.map-marker__label {
+  color: white;
+  text-align: center;
+}
 .slider-control {
   position: absolute;
   bottom: 40px;
-  width: 80%;
+  width: 90%;
   margin: auto;
   right: 0px;
   left: 0;
@@ -100,7 +105,6 @@ table {
 
 .slider-control-block {
   display: inline-block;
-  margin-right: 5px;
 }
 
 .slider-control-range {
@@ -109,7 +113,7 @@ table {
 
 .slider-control-player {
   position: absolute;
-  margin-left: -55px;
+  height: 24px;
 }
 
 
@@ -119,11 +123,12 @@ table {
   box-sizing: border-box;
   width: 0;
   height: 24px;
-  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(95, 86, 86, 0.8);
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0,0,0, 0.8);
   transition: 100ms all ease;
   cursor: pointer;
   border-style: solid;
   border-width: 12px 0 12px 24px;
+  vertical-align: middle;
 }
 
 .player-button:focus {
@@ -132,18 +137,17 @@ table {
 
 .player-button.paused {
   border-style: double;
-  border-width: 0px 0 0px 24px;
+  border-width: 0 0 0 24px;
 }
 
 .player-button:hover {
-  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0.8);
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0,0,0, 1);
 }
 
 .slider-control-steps {
   position: absolute;
   bottom: 0;
   right: 0;
-  margin-right: -60px;
   height: 24px;
 }
 
@@ -496,6 +500,8 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 .panel-body__period--image img {
   max-width: 150px;
   max-height: 150px;
+  float: left;
+  padding: 0 10px 10px 0;
 }
 .panel-body__yearstat {
   text-align: center;
@@ -503,7 +509,6 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 }
 
 .panel-body__yearstat--gain {
-
   font-size: 1.3rem;
   color: green;
 }
@@ -512,11 +517,50 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   color: darkred;
 }
 
+.state-switcher {
+  user-select: none;
+}
+
 .state-switcher__flow {
   display: inline-block;
   cursor: pointer;
   margin: 5px;
 }
+
+.state-switcher__flow.hiden {
+  opacity: 0.3;
+}
+
+.state-switcher__flow small {
+  font-size: 0.6rem;
+}
+.panel.bottom-links {
+  width: auto;
+  background: transparent; }
+
+.transneft__logo {
+  display: inline-block;
+  background: url(./images/Transneft_logo1.png) no-repeat;
+  width: 214px;
+  height: 22px; }
+
+.social__logo {
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  margin-left: 3px; }
+
+.twitter {
+  background: url(./images/twitter.svg) no-repeat; }
+
+.facebook {
+  background: url(./images/facebook.svg) no-repeat; }
+
+.livejournal {
+  background: url(./images/livejournal.svg) no-repeat; }
+
+.vkontakte {
+  background: url(./images/vk.svg) no-repeat; }
 #map {
   position: absolute;
   top: 0;
@@ -547,11 +591,6 @@ body {
   font-size: 0.9em;
 }
 
-img {
-  float: left;
-  padding: 0 10px 10px 0;
-}
-
 /* END CONTENT */
 
 /* CUSTOMIZATION */
@@ -574,6 +613,8 @@ img {
 .noUi-target {
   height: 24px;
   border-radius: 7px;
+  margin: 0 65px;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .noUi-handle {
@@ -603,10 +644,6 @@ img {
   border-radius: 50%;
 }
 
-.noUi-target {
-  background: rgba(255, 255, 255, 0.8);
-}
-
 .noUi-pips {
   top: 0 !important;
   padding: 0;
@@ -626,6 +663,10 @@ img {
 .noUi-marker-large {
   top: 3px;
   height: 16px !important;
+}
+
+.slider-control-player {
+  margin-left: 20px
 }
 
 /* .noUi-base:before,
@@ -681,4 +722,11 @@ img {
 
 .dialog-component {
   max-width: 600px;
+}
+
+
+/* MAPBOX GL */
+
+.mapboxgl-ctrl-bottom-right {
+  margin-bottom: 60px;
 }

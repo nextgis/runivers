@@ -33,3 +33,8 @@
   width: 15px;
   height: 15px;
 }
+
+.map-marker__label {
+  color: white;
+  text-align: center;
+}

@@ -28,11 +28,6 @@ body {
   font-size: 0.9em;
 }
 
-img {
-  float: left;
-  padding: 0 10px 10px 0;
-}
-
 /* END CONTENT */
 
 /* CUSTOMIZATION */
@@ -55,6 +50,8 @@ img {
 .noUi-target {
   height: 24px;
   border-radius: 7px;
+  margin: 0 65px;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .noUi-handle {
@@ -84,10 +81,6 @@ img {
   border-radius: 50%;
 }
 
-.noUi-target {
-  background: rgba(255, 255, 255, 0.8);
-}
-
 .noUi-pips {
   top: 0 !important;
   padding: 0;
@@ -107,6 +100,10 @@ img {
 .noUi-marker-large {
   top: 3px;
   height: 16px !important;
+}
+
+.slider-control-player {
+  margin-left: 20px
 }
 
 /* .noUi-base:before,
@@ -162,4 +159,11 @@ img {
 
 .dialog-component {
   max-width: 600px;
+}
+
+
+/* MAPBOX GL */
+
+.mapboxgl-ctrl-bottom-right {
+  margin-bottom: 60px;
 }

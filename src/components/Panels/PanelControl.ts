@@ -2,9 +2,14 @@ import './PanelControl.css';
 import { WebMap } from '../../../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
 import { Dialog, DialogAdapterOptions } from '../../../nextgisweb_frontend/packages/dialog/lib/dialog';
 
+export interface PanelOptions {
+  headerText?: string;
+  addClass?: string;
+}
+
 export class Panel {
 
-  options;
+  options: PanelOptions;
 
   map: WebMap;
 
@@ -13,16 +18,16 @@ export class Panel {
   private _body: HTMLElement;
   private _dialog: Dialog;
 
-  constructor(options?) {
+  constructor(options?: PanelOptions) {
     this.options = Object.assign({}, this.options, options);
     this._container = null;
     this._header = null;
     this._body = null;
+    this._container = this._createContainer();
   }
 
   onAdd(map) {
     this.map = map;
-    this._container = this._createContainer();
     return this._container;
   }
 
@@ -87,8 +92,12 @@ export class Panel {
   _createContainer() {
     const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl panel';
-
-    element.appendChild(this._createHeader());
+    if (this.options.addClass) {
+      element.classList.add('bottom-links');
+    }
+    if (this.options.headerText) {
+      element.appendChild(this._createHeader());
+    }
     element.appendChild(this._createBody());
 
     return element;

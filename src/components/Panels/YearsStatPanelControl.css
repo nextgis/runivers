@@ -4,7 +4,6 @@
 }
 
 .panel-body__yearstat--gain {
-
   font-size: 1.3rem;
   color: green;
 }
@@ -13,8 +12,20 @@
   color: darkred;
 }
 
+.state-switcher {
+  user-select: none;
+}
+
 .state-switcher__flow {
   display: inline-block;
   cursor: pointer;
   margin: 5px;
+}
+
+.state-switcher__flow.hiden {
+  opacity: 0.3;
+}
+
+.state-switcher__flow small {
+  font-size: 0.6rem;
 }

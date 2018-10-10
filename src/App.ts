@@ -13,6 +13,8 @@ import { EventEmitter } from 'events';
 
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point } from 'geojson';
+import { getBottomLinksPanel } from './components/Links/Links';
+import { Panel } from './components/Panels/PanelControl';
 
 export interface AppOptions {
   baseUrl?: string;
@@ -84,6 +86,7 @@ export class App {
   emitter = new EventEmitter();
 
   _headerElement: HTMLElement;
+  _bottomLink: Panel;
 
   private _minYear: number;
   private _maxYear: number;
@@ -172,8 +175,13 @@ export class App {
       this._layersConfig.sort((a, b) => a.from < b.from ? -1 : 1);
 
       this.slider = this._createSlider();
+
+      this._bottomLink = getBottomLinksPanel();
+
       this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
       this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
+
+      this.webMap.map.addControl(this._bottomLink, 'bottom-right');
 
       this._headerElement = this._createHeader();
 
@@ -182,7 +190,7 @@ export class App {
       });
       this.emitter.emit('build');
     });
-    getPoints((points) => {
+    getPoints().then((points) => {
       this._pointsConfig = this._processPointsMeta(points);
       const pointId = this._getPointIdByYear(this.currentYear);
       this.updatePoint(pointId);
@@ -373,27 +381,29 @@ export class App {
   // TODO: Mapboxgl specific method
   _addPoint(id: string) {
 
-    getPointGeojson(id, (data) => {
-      data.features.forEach((marker: Feature<Point | MultiPoint, PointProperties>) => {
+    getPointGeojson(id).then((data) => {
+      const many = data.features.length > 1;
+      data.features.forEach((marker: Feature<Point | MultiPoint, PointProperties>, i) => {
         const type = marker && marker.geometry && marker.geometry.type;
         if (type === 'MultiPoint') {
           const coordinates = marker.geometry.coordinates as Array<[number, number]>;
           coordinates.forEach((x) => {
-            this._addMarkerToMap(x, marker.properties);
+            this._addMarkerToMap(x, marker.properties, many && i);
           });
         } else if (type === 'Point') {
-          this._addMarkerToMap(marker.geometry.coordinates as [number, number], marker.properties);
+          this._addMarkerToMap(marker.geometry.coordinates as [number, number], marker.properties, many && i);
         }
       });
     });
   }
 
   // TODO: Mapboxgl specific method
-  _addMarkerToMap(coordinates: [number, number], properties: PointProperties) {
+  _addMarkerToMap(coordinates: [number, number], properties: PointProperties, id: string) {
     const map: Map = this.webMap.map.map;
     // create a DOM element for the marker
     const el = document.createElement('div');
     el.className = 'map-marker';
+    el.innerHTML = typeof id !== 'boolean' ? `<div class="map-marker__label">${id + 1}</div>` : '';
     // el.style.backgroundImage = 'url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
 
     const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);

@@ -1,7 +1,7 @@
 .slider-control {
   position: absolute;
   bottom: 40px;
-  width: 80%;
+  width: 90%;
   margin: auto;
   right: 0px;
   left: 0;
@@ -13,7 +13,6 @@
 
 .slider-control-block {
   display: inline-block;
-  margin-right: 5px;
 }
 
 .slider-control-range {
@@ -22,7 +21,7 @@
 
 .slider-control-player {
   position: absolute;
-  margin-left: -55px;
+  height: 24px;
 }
 
 
@@ -32,11 +31,12 @@
   box-sizing: border-box;
   width: 0;
   height: 24px;
-  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(95, 86, 86, 0.8);
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0,0,0, 0.8);
   transition: 100ms all ease;
   cursor: pointer;
   border-style: solid;
   border-width: 12px 0 12px 24px;
+  vertical-align: middle;
 }
 
 .player-button:focus {
@@ -45,18 +45,17 @@
 
 .player-button.paused {
   border-style: double;
-  border-width: 0px 0 0px 24px;
+  border-width: 0 0 0 24px;
 }
 
 .player-button:hover {
-  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0.8);
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0,0,0, 1);
 }
 
 .slider-control-steps {
   position: absolute;
   bottom: 0;
   right: 0;
-  margin-right: -60px;
   height: 24px;
 }
 

@@ -19,30 +19,33 @@ const adapterFor = (function () {
   }
 }());
 
-NgwConnector.prototype._getJson = function (url, callback, context, error) {
-  adapterFor(url).get(url, (resp) => {
-    let data = '';
-    resp.on('data', (chunk) => {
-      data += chunk;
+NgwConnector.prototype._getJson = function (url, options) {
+  return new Promise((resolve, reject) => {
+    adapterFor(url).get(url, (resp) => {
+      let data = '';
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+      resp.on('end', () => {
+        resolve(JSON.parse(data));
+      });
+    }).on('error', (err) => {
+      reject(err);
     });
-    resp.on('end', () => {
-      callback.call(context || this, JSON.parse(data));
-    });
-  }).on('error', (err) => {
-    error(err);
   });
 }
-const connector = new NgwConnector({baseUrl});
 
-connector.makeQuery('/api/resource/?parent={id}', generateData, {
+const connector = new NgwConnector({ baseUrl });
+
+connector.makeQuery('/api/resource/?parent={id}', {
   id: config.sourceGroupId
-});
+}).then(generateData);
 
 function generateData(data) {
   const toFile = data.map((x) => {
     const res = x.resource;
-    return {resource: {display_name: res.display_name, id: res.id}}
+    return { resource: { display_name: res.display_name, id: res.id } }
   });
 
-  fs.writeFile(file, JSON.stringify(toFile), () => console.log('Data write in `' + file+ '` file'));
+  fs.writeFile(file, JSON.stringify(toFile), () => console.log('Data write in `' + file + '` file'));
 }

@@ -64,6 +64,9 @@ export class YearsStatPanelControl extends Panel {
     // if (lost) {
     //   element.appendChild(this._createGainBlock(lost, true));
     // }
+    if (this.yearStats.length > 1) {
+      element.appendChild(this._createStateSwitcher());
+    }
 
     const descrBlock = this._createDescriptionBlock(yearStat);
     if (descrBlock) {
@@ -78,42 +81,42 @@ export class YearsStatPanelControl extends Panel {
 
     }
 
-    if (this.yearStats.length > 1) {
-      element.appendChild(this._createStateSwitcher());
-    }
     return element;
   }
 
   private _createStateSwitcher(): Node {
     const block = document.createElement('div');
+    block.className = 'state-switcher';
     const index = this.yearStats.indexOf(this.yearStat);
     const isFirst = index === 0;
     const length = this.yearStats.length;
     const isLast = index === length - 1;
 
-    const createDirectionFlow = (previous?: boolean) => {
+    const createDirectionFlow = (previous?: boolean, isActive?: boolean) => {
       const flow = document.createElement('div');
-      flow.className = 'state-switcher__flow state-switcher__flow--' + (previous ? 'back' : 'forward');
+      flow.className = 'state-switcher__flow state-switcher__flow--' +
+        (previous ? 'back' : 'forward') +
+        (isActive ? '' : ' hiden');
       flow.innerHTML = previous ? '<<' : '>>';
-      flow.onclick = (e) => {
-        e.preventDefault();
-        const directStat = this.yearStats[previous ? index - 1 : index + 1];
-        this.updateYearStat(directStat);
-      };
+      if (isActive) {
+        flow.onclick = (e) => {
+          e.preventDefault();
+          const directStat = this.yearStats[previous ? index - 1 : index + 1];
+          this.updateYearStat(directStat);
+        };
+      }
       return flow;
     };
 
-    if (!isFirst) {
-      block.appendChild(createDirectionFlow(true));
-    }
+    block.appendChild(createDirectionFlow(true, !isFirst));
 
     const flowCounter = document.createElement('div');
     flowCounter.className = 'state-switcher__flow state-switcher__flow--counter';
-    flowCounter.innerHTML = `${index + 1} / ${length}`;
+    flowCounter.innerHTML = `<b>${index + 1}</b> <small>/ ${length}</small>`;
     block.appendChild(flowCounter);
-    if (!isLast) {
-      block.appendChild(createDirectionFlow(false));
-    }
+
+    block.appendChild(createDirectionFlow(false, !isLast));
+
     return block;
   }
 

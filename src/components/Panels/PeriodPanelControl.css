@@ -24,4 +24,6 @@
 .panel-body__period--image img {
   max-width: 150px;
   max-height: 150px;
+  float: left;
+  padding: 0 10px 10px 0;
 }
