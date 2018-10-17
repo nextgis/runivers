@@ -665,8 +665,13 @@ body {
   height: 16px !important;
 }
 
+.noUi-tooltip {
+  font-size: 1rem;
+  border-radius: 10px;
+}
+
 .slider-control-player {
-  margin-left: 20px
+  margin-left: 20px;
 }
 
 /* .noUi-base:before,
@@ -716,17 +721,16 @@ body {
 
 .btn:focus {
   outline-color: rgba(255, 255, 255, 0);
-  box-shadow: 0 0 0 0.1rem rgba(187, 16, 16,.5);
+  box-shadow: 0 0 0 0.1rem rgba(187, 16, 16, 0.5);
 }
-
 
 .dialog-component {
   max-width: 600px;
 }
 
-
 /* MAPBOX GL */
 
 .mapboxgl-ctrl-bottom-right {
   margin-bottom: 60px;
+  z-index: 0;
 }

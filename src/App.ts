@@ -19,7 +19,8 @@ import { Panel } from './components/Panels/PanelControl';
 export interface AppOptions {
   baseUrl?: string;
   target: string;
-  currentYear: number;
+  fromYear?: number;
+  currentYear?: number;
   animationStep: number;
   animationDelay: number;
   periods: Period[];
@@ -101,7 +102,11 @@ export class App {
 
   constructor(options: AppOptions) {
     this.options = Object.assign({}, this.options, options);
-    this.currentYear = options.currentYear;
+    const {fromYear, currentYear} = this.options;
+    if (fromYear && currentYear && currentYear < fromYear) {
+      this.options.currentYear = fromYear;
+    }
+    this.currentYear = this.options.currentYear;
     this.createWebMap();
     this._buildApp();
   }
@@ -489,7 +494,8 @@ export class App {
 
   _getLayerByYear(year: number, previous?: boolean): LayerMeta | false {
     const layers = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
-    return previous ? layers[0] : layers[layers.length - 1];
+    // return previous ? layers[0] : layers[layers.length - 1];
+    return layers[layers.length - 1];
   }
 
   _getLayerIdByYear(year: number, previous?: boolean): string {
@@ -531,13 +537,18 @@ export class App {
   }
 
   _processLayersMeta(layersMeta) {
-    return layersMeta.map(({ resource }) => {
+    const layers: LayerMeta[] = [];
+    layersMeta.forEach(({ resource }) => {
       const name = resource.display_name;
       const [from, to] = name.match('from_(\\d{4})_to_(\\d{4}).*$').slice(1).map((x) => Number(x));
-      this._minYear = (this._minYear > from ? from : this._minYear) || from;
-      this._maxYear = (this._maxYear < to ? to : this._maxYear) || to;
-      return { name, from, to, id: resource.id };
+      const allowedYear = (this.options.fromYear && from < this.options.fromYear) ? false : true;
+      if (allowedYear) {
+        this._minYear = (this._minYear > from ? from : this._minYear) || from;
+        this._maxYear = (this._maxYear < to ? to : this._maxYear) || to;
+        layers.push({ name, from, to, id: resource.id });
+      }
     });
+    return layers;
   }
 
   _processPointsMeta(pointsMeta): PointMeta[] {
@@ -559,7 +570,7 @@ export class App {
     return this._createPropBlock(fields, props);
   }
 
-  _createPropBlock(fields: Array<{name: string, field: string}>, props) {
+  _createPropBlock(fields: Array<{ name: string, field: string }>, props) {
     const block = document.createElement('div');
 
     fields.forEach((x) => {

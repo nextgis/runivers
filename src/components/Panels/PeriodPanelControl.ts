@@ -58,7 +58,7 @@ export class PeriodPanelControl extends Panel {
       ${imageHtml ? imageHtml : ''}
       <div class="panel-body__period--name">${period.name}</div>
       <div class="panel-body__period--description">${period.description}</div>
-      <div class="panel-body__period--period">${period.years_from} – ${period.years_to}</div>
+      <div class="panel-body__period--period">${period.years_from} – ${period.years_to} г.</div>
     `;
     element.appendChild(periodElement);
 

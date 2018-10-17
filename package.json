@@ -1,10 +1,10 @@
 {
   "name": "russia-history",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "start": "webpack-dev-server --progress",
+    "start": "webpack-dev-server --progress --hot --open",
     "build": "webpack --progress",
     "watch": "rimraf ./dist && npm run build -- --watch",
     "dev": "rimraf ./dist && npm run build",
