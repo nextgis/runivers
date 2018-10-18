@@ -561,6 +561,24 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 
 .vkontakte {
   background: url(./images/vk.svg) no-repeat; }
+
+.panel__toggler {
+  opacity: 0.5;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin-left: 5px;
+  cursor: pointer; }
+  .panel__toggler.active {
+    opacity: 0.7; }
+  .panel__toggler:hover {
+    opacity: 1; }
+
+.period__toggler {
+  background: url(./images/rulers.png) no-repeat; }
+
+.years__toggler {
+  background: url(./images/years.png) no-repeat; }
 #map {
   position: absolute;
   top: 0;

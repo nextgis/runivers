@@ -1,6 +1,7 @@
 import './PanelControl.css';
 import { WebMap } from '../../../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
 import { Dialog, DialogAdapterOptions } from '../../../nextgisweb_frontend/packages/dialog/lib/dialog';
+import { EventEmitter } from 'events';
 
 export interface PanelOptions {
   headerText?: string;
@@ -13,7 +14,10 @@ export class Panel {
 
   map: WebMap;
 
+  emitter = new EventEmitter();
+
   _header: HTMLElement;
+  _blocked: boolean = false;
   private _container: HTMLElement;
   private _body: HTMLElement;
   private _dialog: Dialog;
@@ -49,10 +53,14 @@ export class Panel {
 
   hide() {
     this._container.classList.add('panel-hide');
+    this.emitter.emit('toggle', false);
   }
 
   show() {
-    this._container.classList.remove('panel-hide');
+    if (!this._blocked) {
+      this._container.classList.remove('panel-hide');
+      this.emitter.emit('toggle', true);
+    }
   }
 
   createControlButton(onclick, text = 'Подробнее') {

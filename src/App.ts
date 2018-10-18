@@ -13,7 +13,7 @@ import { EventEmitter } from 'events';
 
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point } from 'geojson';
-import { getBottomLinksPanel } from './components/Links/Links';
+import { getBottomLinksPanel, getTopLinksPanel } from './components/Links/Links';
 import { Panel } from './components/Panels/PanelControl';
 
 export interface AppOptions {
@@ -88,6 +88,7 @@ export class App {
 
   _headerElement: HTMLElement;
   _bottomLink: Panel;
+  _topLink: Panel;
 
   private _minYear: number;
   private _maxYear: number;
@@ -102,7 +103,7 @@ export class App {
 
   constructor(options: AppOptions) {
     this.options = Object.assign({}, this.options, options);
-    const {fromYear, currentYear} = this.options;
+    const { fromYear, currentYear } = this.options;
     if (fromYear && currentYear && currentYear < fromYear) {
       this.options.currentYear = fromYear;
     }
@@ -127,6 +128,13 @@ export class App {
       });
 
       webMap.map.addControl('ZOOM', 'top-left');
+
+      webMap.map.addControl('ATTRIBUTION', 'bottom-left', {
+        customAttribution: [
+          '<a href="http://nextgis.ru" target="_blank">©NextGIS</a>',
+          '<a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>',
+        ]
+      });
 
       webMap.map.emitter.on('data-loaded', (data) => this._onData(data));
 
@@ -182,6 +190,9 @@ export class App {
       this.slider = this._createSlider();
 
       this._bottomLink = getBottomLinksPanel();
+      this._topLink = getTopLinksPanel(this);
+
+      this.webMap.map.addControl(this._topLink, 'top-right');
 
       this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
       this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
