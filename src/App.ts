@@ -132,7 +132,7 @@ export class App {
       webMap.map.addControl('ATTRIBUTION', 'bottom-left', {
         customAttribution: [
           '<a href="http://nextgis.ru" target="_blank">©NextGIS</a>',
-          '<a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>',
+          // '<a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>',
         ]
       });
 
