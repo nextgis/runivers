@@ -34,3 +34,4 @@ app.emitter.on('build', function () {
 
 // for testing and debug
 window.app = app;
+window.version = version;
