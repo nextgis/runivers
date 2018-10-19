@@ -139,7 +139,7 @@ export class App {
       colors: this.options.lineColor,
     });
 
-    this.legendPanel.emitter.on('change', (colors) => this._updateLayersColor(colors));
+    this.legendPanel.emitter.on('change', (colors) => this._updateLayersColor());
 
     webMap.create(options).then(() => {
 
@@ -463,12 +463,14 @@ export class App {
     m.addTo(map);
   }
 
-  _updateLayersColor(colors) {
+  _updateLayersColor() {
     for (const l in this._layersLoaded) {
       if (this._layersLoaded.hasOwnProperty(l)) {
-        // const layer = this._layersLoaded[l];
-        this.webMap.map.map.setPaintProperty(l, 'fill-color', this._getFillColor());
-
+        if (l.indexOf('-bound') !== -1) {
+          this.webMap.map.map.setPaintProperty(l, 'line-color', this._getFillColor({darken: 0.5}));
+        } else {
+          this.webMap.map.map.setPaintProperty(l, 'fill-color', this._getFillColor());
+        }
       }
 
     }
