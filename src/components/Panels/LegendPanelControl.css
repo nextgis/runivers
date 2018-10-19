@@ -1,0 +1,15 @@
+.panel.legend-panel {
+  width: 200px;
+}
+
+.panel-body__legend {
+  margin: 10px;
+}
+
+.panel-body__legend--block {
+  margin: 3px 0;
+}
+
+.panel-body__legend--name {
+  font-size: 1rem;
+}

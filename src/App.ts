@@ -10,22 +10,25 @@ import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
 import { PeriodPanelControl, Period } from './components/Panels/PeriodPanelControl';
 import { YearsStatPanelControl, YearStat } from './components/Panels/YearsStatPanelControl';
 import { EventEmitter } from 'events';
+import Color from 'color';
 
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point } from 'geojson';
 import { getBottomLinksPanel, getTopLinksPanel } from './components/Links/Links';
 import { Panel } from './components/Panels/PanelControl';
+import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 
 export interface AppOptions {
   baseUrl?: string;
   target: string;
   fromYear?: number;
   currentYear?: number;
-  animationStep: number;
-  animationDelay: number;
-  periods: Period[];
-  yearsStat: YearStat[];
-  version: string;
+  animationStep?: number;
+  animationDelay?: number;
+  periods?: Period[];
+  yearsStat?: YearStat[];
+  version?: string;
+  lineColor?: Array<[number, string]>;
 }
 
 export interface HistoryLayerProperties {
@@ -73,12 +76,25 @@ export interface PointProperties {
 
 export class App {
 
-  options: AppOptions;
+  options: AppOptions = {
+    target: '#app',
+    lineColor: [
+      [1, '#cd403a'],
+      [2, '#d66460'],
+      [3, '#e19c4b'],
+      [4, '#e1774b'],
+      [5, '#e14b90'],
+      [6, '#a62f2b'],
+      [7, '#008000'],
+      [null, '#ccc']/* other */
+    ]
+  };
   currentYear: number;
   slider: SliderControl;
 
   periodsPanelControl = new PeriodPanelControl();
   yearsStatPanelControl = new YearsStatPanelControl();
+  legendPanel: Panel;
   webMap: WebMap;
 
   currentLayerId: string;
@@ -118,6 +134,13 @@ export class App {
       mapAdapter: new MapboxglAdapter(),
       starterKits: [new QmsKit()],
     });
+
+    this.legendPanel = new LegendPanelControl({
+      colors: this.options.lineColor,
+    });
+
+    this.legendPanel.emitter.on('change', (colors) => this._updateLayersColor(colors));
+
     webMap.create(options).then(() => {
 
       // webMap.addBaseLayer('osm', 'OSM');
@@ -128,6 +151,7 @@ export class App {
       });
 
       webMap.map.addControl('ZOOM', 'top-left');
+      webMap.map.addControl(this.legendPanel, 'top-left');
 
       webMap.map.addControl('ATTRIBUTION', 'bottom-left', {
         customAttribution: [
@@ -439,6 +463,41 @@ export class App {
     m.addTo(map);
   }
 
+  _updateLayersColor(colors) {
+    for (const l in this._layersLoaded) {
+      if (this._layersLoaded.hasOwnProperty(l)) {
+        // const layer = this._layersLoaded[l];
+        this.webMap.map.map.setPaintProperty(l, 'fill-color', this._getFillColor());
+
+      }
+
+    }
+  }
+
+  _getFillColor(opt: {
+    lighten?: number,
+    darken?: number
+  } = { }) {
+
+    const meta = [
+      'match',
+      ['get', 'status']
+    ];
+    const colors = this.options.lineColor.reduce((a, b) => {
+      const [param, color] = b;
+      const c = Color(color);
+      if (param) {
+        a.push(param);
+      }
+      if (opt.darken) {
+        c.darken(opt.darken);
+      }
+      a.push(c.hex());
+      return a;
+    }, []);
+    return meta.concat(colors);
+  }
+
   _addLayer(url: string, id: string): Promise<any> {
     const paint = {
       'fill-opacity': 0.8,
@@ -446,18 +505,7 @@ export class App {
         duration: 0
       },
       // 'fill-outline-color': '#8b0000', // darkred
-      'fill-color': [
-        'match',
-        ['get', 'status'],
-        1, '#cd403a',
-        2, '#d66460',
-        3, '#e19c4b',
-        4, '#e1774b',
-        5, '#e14b90',
-        6, '#a62f2b',
-        7, '#008000',
-        /* other */ '#ccc'
-      ]
+      'fill-color': this._getFillColor()
     };
     const paintLine = {
       'line-opacity': 0.8,
@@ -465,18 +513,7 @@ export class App {
         duration: 0
       },
       'line-width': 1,
-      'line-color': [
-        'match',
-        ['get', 'status'],
-        1, '#7d2420',
-        2, '#cd403a',
-        3, '#d68324',
-        4, '#d65a24',
-        5, '#d62477',
-        6, '#7d2420',
-        7, '#004d00',
-        /* other */ '#ccc'
-      ]
+      'line-color': this._getFillColor({darken: 0.5}),
     };
     return Promise.all([
       this.webMap.map.addLayer('MVT', { url, id, paint }),

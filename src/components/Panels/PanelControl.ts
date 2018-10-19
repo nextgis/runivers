@@ -101,7 +101,7 @@ export class Panel {
     const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl panel';
     if (this.options.addClass) {
-      element.classList.add('bottom-links');
+      element.classList.add(this.options.addClass);
     }
     if (this.options.headerText) {
       element.appendChild(this._createHeader());
