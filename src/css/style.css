@@ -167,7 +167,10 @@ body {
 
 /* MAPBOX GL */
 
-.mapboxgl-ctrl-bottom-right {
+.mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right {
   margin-bottom: 60px;
   z-index: 0;
 }
+
+
+

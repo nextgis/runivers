@@ -14,7 +14,7 @@ import Color from 'color';
 
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point } from 'geojson';
-import { getBottomLinksPanel, getTopLinksPanel } from './components/Links/Links';
+import { getBottomLinksPanel, getTopLinksPanel, getBottomLeftLinksPanel } from './components/Links/Links';
 import { Panel } from './components/Panels/PanelControl';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 
@@ -104,6 +104,7 @@ export class App {
 
   _headerElement: HTMLElement;
   _bottomLink: Panel;
+  _bottomLeftLink: Panel;
   _topLink: Panel;
 
   private _minYear: number;
@@ -214,6 +215,7 @@ export class App {
       this.slider = this._createSlider();
 
       this._bottomLink = getBottomLinksPanel();
+      this._bottomLeftLink = getBottomLeftLinksPanel();
       this._topLink = getTopLinksPanel(this);
 
       this.webMap.map.addControl(this._topLink, 'top-right');
@@ -221,6 +223,7 @@ export class App {
       this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
       this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
 
+      // this.webMap.map.addControl(this._bottomLeftLink, 'bottom-left');
       this.webMap.map.addControl(this._bottomLink, 'bottom-right');
 
       this._headerElement = this._createHeader();
