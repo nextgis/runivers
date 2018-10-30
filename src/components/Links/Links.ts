@@ -6,15 +6,17 @@ import { Toggler } from './Toggler';
 export function getBottomLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
+    <a  href="https://www.runivers.ru" class="runiver__logo"></a>
     <div class="transneft__logo"></div>
 
     <span class="socialLinks" style="height: 20px;">
       <a href="http://twitter.com/#!/runivers" class="social__logo twitter"></a>
       <a href="http://www.facebook.com/Runiverse.ru" class="social__logo facebook"></a>
       <a href="http://vk.com/public35690973" class="social__logo vkontakte"></a>
-      <a href="http://runivers.livejournal.com/" class="social__logo livejournal"></a>
+
     </span>
   `;
+  // <a href="http://runivers.livejournal.com/" class="social__logo livejournal"></a>
 
 
   const panel = new Panel({

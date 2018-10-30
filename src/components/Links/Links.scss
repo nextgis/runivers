@@ -4,16 +4,27 @@
 }
 
 .transneft__logo {
+	vertical-align: middle;
 	display: inline-block;
   background: url(./img/Transneft_logo1.png) no-repeat;
-  width: 214px;
-  height: 22px;
+  width: 176px;
+  height: 18px;
+}
+
+.runiver__logo {
+	vertical-align: middle;
+	display: inline-block;
+  background: url(./img/Runivers-Logo.png) no-repeat;
+	height: 26px;
+	width: 91px;
+	margin-right: 4px;
 }
 
 .social__logo {
+	vertical-align: middle;
 	display: inline-block;
-	height: 22px;
-	width: 22px;
+	height: 18px;
+	width: 18px;
 	margin-left: 3px;
 }
 
