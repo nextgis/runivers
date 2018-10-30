@@ -29,6 +29,7 @@ export interface AppOptions {
   yearsStat?: YearStat[];
   version?: string;
   lineColor?: Array<[number, string]>;
+  lineColorLegend?: Array<[number, string, string]>;
 }
 
 export interface HistoryLayerProperties {
@@ -79,14 +80,19 @@ export class App {
   options: AppOptions = {
     target: '#app',
     lineColor: [
-      [1, '#cd403a'],
-      [2, '#d66460'],
-      [3, '#e19c4b'],
-      [4, '#e1774b'],
-      [5, '#e14b90'],
-      [6, '#a62f2b'],
-      [7, '#008000'],
+      [1, '#33b850'],
+      [2, '#33b850'],
+      [3, '#79d254'],
+      [4, '#79d254'],
+      [5, '#79d254'],
+      [6, '#33b850'],
+      [7, '#a3ada3'],
       [null, '#ccc']/* other */
+    ],
+    lineColorLegend: [
+      [1, '#33b850', 'Территория России, новые территории, территории под протекторатом'],
+      [2, '#79d254', 'Аренда, совместное владение, спорная территория'],
+      [3, '#a3ada3', 'Утраченная территория'],
     ]
   };
   currentYear: number;
@@ -137,7 +143,8 @@ export class App {
     });
 
     this.legendPanel = new LegendPanelControl({
-      colors: this.options.lineColor,
+      // colors: this.options.lineColor,
+      colors: this.options.lineColorLegend,
     });
 
     this.legendPanel.emitter.on('change', (colors) => this._updateLayersColor());
