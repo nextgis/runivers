@@ -6,7 +6,6 @@ import { Toggler } from './Toggler';
 export function getBottomLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <a  href="https://www.runivers.ru/timeline/" class="resource__link">График изменения</a>
     <a  href="https://www.runivers.ru" class="runiver__logo"></a>
     <div class="transneft__logo"></div>
 
@@ -29,9 +28,10 @@ export function getBottomLinksPanel() {
 export function getBottomLeftLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <a  href="https://www.runivers.ru/about/" class="resource__link">О проекте</a>
+    <div><a  href="http://igh.ru" class="resource__link">Лаборатория ИГ ИВИ РАН</a></div>
+    <div><a  href="https://www.runivers.ru/timeline/" class="resource__link">График изменения</a></div>
+    <div><a  href="https://www.runivers.ru/about/" class="resource__link">О проекте</a></div>
   `;
-
 
   const panel = new Panel({
     addClass: 'bottom-links'
