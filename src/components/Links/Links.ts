@@ -49,8 +49,8 @@ export function getTopLinksPanel(app: App) {
     titleOff: 'Показать панель изменения в территориальной целостности',
     toggleAction: (status) => {
       if (status) {
-        app.yearsStatPanelControl.show();
         app.yearsStatPanelControl._blocked = false;
+        app.yearsStatPanelControl.show();
       } else {
         app.yearsStatPanelControl.hide();
         app.yearsStatPanelControl._blocked = true;
