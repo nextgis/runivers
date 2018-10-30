@@ -223,7 +223,7 @@ export class App {
       this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
       this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
 
-      // this.webMap.map.addControl(this._bottomLeftLink, 'bottom-left');
+      this.webMap.map.addControl(this._bottomLeftLink, 'bottom-left');
       this.webMap.map.addControl(this._bottomLink, 'bottom-right');
 
       this._headerElement = this._createHeader();

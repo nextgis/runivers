@@ -29,7 +29,7 @@ export function getBottomLinksPanel() {
 export function getBottomLeftLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <a  href="https://www.runivers.ru" class="runiver__logo"></a>
+    <a  href="https://www.runivers.ru/about/" class="resource__link">О проекте</a>
   `;
 
 

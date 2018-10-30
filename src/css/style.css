@@ -172,5 +172,12 @@ body {
   z-index: 0;
 }
 
+.mapboxgl-ctrl-bottom-left .mapboxgl-ctrl.panel.bottom-links {
+  margin: 0;
+}
+
+/* .mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+
+} */
 
 

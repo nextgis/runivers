@@ -1,72 +1,81 @@
 .panel.bottom-links {
-	width: auto;
+  width: auto;
 	background: transparent;
+
 }
 
 .transneft__logo {
-	vertical-align: middle;
-	display: inline-block;
+  vertical-align: middle;
+  display: inline-block;
   background: url(./img/Transneft_logo1.png) no-repeat;
   width: 176px;
   height: 18px;
 }
 
 .resource__link {
-	margin: 0 3px;
+  color: rgba(0, 0, 0, 0.75);
+  padding: 0 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+	margin: 0;
+	text-decoration: none;
+}
+
+.resource__link:hover {
+	text-decoration: underline;
 }
 
 .runiver__logo {
-	vertical-align: middle;
-	display: inline-block;
+  vertical-align: middle;
+  display: inline-block;
   background: url(./img/Runivers-Logo.png) no-repeat;
-	height: 26px;
-	width: 91px;
-	margin-right: 4px;
+  height: 26px;
+  width: 91px;
+  margin-right: 4px;
 }
 
 .social__logo {
-	vertical-align: middle;
-	display: inline-block;
-	height: 18px;
-	width: 18px;
-	margin-left: 3px;
+  vertical-align: middle;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  margin-left: 3px;
 }
 
 .twitter {
-	background: url(./img/twitter.svg) no-repeat;
+  background: url(./img/twitter.svg) no-repeat;
 }
 
 .facebook {
-	background: url(./img/facebook.svg) no-repeat;
+  background: url(./img/facebook.svg) no-repeat;
 }
 
 .livejournal {
-	background: url(./img/livejournal.svg) no-repeat;
+  background: url(./img/livejournal.svg) no-repeat;
 }
 
 .vkontakte {
-	background: url(./img/vk.svg) no-repeat;
+  background: url(./img/vk.svg) no-repeat;
 }
 
 .panel__toggler {
-	opacity: 0.5;
-	display: inline-block;
-	width: 50px;
-	height: 50px;
-	margin-left: 5px;
-	cursor: pointer;
-	&.active {
-		opacity: 0.7;
-	}
-	&:hover {
-		opacity: 1;
-	}
+  opacity: 0.5;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin-left: 5px;
+  cursor: pointer;
+  &.active {
+    opacity: 0.7;
+  }
+  &:hover {
+    opacity: 1;
+  }
 }
 
-.period__toggler{
-	background: url(./img/rulers.png) no-repeat;
+.period__toggler {
+  background: url(./img/rulers.png) no-repeat;
 }
 
-.years__toggler{
-	background: url(./img/years.png) no-repeat;
+.years__toggler {
+  background: url(./img/years.png) no-repeat;
 }
