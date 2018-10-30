@@ -30,11 +30,12 @@
   cursor: pointer;
   padding: 0;
   background: green;
-  width: 15px;
-  height: 15px;
+  width: 23px;
+  height: 23px;
 }
 
 .map-marker__label {
   color: white;
   text-align: center;
+  line-height: 23px;
 }
