@@ -264,7 +264,7 @@ export class App {
 
   _createHeader() {
     const header = document.createElement('div');
-    header.className = 'font-effect-outline app-header';
+    header.className = 'font-effect-shadow-multiple app-header';
     header.innerHTML = `Границы России ${this._minYear}-${this._maxYear} гг.`;
     const mapContainer = this.webMap.map.getContainer();
     mapContainer.appendChild(header);
