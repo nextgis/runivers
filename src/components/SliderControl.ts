@@ -16,6 +16,7 @@ export interface SliderOptions {
   animationDelay: number;
 
   stepReady?(nextValue: number, callback: (value: number) => void, previous?: boolean): void;
+  filterPips?(value, type): -1 | 0 | 1 | 2; // -1 (no pip at all) 0 (no value) 1 (large value) 2 (small value)
 }
 
 const OPTIONS: SliderOptions = {
@@ -25,7 +26,10 @@ const OPTIONS: SliderOptions = {
   step: 1,
   animationStep: 1,
   value: 50,
-  animationDelay: 100
+  animationDelay: 100,
+  filterPips: (value, piptype) => {
+    return piptype === 1 ? 1 : value % 100 ? value % 10 ? -1 : 0 : 1;
+  },
 };
 
 export class SliderControl {
@@ -146,7 +150,11 @@ export class SliderControl {
       step,
       tooltips: [wNumb({ decimals: 0 })],
       start: [this.options.value],
-      pips: { mode: 'count', values: 5 }
+      pips: {
+        mode: 'steps',
+        density: 3,
+        filter: this.options.filterPips
+      }
     });
 
     slider.on('change', (values, handle) => {
