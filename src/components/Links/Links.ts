@@ -6,7 +6,8 @@ import { Toggler } from './Toggler';
 export function getBottomLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <a  href="https://www.runivers.ru" class="runiver__logo"></a>
+    <a href="https://www.runivers.ru" class="runiver__logo"></a>
+    <a href="https://histgeo.ru/laboratory.html" class="laboratory__logo"></a>
     <div class="transneft__logo"></div>
 
     <span class="socialLinks" style="height: 18px;">
@@ -28,10 +29,10 @@ export function getBottomLinksPanel() {
 export function getBottomLeftLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <div><a  href="http://igh.ru" class="resource__link">Лаборатория ИГ ИВИ РАН</a></div>
-    <div><a  href="https://www.runivers.ru/timeline/" class="resource__link">График изменения</a></div>
-    <div><a  href="https://www.runivers.ru/about/" class="resource__link">О проекте</a></div>
+    <div><a href="https://www.runivers.ru/timeline/" class="resource__link">График изменения</a></div>
+    <div><a href="https://www.runivers.ru/about/" class="resource__link">О проекте</a></div>
   `;
+  // <div><a  href="https://histgeo.ru/laboratory.html" class="resource__link">Лаборатория ИГ ИВИ РАН</a></div>
 
   const panel = new Panel({
     addClass: 'bottom-links'
