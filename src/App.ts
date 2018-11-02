@@ -461,13 +461,18 @@ export class App {
     const m = new Marker(el);
     this._markers.push(m);
     m.setLngLat(coordEPSG4326);
+    const date = properties.lwdate.split('-').reverse().join('-');
+    const popupHtml = `
+    <div class="popup__property--center">${date}</div>
+    <div>${properties.eventstart || properties.linecomnt}</div>
+    `;
 
     el.addEventListener('click', (e) => {
       e.stopPropagation();
       this._removePopup();
       this._popup = new Popup()
         .setLngLat(coordEPSG4326)
-        .setHTML((properties.eventstart || properties.linecomnt) + properties.lwdate)
+        .setHTML(popupHtml)
         .addTo(map);
     });
     m.addTo(map);
@@ -641,10 +646,10 @@ export class App {
         propBlock.className = 'popup__propertyblock';
         propBlock.innerHTML = '';
         if (name) {
-          propBlock.innerHTML += `<div class="popup__property-name">${x.name}</div>`;
+          propBlock.innerHTML += `<div class="popup__property--name">${x.name}</div>`;
         }
         propBlock.innerHTML = `
-        <div class="popup__property-value">${prop}</div>
+          <div class="popup__property--value">${prop}</div>
         `;
         block.appendChild(propBlock);
       }

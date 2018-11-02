@@ -12,15 +12,19 @@
   text-align: center;
 }
 
-.popup__property-name {
+.popup__property--name {
   font-size: 0.75rem;
   font-weight: 500;
   margin-bottom: 0.2rem;
   color: #525252;
 }
 
-.popup__property-value {
+.popup__property--value {
   font-size: 1rem;
+}
+
+.popup__property--center {
+  text-align: center;
 }
 
 .map-marker {
