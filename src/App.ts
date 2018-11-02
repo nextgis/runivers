@@ -152,7 +152,7 @@ export class App {
     webMap.create(options).then(() => {
 
       // webMap.addBaseLayer('osm', 'OSM');
-      webMap.addBaseLayer('sputnik', 'QMS', {
+      webMap.addBaseLayer('baselayer', 'QMS', {
         qmsid: 487
       }).then((layer) => {
         webMap.map.showLayer(layer.name);

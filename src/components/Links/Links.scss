@@ -68,8 +68,8 @@
 .panel__toggler {
   opacity: 0.5;
   display: inline-block;
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   margin-left: 5px;
   cursor: pointer;
   &.active {
@@ -86,4 +86,8 @@
 
 .years__toggler {
   background: url(./img/years.png) no-repeat;
+}
+
+.baselayer__toggler {
+  background: url(./img/baselayer.png) no-repeat;
 }

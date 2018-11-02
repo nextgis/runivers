@@ -43,6 +43,21 @@ export function getBottomLeftLinksPanel() {
 
 export function getTopLinksPanel(app: App) {
   const block = document.createElement('div');
+
+  const baselayerToggler = new Toggler({
+    className: 'baselayer__toggler',
+    title: 'Скрыть подложку',
+    titleOff: 'Показать подложку',
+    toggleAction: (status) => {
+      if (status) {
+        app.webMap.map.showLayer('baselayer');
+      } else {
+        app.webMap.map.hideLayer('baselayer');
+      }
+    }
+  });
+  block.appendChild(baselayerToggler.getContainer());
+
   const periodToggler = new Toggler({
     className: 'period__toggler',
     title: 'Скрыть панель правителей',
