@@ -7,18 +7,20 @@
 }
 
 .panel-body__legend--block {
-  margin: 3px 0;
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .panel-body__legend--name {
-  vertical-align: middle;
-  display: inline-block;
   font-size: 1rem;
 }
 
 .panel-body__legend--color {
-  vertical-align: middle;
-  display: inline-block;
-  width: 100%;
+  width: 25px;
   height: 25px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-right: 4px;
 }
