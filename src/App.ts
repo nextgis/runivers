@@ -621,8 +621,9 @@ export class App {
 
   _createPopupContent(props: HistoryLayerProperties): HTMLElement {
     const fields = [
-      { name: 'Fid', field: 'fid' },
-      { name: 'Наименование территории', field: 'name' },
+      // { name: 'Fid', field: 'fid' },
+      { field: 'name' },
+      // { name: 'Наименование территории', field: 'name' },
       // { name: 'Дата возникновения', field: 'lwdate' },
       // { name: 'Дата исчезновения', field: 'updtrl' },
       // { name: 'Комментарий', field: 'linecomnt' },
@@ -630,7 +631,7 @@ export class App {
     return this._createPropBlock(fields, props);
   }
 
-  _createPropBlock(fields: Array<{ name: string, field: string }>, props) {
+  _createPropBlock(fields: Array<{ name?: string, field: string }>, props) {
     const block = document.createElement('div');
 
     fields.forEach((x) => {
@@ -638,8 +639,11 @@ export class App {
       if (prop) {
         const propBlock = document.createElement('div');
         propBlock.className = 'popup__propertyblock';
+        propBlock.innerHTML = '';
+        if (name) {
+          propBlock.innerHTML += `<div class="popup__property-name">${x.name}</div>`;
+        }
         propBlock.innerHTML = `
-        <div class="popup__property-name">${x.name}</div>
         <div class="popup__property-value">${prop}</div>
         `;
         block.appendChild(propBlock);
