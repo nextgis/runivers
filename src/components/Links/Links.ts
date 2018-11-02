@@ -29,13 +29,27 @@ export function getBottomLinksPanel() {
 export function getBottomLeftLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <div><a href="https://www.runivers.ru/timeline/" class="resource__link">График изменения</a></div>
     <div><a href="https://www.runivers.ru/about/" class="resource__link">О проекте</a></div>
   `;
   // <div><a  href="https://histgeo.ru/laboratory.html" class="resource__link">Лаборатория ИГ ИВИ РАН</a></div>
 
   const panel = new Panel({
     addClass: 'bottom-links'
+  });
+  panel.updateBody(block);
+  return panel;
+}
+
+export function getTopLeftLinksPanel() {
+  const block = document.createElement('div');
+  block.innerHTML = `
+    <div>
+      <a href="https://www.runivers.ru/timeline/" class="graph_logo" title="График изменения территории России"></a>
+    </div>
+  `;
+
+  const panel = new Panel({
+    addClass: 'top-links'
   });
   panel.updateBody(block);
   return panel;
@@ -96,7 +110,7 @@ export function getTopLinksPanel(app: App) {
 
 
   const panel = new Panel({
-    addClass: 'bottom-links'
+    addClass: 'top-links'
   });
   panel.updateBody(block);
   return panel;

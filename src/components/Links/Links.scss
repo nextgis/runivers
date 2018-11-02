@@ -1,7 +1,6 @@
-.panel.bottom-links {
+.panel.bottom-links, .panel.top-links {
   width: auto;
 	background: transparent;
-
 }
 
 .transneft__logo {
@@ -39,6 +38,13 @@
   height: 18px;
   width: 63px;
   margin-right: 4px;
+}
+
+.graph_logo {
+	display: inline-block;
+	background: url(./img/graph.png) no-repeat;
+	width: 50px;
+	height: 50px;
 }
 
 .social__logo {
