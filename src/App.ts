@@ -30,6 +30,7 @@ export interface AppOptions {
   version?: string;
   lineColor?: Array<[number, string]>;
   lineColorLegend?: Array<[number, string, string]>;
+  statusAliases?: { [name: string]: string };
 }
 
 export interface HistoryLayerProperties {
@@ -43,6 +44,7 @@ export interface HistoryLayerProperties {
   updtappr: number;
   updtrl: string;
   upperdat: string;
+  Area: number;
 }
 
 export interface LayerMeta {
@@ -93,7 +95,16 @@ export class App {
       [1, '#33b850', 'Территория России, новые территории, территории под протекторатом'],
       [2, '#79d254', 'Аренда, совместное владение, спорная территория'],
       [3, '#a3ada3', 'Утраченная территория'],
-    ]
+    ],
+    statusAliases: {
+      1: 'Территория России',
+      2: 'Территория под протекторатом, в вассальной зависимости или в сфере влияния',
+      3: 'Аренда',
+      4: 'Совместное владение',
+      5: 'Спорная территория',
+      6: 'Новая территория',
+      7: 'Утраченная территория',
+    }
   };
   currentYear: number;
   slider: SliderControl;
@@ -466,8 +477,8 @@ export class App {
     m.setLngLat(coordEPSG4326);
     const date = properties.lwdate.split('-').reverse().join('-');
     const popupHtml = `
-    <div class="popup__property--center">${date}</div>
-    <div>${properties.eventstart || properties.linecomnt}</div>
+      <div class="popup__property--center">${date}</div>
+      <div>${properties.eventstart || properties.linecomnt}</div>
     `;
 
     el.addEventListener('click', (e) => {
@@ -485,7 +496,7 @@ export class App {
     for (const l in this._layersLoaded) {
       if (this._layersLoaded.hasOwnProperty(l)) {
         if (l.indexOf('-bound') !== -1) {
-          this.webMap.map.map.setPaintProperty(l, 'line-color', this._getFillColor({darken: 0.5}));
+          this.webMap.map.map.setPaintProperty(l, 'line-color', this._getFillColor({ darken: 0.5 }));
         } else {
           this.webMap.map.map.setPaintProperty(l, 'fill-color', this._getFillColor());
         }
@@ -497,7 +508,7 @@ export class App {
   _getFillColor(opt: {
     lighten?: number,
     darken?: number
-  } = { }) {
+  } = {}) {
 
     const meta = [
       'match',
@@ -533,7 +544,7 @@ export class App {
         duration: 0
       },
       'line-width': 1,
-      'line-color': this._getFillColor({darken: 0.5}),
+      'line-color': this._getFillColor({ darken: 0.5 }),
     };
     return Promise.all([
       this.webMap.map.addLayer('MVT', { url, id, paint }),
@@ -639,7 +650,7 @@ export class App {
     return this._createPropBlock(fields, props);
   }
 
-  _createPropBlock(fields: Array<{ name?: string, field: string }>, props) {
+  _createPropBlock(fields: Array<{ name?: string, field: string }>, props: HistoryLayerProperties) {
     const block = document.createElement('div');
 
     fields.forEach((x) => {
@@ -654,11 +665,37 @@ export class App {
         propBlock.innerHTML = `
           <div class="popup__property--value">${prop}</div>
         `;
+        if (props.status) {
+          const alias = this.options.statusAliases[props.status];
+          if (alias) {
+            propBlock.innerHTML += `
+              <div class="popup__property--value">${alias}</div>
+            `;
+          }
+          if (props.status > 0 && props.status < 6) {
+            propBlock.innerHTML += `
+              <div class="popup__property--value">${props.lwdate} - ${props.updtrl}</div>
+            `;
+          }
+          if (props.Area) {
+            propBlock.innerHTML += `
+              <div class="popup__property--value">
+                ${this._numberWithSpaces(Math.round(props.Area / 1000000))} км²</sup>
+              </div>
+            `;
+          }
+        }
         block.appendChild(propBlock);
       }
     });
     return block;
   }
+
+  private _numberWithSpaces(x) {
+    const parts = x.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return parts.join('.');
+}
   // endregion
 
   private _addLayerListeners(layerId: string) {

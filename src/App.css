@@ -21,6 +21,7 @@
 
 .popup__property--value {
   font-size: 1rem;
+  line-height: 1.2rem;
 }
 
 .popup__property--center {

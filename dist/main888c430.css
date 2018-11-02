@@ -12,15 +12,20 @@
   text-align: center;
 }
 
-.popup__property-name {
+.popup__property--name {
   font-size: 0.75rem;
   font-weight: 500;
   margin-bottom: 0.2rem;
   color: #525252;
 }
 
-.popup__property-value {
+.popup__property--value {
   font-size: 1rem;
+  line-height: 1.2rem;
+}
+
+.popup__property--center {
+  text-align: center;
 }
 
 .map-marker {
@@ -198,7 +203,7 @@
 .state-switcher__flow small {
   font-size: 0.6rem;
 }
-.panel.bottom-links {
+.panel.bottom-links, .panel.top-links {
   width: auto;
   background: transparent; }
 
@@ -230,9 +235,16 @@
   vertical-align: middle;
   display: inline-block;
   background: url(./images/Runivers-Logo.png) no-repeat;
-  height: 26px;
-  width: 91px;
+  height: 18px;
+  width: 63px;
   margin-right: 4px; }
+
+.graph_logo {
+  display: inline-block;
+  background: url(./images/graph.png) no-repeat;
+  width: 50px;
+  height: 50px;
+  opacity: .8; }
 
 .social__logo {
   vertical-align: middle;
@@ -256,8 +268,8 @@
 .panel__toggler {
   opacity: 0.5;
   display: inline-block;
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   margin-left: 5px;
   cursor: pointer; }
   .panel__toggler.active {
@@ -270,6 +282,9 @@
 
 .years__toggler {
   background: url(./images/years.png) no-repeat; }
+
+.baselayer__toggler {
+  background: url(./images/baselayer.png) no-repeat; }
 .panel.legend-panel {
   width: 200px;
 }
@@ -279,20 +294,22 @@
 }
 
 .panel-body__legend--block {
-  margin: 3px 0;
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .panel-body__legend--name {
-  vertical-align: middle;
-  display: inline-block;
   font-size: 1rem;
 }
 
 .panel-body__legend--color {
-  vertical-align: middle;
-  display: inline-block;
-  width: 100%;
+  width: 25px;
   height: 25px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-right: 4px;
 }
 #map {
   position: absolute;
