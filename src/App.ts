@@ -476,20 +476,20 @@ export class App {
     const m = new Marker(el);
     this._markers.push(m);
     m.setLngLat(coordEPSG4326);
-    const date = properties.lwdate.split('-').reverse().join('-');
-    const popupHtml = `
-      <div class="popup__property--center">${date}</div>
-      <div>${properties.eventstart || properties.linecomnt}</div>
-    `;
+    // const date = properties.lwdate.split('-').reverse().join('-');
+    // const popupHtml = `
+    //   <div class="popup__property--center">${date}</div>
+    //   <div>${properties.eventstart || properties.linecomnt}</div>
+    // `;
 
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this._removePopup();
-      this._popup = new Popup()
-        .setLngLat(coordEPSG4326)
-        .setHTML(popupHtml)
-        .addTo(map);
-    });
+    // el.addEventListener('click', (e) => {
+    //   e.stopPropagation();
+    //   this._removePopup();
+    //   this._popup = new Popup()
+    //     .setLngLat(coordEPSG4326)
+    //     .setHTML(popupHtml)
+    //     .addTo(map);
+    // });
     m.addTo(map);
   }
 
@@ -634,8 +634,10 @@ export class App {
   _processPointsMeta(pointsMeta): PointMeta[] {
     return pointsMeta.map(({ resource }) => {
       const name = resource.display_name;
-      const [year, month, day] = name.match('(\\d{4})-(\\d{2})-(\\d{2})*$').slice(1).map((x) => Number(x));
-      return { name, year, month, day, id: resource.id };
+      // const [year, month, day] = name.match('(\\d{4})-(\\d{2})-(\\d{2})*$').slice(1).map((x) => Number(x));
+      // return { name, year, month, day, id: resource.id };
+      const [year] = name.match('(\\d{4})*$').slice(1).map((x) => Number(x));
+      return { name, year, id: resource.id };
     });
   }
 
@@ -696,7 +698,7 @@ export class App {
     const parts = x.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     return parts.join('.');
-}
+  }
   // endregion
 
   private _addLayerListeners(layerId: string) {
