@@ -2,7 +2,7 @@
  * This node script allow to generate actual data for layer from http://213.248.47.89
  */
 const fs = require('fs');
-const { NgwConnector } = require('../nextgisweb_frontend/packages/ngw-connector');
+const NgwConnector = require('../nextgisweb_frontend/packages/ngw-connector');
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 const baseUrl = config.baseUrl;
 

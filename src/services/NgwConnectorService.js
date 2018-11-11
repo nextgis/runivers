@@ -1,4 +1,4 @@
-import { NgwConnector } from '../../nextgisweb_frontend/packages/ngw-connector';
+import NgwConnector from '../../nextgisweb_frontend/packages/ngw-connector';
 import config from '../../config.json';
 
 var ngwUrl = config.baseUrl;
