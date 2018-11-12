@@ -77,7 +77,9 @@ export class YearsStatPanelControl extends Panel {
     if (descrLong) {
 
       const template = document.createElement('div');
-      template.innerHTML = `<div class="panel-body__period--description">${descrLong}</div>`;
+      template.innerHTML = `
+        <div class="panel-body__period--description">${descrLong}</div>
+      `;
       element.appendChild(this.createControlButton(() => this.openDialog({ template })));
 
     }
@@ -122,10 +124,11 @@ export class YearsStatPanelControl extends Panel {
   }
 
   private _createDescriptionBlock(yearStat: YearStat): HTMLElement {
+    const element = document.createElement('div');
+    element.className = 'panel-body__yearstat--description';
+    element.innerHTML = `<div class="panel-body__period--description">${yearStat.year} г.</div>`;
     if (yearStat.description_short) {
-      const element = document.createElement('div');
-      element.className = 'panel-body__yearstat--description';
-      element.innerHTML = yearStat.description_short;
+      element.innerHTML += `<div class="panel-body__period--description">${yearStat.description_short}</div>`;
       return element;
     }
   }
