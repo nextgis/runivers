@@ -654,6 +654,11 @@ export class App {
     return this._createPropBlock(fields, props);
   }
 
+  _formatDateStr(str: string): string {
+    const formated = str.split('-').reverse().join('.');
+    return formated;
+  }
+
   _createPropBlock(fields: Array<{ name?: string, field: string }>, props: HistoryLayerProperties) {
     const block = document.createElement('div');
 
@@ -678,7 +683,9 @@ export class App {
           }
           if (props.status > 0 && props.status < 6) {
             propBlock.innerHTML += `
-              <div class="popup__property--value">${props.lwdate} - ${props.updtrl}</div>
+              <div class="popup__property--value">
+                ${this._formatDateStr(props.lwdate)} - ${this._formatDateStr(props.updtrl)}
+              </div>
             `;
           }
           if (props.Area) {
