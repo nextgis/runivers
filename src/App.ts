@@ -209,9 +209,9 @@ export class App {
   updateDataByYear(year: number) {
     const pointId = this._getPointIdByYear(year);
     this.updatePoint(pointId);
-
-    this._updatePeriodBlockByYear(year);
-    this._updateYearStatBlockByYear(year);
+    const areaStat = this._findAreaStatByYear(year);
+    this._updatePeriodBlockByYear(year, areaStat);
+    this._updateYearStatBlockByYear(year, areaStat);
   }
 
   updateLayer(layerId: string) {
@@ -305,9 +305,9 @@ export class App {
     return header;
   }
 
-  _updatePeriodBlockByYear(year) {
+  _updatePeriodBlockByYear(year: number, areaStat: AreaStat) {
     const period = this._findPeriodByYear(year);
-    this.periodsPanelControl.updatePeriod(period);
+    this.periodsPanelControl.updatePeriod(period, areaStat);
   }
 
   _findPeriodByYear(year) {
@@ -317,9 +317,8 @@ export class App {
     return period;
   }
 
-  _updateYearStatBlockByYear(year) {
+  _updateYearStatBlockByYear(year: number, areaStat: AreaStat) {
     const yearStat = this._findYearStatsByYear(year);
-    const areaStat = this._findAreaStatByYear(year);
     this.yearsStatPanelControl.updateYearStats(yearStat, areaStat);
   }
 

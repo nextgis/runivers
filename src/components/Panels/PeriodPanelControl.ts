@@ -1,5 +1,7 @@
 import { Panel } from './PanelControl';
 import './PeriodPanelControl.css';
+import { AreaStat } from '../../App';
+import { formatArea } from '../../utils/utils';
 
 /**
  * Information about the ruler in the time interval
@@ -28,12 +30,12 @@ export class PeriodPanelControl extends Panel {
     this.period = null;
   }
 
-  updatePeriod(period: Period) {
+  updatePeriod(period: Period, areaStat: AreaStat) {
     const exist = this.period;
     this.closeDialog();
     if (period) {
       if (exist !== period) {
-        this.updateBody(this._createPeriodBody(period));
+        this.updateBody(this._createPeriodBody(period, areaStat));
         this.period = period;
       }
     } else {
@@ -42,7 +44,7 @@ export class PeriodPanelControl extends Panel {
     }
   }
 
-  private _createPeriodBody(period: Period) {
+  private _createPeriodBody(period: Period, areaStat: AreaStat) {
     const element = document.createElement('div');
     element.className = 'panel-body__period';
 
@@ -58,6 +60,11 @@ export class PeriodPanelControl extends Panel {
       ${imageHtml ? imageHtml : ''}
       <div class="panel-body__period--name">${period.name}</div>
       <div class="panel-body__period--description">${period.description}</div>
+      <div class="panel-body__period--description">
+        Общая площадь - <span class="panel-body__period--area">
+          ${formatArea(areaStat.area)}
+        </span>
+      </div>
       <div class="panel-body__period--period">${period.years_from} – ${period.years_to} гг.</div>
     `;
     element.appendChild(periodElement);
