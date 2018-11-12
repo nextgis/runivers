@@ -9,13 +9,14 @@ import './YearsStatPanelControl.css';
  * @prop {string} period
  */
 export interface YearStat {
-  precision: '0' | '1' | 'П' | 'Н';
-  comment?: string;
-  fid: number;
-  ruler?: string;
-  date_from: string;
-  date_to?: string;
-  reason?: string;
+  // precision: '0' | '1' | 'П' | 'Н';
+  // comment?: string;
+  // fid: number;
+  // ruler?: string;
+  // date_from: string;
+  // date_to?: string;
+  // reason?: string;
+  year: number;
   description_short?: string;
   description_long?: string;
 }

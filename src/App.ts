@@ -323,7 +323,7 @@ export class App {
     year = Number(year);
     const yearsStat = this.options.yearsStat || [];
     const yearStat = yearsStat.filter((x) => {
-      const from = this._findYearInDateStr(x.date_from);
+      // const from = this._findYearInDateStr(x.date_from);
       // let included = false;
       // if (x.date_to) {
       //   const to = this._findYearInDateStr(x.date_to);
@@ -332,7 +332,8 @@ export class App {
       //   included = year === from;
       // }
       // return included;
-      return year === from;
+      // return year === from;
+      return year === x.year;
     });
     // console.log(yearStat);
     return yearStat;
