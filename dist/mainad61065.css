@@ -162,6 +162,10 @@
   padding: 0.2rem;
 }
 
+.panel-body__period--area {
+  white-space: nowrap;
+}
+
 .panel-body__period--image {
   width: 100%;
 }
