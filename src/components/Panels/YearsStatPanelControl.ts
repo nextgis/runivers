@@ -1,5 +1,7 @@
 import { Panel } from './PanelControl';
 import './YearsStatPanelControl.css';
+import { AreaStat } from '../../App';
+import { formatArea } from '../../utils/utils';
 
 /**
  * @typedef {Object} YearStat - information about changes in territorial integrity
@@ -28,14 +30,16 @@ export class YearsStatPanelControl extends Panel {
   yearStat: YearStat;
 
   yearStats: YearStat[];
+  areaStat: AreaStat;
 
   constructor(options?) {
     super(Object.assign({}, OPTIONS, options));
 
   }
 
-  updateYearStats(yearStats: YearStat[]) {
+  updateYearStats(yearStats: YearStat[], areaStat?: AreaStat) {
     this.yearStats = yearStats;
+    this.areaStat = areaStat;
     this.updateYearStat(this.yearStats[0]);
   }
 
@@ -57,16 +61,24 @@ export class YearsStatPanelControl extends Panel {
   private _createPeriodBody(yearStat: YearStat) {
     const element = document.createElement('div');
     element.className = 'panel-body__yearstat';
-    // const gain = yearStat.territories_gained;
-    // if (gain) {
-    //   element.appendChild(this._createGainBlock(gain));
-    // }
-    // const lost = yearStat.territories_lost;
-    // if (lost) {
-    //   element.appendChild(this._createGainBlock(lost, true));
-    // }
-    if (this.yearStats.length > 1) {
-      element.appendChild(this._createStateSwitcher());
+
+    const yearBlock = document.createElement('div');
+    // yearBlock.className = 'panel-body__period--description';
+    yearBlock.innerHTML = `${yearStat.year} г.`;
+    element.appendChild(yearBlock);
+
+    if (this.areaStat) {
+      const gain = this.areaStat.plus;
+      if (gain) {
+        element.appendChild(this._createGainBlock(gain));
+      }
+      const lost = this.areaStat.minus;
+      if (lost) {
+        element.appendChild(this._createGainBlock(lost, true));
+      }
+      if (this.yearStats.length > 1) {
+        element.appendChild(this._createStateSwitcher());
+      }
     }
 
     const descrBlock = this._createDescriptionBlock(yearStat);
@@ -125,19 +137,17 @@ export class YearsStatPanelControl extends Panel {
 
   private _createDescriptionBlock(yearStat: YearStat): HTMLElement {
     const element = document.createElement('div');
-    element.className = 'panel-body__yearstat--description';
-    element.innerHTML = `<div class="panel-body__period--description">${yearStat.year} г.</div>`;
     if (yearStat.description_short) {
-      element.innerHTML += `<div class="panel-body__period--description">${yearStat.description_short}</div>`;
+      element.innerHTML = `<div class="panel-body__period--description">${yearStat.description_short}</div>`;
       return element;
     }
   }
 
-  // private _createGainBlock(count, isLost?: boolean) {
-  //   const element = document.createElement('div');
-  //   element.className = 'panel-body__yearstat--gain ' + (isLost ? 'lost' :  'gained');
-  //   element.innerHTML = (isLost ? '-' : '+') + count + ' кв.км.';
-  //   return element;
-  // }
+  private _createGainBlock(count, isLost?: boolean) {
+    const element = document.createElement('div');
+    element.className = 'panel-body__yearstat--gain ' + (isLost ? 'lost' : 'gained');
+    element.innerHTML = (isLost ? '-' : '+') + formatArea(count);
+    return element;
+  }
 
 }

@@ -17,6 +17,14 @@ import { Feature, MultiPoint, Point } from 'geojson';
 import { getBottomLinksPanel, getTopLinksPanel, getBottomLeftLinksPanel, getTopLeftLinksPanel } from './components/Links/Links';
 import { Panel } from './components/Panels/PanelControl';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
+import { formatArea } from './utils/utils';
+
+export interface AreaStat {
+  year: number;
+  area: number;
+  plus?: number;
+  minus?: number;
+}
 
 export interface AppOptions {
   baseUrl?: string;
@@ -27,6 +35,7 @@ export interface AppOptions {
   animationDelay?: number;
   periods?: Period[];
   yearsStat?: YearStat[];
+  areaStat?: AreaStat[];
   version?: string;
   lineColor?: Array<[number, string]>;
   lineColorLegend?: Array<[number, string, string]>;
@@ -310,13 +319,18 @@ export class App {
 
   _updateYearStatBlockByYear(year) {
     const yearStat = this._findYearStatsByYear(year);
-    this.yearsStatPanelControl.updateYearStats(yearStat);
+    const areaStat = this._findAreaStatByYear(year);
+    this.yearsStatPanelControl.updateYearStats(yearStat, areaStat);
   }
 
   _findYearInDateStr(dateStr: string): number {
     const datePattern = /(\d{4})/;
     const date = datePattern.exec(dateStr);
     return Number(date[0]);
+  }
+
+  _findAreaStatByYear(year: number): AreaStat {
+    return this.options.areaStat.find((x) => x.year === year);
   }
 
   _findYearStatsByYear(year: number) {
@@ -691,7 +705,7 @@ export class App {
           if (props.Area) {
             propBlock.innerHTML += `
               <div class="popup__property--value">
-                ${this._numberWithSpaces(Math.round(props.Area / 1000000))} км²</sup>
+                ${formatArea(props.Area / 1000000)}
               </div>
             `;
           }
@@ -700,12 +714,6 @@ export class App {
       }
     });
     return block;
-  }
-
-  private _numberWithSpaces(x) {
-    const parts = x.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    return parts.join('.');
   }
   // endregion
 

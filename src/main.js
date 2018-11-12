@@ -4,6 +4,7 @@ import config from '../config.json';
 import { version } from '../package.json';
 import periods from './data/periods.csv';
 import yearsStat from './data/years_stat.csv';
+import areaStat from './data/area_stat.csv';
 
 import './css/style.css';
 
@@ -18,6 +19,7 @@ const app = new App({
   animationStep: 1,
   periods: periods,
   yearsStat: yearsStat,
+  areaStat: areaStat,
   version: version
 });
 
