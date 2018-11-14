@@ -140,7 +140,7 @@ const aboutShort = `
 <SPAN LANG="ru-RU"><a href="https://www.runivers.ru" target="_blank">«Руниверс»</a>
 совместно с <a href="https://histgeo.ru/laboratory.html" target="_blank">Лабораторией исторической
 геоинформатики</a> Института всеобщей
-истории РАН и компанией <a href="http://nextgis.ru/" target="_blank">«НекстГИС»</a>
+истории РАН и компанией <a href="http://nextgis.ru/" target="_blank">NextGIS</a>
 представляет проект «Границы России
 1462–2018 гг.».</SPAN></P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
@@ -262,10 +262,10 @@ const aboutShort = `
 динамической карты. С точки зрения
 технической реализации проекта эта
 концепция является оригинальным
-решением, разработанным в Лаборатории
-исторической геоинформатики Института
+решением, разработанным в <a href="https://histgeo.ru/laboratory.html" target="_blank">Лабораторией исторической
+геоинформатики</a> Института
 всеобщей истории РАН совместно с
-«НекстГИС».</SPAN></P>
+<a href="http://nextgis.ru/" target="_blank">NextGIS</a>.</SPAN></P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
 <SPAN LANG="ru-RU">Прикладное
 значение данного проекта для использования
