@@ -1,6 +1,6 @@
 import './PanelControl.css';
-import { WebMap } from '../../../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
-import { Dialog, DialogAdapterOptions } from '../../../nextgisweb_frontend/packages/dialog/lib/dialog';
+import { WebMap } from '@nextgis/webmap';
+import { Dialog, DialogAdapterOptions } from '@nextgis/dialog';
 import { EventEmitter } from 'events';
 
 export interface PanelOptions {

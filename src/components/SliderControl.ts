@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import './SliderControl.css';
-import { WebMap } from '../../nextgisweb_frontend/packages/webmap/lib/webmap';
+import { WebMap } from '@nextgis/webmap';
 
 import noUiSlider from 'nouislider';
 import wNumb from 'wnumb';

@@ -10,7 +10,6 @@ const OPTIONS: LegendPanelOptions = {
   addClass: 'legend-panel'
 };
 
-
 export class LegendPanelControl extends Panel {
 
   constructor(public options: LegendPanelOptions) {
@@ -66,11 +65,6 @@ export class LegendPanelControl extends Panel {
       nameBlock.innerHTML = `${text}`;
       block.appendChild(nameBlock);
     }
-
-
-
-
-
     return block;
   }
 
