@@ -19,11 +19,11 @@ import { EventEmitter } from 'events';
 import Color from 'color';
 
 import proj4 from 'proj4';
-import { Feature, MultiPoint, Point } from 'geojson';
+import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
 import { getBottomLinksPanel, getTopLinksPanel, getBottomLeftLinksPanel, getTopLeftLinksPanel } from './components/Links/Links';
 import { Panel } from './components/Panels/PanelControl';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
-import { formatArea } from './utils/utils';
+import { formatArea, onlyUnique } from './utils/utils';
 
 export interface AreaStat {
   year: number;
@@ -90,6 +90,7 @@ export interface PointProperties {
   linecomnt: string; // Передача СССР Кенигсберга,
   updtappr: any;
   name: any;
+  numb?: number;
 }
 
 export class App {
@@ -466,29 +467,31 @@ export class App {
   // TODO: Mapboxgl specific method
   _addPoint(id: string) {
 
-    getPointGeojson(id).then((data) => {
-      const many = data.features.length > 1;
+    getPointGeojson(id).then((data: FeatureCollection<MultiPoint, PointProperties>) => {
+      const many = data.features.length > 1 &&
+      data.features.map((x) => x.properties.numb).filter(onlyUnique).length > 0;
       data.features.forEach((marker: Feature<Point | MultiPoint, PointProperties>, i) => {
         const type = marker && marker.geometry && marker.geometry.type;
         if (type === 'MultiPoint') {
           const coordinates = marker.geometry.coordinates as Array<[number, number]>;
           coordinates.forEach((x) => {
-            this._addMarkerToMap(x, marker.properties, many && i);
+            this._addMarkerToMap(x, marker.properties, many);
           });
         } else if (type === 'Point') {
-          this._addMarkerToMap(marker.geometry.coordinates as [number, number], marker.properties, many && i);
+          this._addMarkerToMap(marker.geometry.coordinates as [number, number], marker.properties, many);
         }
       });
     });
   }
 
   // TODO: Mapboxgl specific method
-  _addMarkerToMap(coordinates: [number, number], properties: PointProperties, id: string) {
+  _addMarkerToMap(coordinates: [number, number], properties: PointProperties, many: boolean) {
     const map: Map = this.webMap.map.map;
     // create a DOM element for the marker
     const el = document.createElement('div');
     el.className = 'map-marker';
-    el.innerHTML = typeof id !== 'boolean' ? `<div class="map-marker__label">${id + 1}</div>` : '';
+    el.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
+    // el.innerHTML = typeof id !== 'boolean' ? `<div class="map-marker__label">${id + 1}</div>` : '';
     // el.style.backgroundImage = 'url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
 
     const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);

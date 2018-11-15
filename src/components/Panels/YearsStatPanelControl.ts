@@ -21,6 +21,8 @@ export interface YearStat {
   year: number;
   description_short?: string;
   description_long?: string;
+  numb?: number;
+  count?: number;
 }
 
 const OPTIONS = { headerText: 'Изменения в территориальной целостности' };
@@ -102,7 +104,8 @@ export class YearsStatPanelControl extends Panel {
   private _createStateSwitcher(): Node {
     const block = document.createElement('div');
     block.className = 'state-switcher';
-    const index = this.yearStats.indexOf(this.yearStat);
+    const yearStat = this.yearStat;
+    const index = this.yearStats.indexOf(yearStat);
     const isFirst = index === 0;
     const length = this.yearStats.length;
     const isLast = index === length - 1;
@@ -127,7 +130,7 @@ export class YearsStatPanelControl extends Panel {
 
     const flowCounter = document.createElement('div');
     flowCounter.className = 'state-switcher__flow state-switcher__flow--counter';
-    flowCounter.innerHTML = `<b>${index + 1}</b> <small>/ ${length}</small>`;
+    flowCounter.innerHTML = `<b>${yearStat.numb}</b> <small>/ ${yearStat.count}</small>`;
     block.appendChild(flowCounter);
 
     block.appendChild(createDirectionFlow(false, !isLast));
