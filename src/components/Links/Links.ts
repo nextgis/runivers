@@ -2,7 +2,7 @@ import './Links.scss';
 import { Panel } from '../Panels/PanelControl';
 import { App } from '../../App';
 import { Toggler } from './Toggler';
-import { Dialog, DialogAdapterOptions } from '@nextgis/dialog';
+import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 
 export function getBottomLinksPanel() {
   const block = document.createElement('div');

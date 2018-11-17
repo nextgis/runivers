@@ -4,9 +4,9 @@ import './App.css';
 // import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/mapbox-gl-adapter';
 // import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
 
-import { WebMap } from '@nextgis/webmap';
-import { MapboxglAdapter } from '@nextgis/mapbox-gl-adapter';
-import { QmsKit } from '@nextgis/qms-kit';
+import WebMap from '@nextgis/webmap';
+import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
+import QmsKit from '@nextgis/qms-kit';
 
 import { SliderControl } from './components/SliderControl';
 import { Popup, Marker, Map } from 'mapbox-gl';
