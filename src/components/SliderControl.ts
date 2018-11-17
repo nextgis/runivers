@@ -259,14 +259,18 @@ export class SliderControl {
 
   _startAnimation() {
     if (this._animationStatus) {
+      const timerStart = new Date().getTime();
       this._stepReady((step: number) => {
         const isReady = typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
         if (isReady) {
+          const stepDelay = new Date().getTime() - timerStart;
+          let delay = this.options.animationDelay - stepDelay;
+          delay = delay >= 0 ? delay : 0;
           // this._nextStepTimeoutId = setTimeout(() => {
           setTimeout(() => {
             this._nextStep(step);
             this._startAnimation();
-          }, this.options.animationDelay);
+          }, delay);
         } else {
           this.stopAnimation();
         }
