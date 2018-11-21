@@ -1,6 +1,6 @@
 {
   "name": "russia-history",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "",
   "main": "src/app.js",
   "scripts": {
@@ -15,11 +15,11 @@
   "license": "ISC",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
-    "@nextgis/dialog": "^0.5.0",
-    "@nextgis/mapboxgl-map-adapter": "^0.5.1",
-    "@nextgis/ngw-connector": "^0.5.0",
-    "@nextgis/qms-kit": "^0.5.1",
-    "@nextgis/webmap": "^0.5.1",
+    "@nextgis/dialog": "^0.6.3",
+    "@nextgis/mapboxgl-map-adapter": "^0.6.3",
+    "@nextgis/ngw-connector": "^0.6.3",
+    "@nextgis/qms-kit": "^0.6.3",
+    "@nextgis/webmap": "^0.6.3",
     "@types/node": "^10.12.9",
     "color": "^3.1.0",
     "dialog-polyfill": "^0.4.10",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.4",
-    "@types/mapbox-gl": "^0.49.1",
+    "@types/mapbox-gl": "^0.51.0",
     "autoprefixer": "^9.3.1",
     "babel-loader": "^8.0.4",
     "compression-webpack-plugin": "^2.0.0",
@@ -55,7 +55,7 @@
     "tslint-loader": "^3.6.0",
     "typescript": "^3.1.6",
     "url-loader": "^1.1.2",
-    "webpack": "^4.25.1",
+    "webpack": "^4.26.0",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
   }

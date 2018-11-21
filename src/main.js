@@ -15,7 +15,7 @@ const app = new App({
   target: 'map',
   fromYear: 1462,
   currentYear: 1300,
-  animationDelay: 1000,
+  animationDelay: 100,
   animationStep: 1,
   periods: periods,
   yearsStat: yearsStat,

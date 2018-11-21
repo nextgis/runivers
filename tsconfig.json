@@ -15,8 +15,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "allowJs": true,
-    "noUnusedLocals": true,
-    "typeRoots": ["node_modules/@types", "./custom_typings"],
+    "noUnusedLocals": true
   },
   "include": [
     "src/**/*.ts",
