@@ -181,23 +181,23 @@ export class App {
     webMap.create(options).then(() => {
 
       // webMap.addBaseLayer('osm', 'OSM');
-      webMap.addBaseLayer('baselayer', 'QMS', {
+      webMap.addBaseLayer('QMS', {
         qmsid: 487
       }).then((layer) => {
-        webMap.map.showLayer(layer.name);
+        webMap.showLayer(layer.name);
       });
 
-      webMap.map.addControl('ZOOM', 'top-left');
-      webMap.map.addControl(this.legendPanel, 'top-left');
+      webMap.addControl('ZOOM', 'top-left');
+      webMap.addControl(this.legendPanel, 'top-left');
 
-      webMap.map.addControl('ATTRIBUTION', 'bottom-left', {
+      webMap.addControl('ATTRIBUTION', 'bottom-left', {
         customAttribution: [
           '<a href="http://nextgis.ru" target="_blank">©NextGIS</a>',
           // '<a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>',
         ]
       });
 
-      webMap.map.emitter.on('data-loaded', (data) => this._onData(data));
+      webMap.mapAdapter.emitter.on('data-loaded', (data) => this._onData(data));
 
     });
 
@@ -255,18 +255,18 @@ export class App {
       this._topLink = getTopLinksPanel(this);
       this._topLeftLink = getTopLeftLinksPanel();
 
-      this.webMap.map.addControl(this._topLink, 'top-right');
-      this.webMap.map.addControl(this._topLeftLink, 'top-left');
+      this.webMap.addControl(this._topLink, 'top-right');
+      this.webMap.addControl(this._topLeftLink, 'top-left');
 
-      this.webMap.map.addControl(this.periodsPanelControl, 'top-right');
-      this.webMap.map.addControl(this.yearsStatPanelControl, 'top-right');
+      this.webMap.addControl(this.periodsPanelControl, 'top-right');
+      this.webMap.addControl(this.yearsStatPanelControl, 'top-right');
 
-      this.webMap.map.addControl(this._bottomLeftLink, 'bottom-left');
-      this.webMap.map.addControl(this._bottomLink, 'bottom-right');
+      this.webMap.addControl(this._bottomLeftLink, 'bottom-left');
+      this.webMap.addControl(this._bottomLink, 'bottom-right');
 
       this._headerElement = this._createHeader();
 
-      this.webMap.map.onMapLoad(() => {
+      this.webMap.mapAdapter.onMapLoad(() => {
         this.updateByYear(this.currentYear);
       });
       this.emitter.emit('build');
@@ -297,7 +297,7 @@ export class App {
       }
     });
 
-    const container = this.webMap.map.getContainer();
+    const container = this.webMap.mapAdapter.getContainer();
     container.appendChild(slider.onAdd(this.webMap));
 
     return slider;
@@ -307,7 +307,7 @@ export class App {
     const header = document.createElement('div');
     header.className = 'font-effect-shadow-multiple app-header';
     header.innerHTML = `Границы России ${this._minYear}-${this._maxYear} гг.`;
-    const mapContainer = this.webMap.map.getContainer();
+    const mapContainer = this.webMap.mapAdapter.getContainer();
     mapContainer.appendChild(header);
     return header;
   }
@@ -427,11 +427,11 @@ export class App {
   }
 
   _hideNotCurrentLayers() {
-    const layers = this.webMap.map.getLayers();
+    const layers = this.webMap.getLayers();
     layers.forEach((l) => {
       if (!this.webMap.isBaseLayer(l)) {
         const isSkipLayer = l === this.currentLayerId || l === this.currentLayerId + '-bound';
-        if (!isSkipLayer && this.webMap.map.isLayerOnTheMap(l)) {
+        if (!isSkipLayer && this.webMap.isLayerOnTheMap(l)) {
           this._hideLayer(l);
         }
       }
@@ -444,11 +444,11 @@ export class App {
 
   _showLayer(id) {
     const toggle = () => {
-      this.webMap.map.toggleLayer(id, true);
-      this.webMap.map.toggleLayer(id + '-bound', true);
+      this.webMap.toggleLayer(id, true);
+      this.webMap.toggleLayer(id + '-bound', true);
     };
 
-    const exist = this.webMap.map.getLayer(id);
+    const exist = this.webMap.getLayer(id);
     if (!exist) {
       const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
       this._addLayer(url, id).then(() => {
@@ -460,8 +460,8 @@ export class App {
   }
 
   _setLayerOpacity(id: string, value: number) {
-    this.webMap.map.setLayerOpacity(id, value);
-    this.webMap.map.setLayerOpacity(id + '-bound', value);
+    this.webMap.setLayerOpacity(id, value);
+    this.webMap.setLayerOpacity(id + '-bound', value);
   }
 
   // TODO: Mapboxgl specific method
@@ -486,7 +486,7 @@ export class App {
 
   // TODO: Mapboxgl specific method
   _addMarkerToMap(coordinates: [number, number], properties: PointProperties, many: boolean) {
-    const map: Map = this.webMap.map.map;
+    const map: Map = this.webMap.mapAdapter.map;
     // create a DOM element for the marker
     const el = document.createElement('div');
     el.className = 'map-marker';
@@ -520,9 +520,9 @@ export class App {
     for (const l in this._layersLoaded) {
       if (this._layersLoaded.hasOwnProperty(l)) {
         if (l.indexOf('-bound') !== -1) {
-          this.webMap.map.map.setPaintProperty(l, 'line-color', this._getFillColor({ darken: 0.5 }));
+          this.webMap.mapAdapter.map.setPaintProperty(l, 'line-color', this._getFillColor({ darken: 0.5 }));
         } else {
-          this.webMap.map.map.setPaintProperty(l, 'fill-color', this._getFillColor());
+          this.webMap.mapAdapter.map.setPaintProperty(l, 'fill-color', this._getFillColor());
         }
       }
 
@@ -571,8 +571,8 @@ export class App {
       'line-color': this._getFillColor({ darken: 0.5 }),
     };
     return Promise.all([
-      this.webMap.map.addLayer('MVT', { url, id, paint }),
-      this.webMap.map.addLayer('MVT', {
+      this.webMap.addLayer('MVT', { url, id, paint }),
+      this.webMap.addLayer('MVT', {
         url,
         'id': (id + '-bound'),
         'paint': paintLine,
@@ -589,8 +589,8 @@ export class App {
       this._showLayer(id);
       this._showLayer(id + '-bound');
     } else {
-      this.webMap.map.removeLayer(id);
-      this.webMap.map.removeLayer(id + '-bound');
+      this.webMap.removeLayer(id);
+      this.webMap.removeLayer(id + '-bound');
     }
 
   }
@@ -726,7 +726,7 @@ export class App {
   // endregion
 
   private _addLayerListeners(layerId: string) {
-    const map = this.webMap.map.map;
+    const map = this.webMap.mapAdapter.map;
 
     map.on('click', layerId, (e) => {
       const point = e.point;
@@ -771,7 +771,7 @@ export class App {
   }
 
   private _removeLayerListeners(layerId: string) {
-    const map = this.webMap.map.map;
+    const map = this.webMap.mapAdapter.map;
     // map.off('click', layerId);
 
     // Change the cursor to a pointer when the mouse is over the places layer.

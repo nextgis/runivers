@@ -1,21 +1,32 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "allowJs": true,
+    /* Basic Options */
+    "target": "es5", /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
+    "module": "es2015", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
+    "declaration": false, /* Generates corresponding '.d.ts' file. */
+    /* "declarationDir": "lib", */
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
     "lib": [
       "es6",
       "dom"
     ],
-    "module": "es2015",
-    "moduleResolution": "node",
-    "strict": false,
-    "importHelpers": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
+    /* Strict Type-Checking Options */
+    "strict": false, /* Enable all strict type-checking options. */
+    /* Module Resolution Options */
+    "esModuleInterop": true, /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
     "sourceMap": true,
-    "allowJs": true,
-    "noUnusedLocals": true
+    "noImplicitReturns": false,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@nextgis/*": [
+        "./nextgisweb_frontend/packages/*/src/"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts",

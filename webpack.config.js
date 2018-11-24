@@ -1,7 +1,9 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-const CompressionPlugin = require('compression-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { getAliases } = require('./nextgisweb_frontend/build/aliases');
+
+const alias = getAliases();
 
 module.exports = (env, argv) => {
 
@@ -25,6 +27,7 @@ module.exports = (env, argv) => {
 
     resolve: {
       extensions: ['.js', '.ts', '.json'],
+      alias
     },
 
     module: {
@@ -143,10 +146,6 @@ module.exports = (env, argv) => {
         },
       },
     },
-  }
-
-  if (isProd) {
-    config.plugins.push(new CompressionPlugin());
   }
 
   return config;

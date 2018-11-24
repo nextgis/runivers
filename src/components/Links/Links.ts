@@ -70,9 +70,9 @@ export function getTopLinksPanel(app: App) {
     titleOff: 'Показать подложку',
     toggleAction: (status) => {
       if (status) {
-        app.webMap.map.showLayer('baselayer');
+        app.webMap.showLayer('baselayer');
       } else {
-        app.webMap.map.hideLayer('baselayer');
+        app.webMap.hideLayer('baselayer');
       }
     }
   });
