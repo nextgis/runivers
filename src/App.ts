@@ -361,10 +361,10 @@ export class App {
   // endregion
 
   // region Map control
-  _switchLayer(fromId: string, toId: string) {
+  async _switchLayer(fromId: string, toId: string) {
     this._removePopup();
     if (toId && fromId !== toId) {
-      this._showLayer(toId);
+      await this._showLayer(toId);
       this._addLayerListeners(toId);
       // do not hide unloaded layer if it first
       if (fromId) {
@@ -442,7 +442,7 @@ export class App {
     this._toggleLayer(layerId, false);
   }
 
-  _showLayer(id) {
+  _showLayer(id): Promise<any> {
     const toggle = () => {
       this.webMap.toggleLayer(id, true);
       this.webMap.toggleLayer(id + '-bound', true);
@@ -451,11 +451,11 @@ export class App {
     const exist = this.webMap.getLayer(id);
     if (!exist) {
       const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
-      this._addLayer(url, id).then(() => {
-        toggle();
+      return this._addLayer(url, id).then(() => {
+        return toggle();
       });
     } else {
-      toggle();
+      return Promise.resolve(toggle());
     }
   }
 
