@@ -468,8 +468,10 @@ export class App {
   _addPoint(id: string) {
 
     getPointGeojson(id).then((data: FeatureCollection<MultiPoint, PointProperties>) => {
-      const many = data.features.length > 1 &&
-      data.features.map((x) => x.properties.numb).filter(onlyUnique).length > 0;
+      const _many = data.features.length > 1 &&
+        data.features.map((x) => x.properties.numb)
+          .filter(onlyUnique);
+      const many = _many.length > 1;
       data.features.forEach((marker: Feature<Point | MultiPoint, PointProperties>, i) => {
         const type = marker && marker.geometry && marker.geometry.type;
         if (type === 'MultiPoint') {
