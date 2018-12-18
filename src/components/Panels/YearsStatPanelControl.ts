@@ -25,7 +25,7 @@ export interface YearStat {
   count?: number;
 }
 
-const OPTIONS = { headerText: 'Изменения в территориальной целостности' };
+const OPTIONS = { headerText: 'Изменения в территориальном составе' };
 
 export class YearsStatPanelControl extends Panel {
 

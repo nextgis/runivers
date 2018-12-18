@@ -97,8 +97,8 @@ export function getTopLinksPanel(app: App) {
 
   const yearsToggler = new Toggler({
     className: 'years__toggler',
-    title: 'Скрыть панель изменения в территориальной целостности',
-    titleOff: 'Показать панель изменения в территориальной целостности',
+    title: 'Скрыть панель изменения в территориальном составе',
+    titleOff: 'Показать панель изменения в территориальном составе',
     toggleAction: (status) => {
       if (status) {
         app.yearsStatPanelControl._blocked = false;
