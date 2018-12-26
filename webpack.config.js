@@ -1,9 +1,15 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const { getAliases } = require('./nextgisweb_frontend/build/aliases');
 
-const alias = getAliases();
+let alias = {};
+try {
+  const { getAliases } = require('./nextgisweb_frontend/build/aliases');
+  alias = getAliases();
+} catch (er) {
+  // ignore
+}
+
 
 module.exports = (env, argv) => {
 

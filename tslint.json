@@ -38,6 +38,7 @@
     "no-submodule-imports": false,
     "interface-name": false,
     "prefer-object-spread": false,
-    "max-line-length": [true, {"limit": 120, "ignore-pattern": "^import |^export {(.*?)}"}]
+    "max-line-length": [true, {"limit": 120, "ignore-pattern": "^import |^export {(.*?)}"}],
+    "no-var-requires": false
   }
 }
