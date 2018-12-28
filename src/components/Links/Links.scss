@@ -31,6 +31,26 @@
 	text-decoration: underline;
 }
 
+.about_icon {
+  background: rgba(49, 49, 49, 0.8);
+  border-radius: 30px;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-size: 15px;
+  display: block;
+  outline: none;
+  border: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-shadow: none;
+  padding: 3px;
+  color: #fff;
+  text-decoration: none!important;
+  display: inline-block;
+  margin-left: 10px;
+}
+
 .runiver__logo {
   vertical-align: middle;
   display: inline-block;
@@ -41,19 +61,27 @@
 }
 
 .graph_logo {
-	display: inline-block;
 	background: url(./img/graph.png) no-repeat;
-	width: 50px;
-	height: 50px;
-	opacity: .8;
+  background-size: contain;
+  opacity: 1!important;
+}
+
+.socialLinks {
+  margin-left: 10px;
 }
 
 .social__logo {
   vertical-align: middle;
-  display: inline-block;
-  height: 18px;
-  width: 18px;
+  display: block;
+  height: 20px;
+  width: 20px;
   margin-left: 3px;
+  margin-top: 10px;
+  opacity: 0.7;
+}
+
+.social__logo:hover {
+  opacity: 1;
 }
 
 .twitter {
@@ -98,3 +126,10 @@
 .baselayer__toggler {
   background: url(./img/baselayer.png) no-repeat;
 }
+
+.mapboxgl-ctrl-group.mapboxgl-ctrl-group-home {
+  margin: 0!important;
+  transform: translateY(-50%) translateY(52px)!important;
+}
+
+

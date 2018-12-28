@@ -1,5 +1,17 @@
 .panel.legend-panel {
-  width: 200px;
+  width: auto;
+  border-radius: 6px;
+  max-width: 450px;
+  margin: auto;
+  margin-left: 15px;
+  color: #f1f1f1;
+  background: rgba(49, 49, 49, 0.8);
+  position: relative;
+  top: 80px;
+}
+
+.panel .panel-body {
+  margin: 10px 5px;
 }
 
 .panel-body__legend {
@@ -7,20 +19,94 @@
 }
 
 .panel-body__legend--block {
-  margin: 10px 0;
+  margin: 15px 0;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
 }
 
 .panel-body__legend--name {
-  font-size: 1rem;
+  font-size: 13px;
+  margin-left: 5px;
 }
 
 .panel-body__legend--color {
-  width: 25px;
-  height: 25px;
+  width: 15px;
+  height: 15px;
   flex-grow: 0;
   flex-shrink: 0;
   margin-right: 4px;
+  border-radius: 30px;
 }
+
+.panel.panel-body {
+  width: auto;
+
+}
+
+.mapboxgl-ctrl-top-left .mapboxgl-ctrl-group {
+  margin-left: 15px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.mapboxgl-ctrl-group {
+  border-radius: 0;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  overflow: hidden;
+  background: none;
+}
+
+.mapboxgl-ctrl-group > button + button {
+  border-top: 0;
+  margin-top: 3px;
+}
+
+.mapboxgl-ctrl-group > button {
+  width: 25px;
+  height: 25px;
+  background: rgba(49, 49, 49, 1);
+  border-radius: 30px;
+}
+
+.mapboxgl-ctrl-icon.mapboxgl-ctrl-zoom-in {
+  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDM1NyAzNTciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDM1NyAzNTc7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8ZyBpZD0iYWRkIj4KCQk8cGF0aCBkPSJNMzU3LDIwNEgyMDR2MTUzaC01MVYyMDRIMHYtNTFoMTUzVjBoNTF2MTUzaDE1M1YyMDR6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8L2c+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==)!important;
+  opacity: 0.8;
+  background-repeat: no-repeat;
+  background-size: 13px;
+  background-position: center;
+}
+
+.mapboxgl-ctrl-icon.mapboxgl-ctrl-home {
+  opacity: 0.8;
+}
+.mapboxgl-ctrl-icon.mapboxgl-ctrl-home:hover {
+  opacity: 1;
+}
+
+.mapboxgl-ctrl-icon.mapboxgl-ctrl-zoom-in:hover {
+  opacity: 1;
+}
+
+.mapboxgl-ctrl-icon.mapboxgl-ctrl-zoom-out {
+  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMS4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDQ5MS44NTggNDkxLjg1OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDkxLjg1OCA0OTEuODU4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCI+CjxnPgoJPGc+CgkJPHBhdGggZD0iTTQ2NS4xNjcsMjExLjYxM0gyNDAuMjFIMjYuNjljLTguNDI0LDAtMjYuNjksMTEuNDM5LTI2LjY5LDM0LjMxNnMxOC4yNjcsMzQuMzE2LDI2LjY5LDM0LjMxNmgyMTMuNTJoMjI0Ljk1OSAgICBjOC40MjEsMCwyNi42ODktMTEuNDM5LDI2LjY4OS0zNC4zMTZTNDczLjU5LDIxMS42MTMsNDY1LjE2NywyMTEuNjEzeiIgZmlsbD0iI0ZGRkZGRiIvPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=)!important;
+  opacity: 0.8;
+  background-repeat: no-repeat;
+  background-size: 13px;
+  background-position: center;
+}
+
+.mapboxgl-ctrl-icon.mapboxgl-ctrl-zoom-out:hover {
+  opacity: 1;
+}
+
+.mapboxgl-ctrl > button:hover {
+  background-color: rgba(49, 49, 49, 1);
+}
+
+
+
+

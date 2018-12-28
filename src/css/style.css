@@ -48,16 +48,18 @@ body {
 }
 
 .noUi-target {
-  height: 24px;
+  height: 11px;
   border-radius: 7px;
-  margin: 0 65px;
-  background: rgba(255, 255, 255, 0.8);
+  margin: 0 115px 0 0;
+  background: rgba(49, 49, 49, 0.8);
+  box-shadow: none!important;
+  border: 0!important;
 }
 
 .noUi-handle {
   right: -10px !important;
   outline: none;
-  top: 1px !important;
+  top: -6px !important;
   border-radius: 50%;
   width: 20px !important;
   height: 20px !important;
@@ -74,10 +76,10 @@ body {
 .noUi-handle:before {
   content: "";
   background: rgb(187, 16, 16);
-  width: 10px;
-  height: 10px;
-  left: 4px;
-  top: 4px;
+  width: 7px;
+  height: 7px;
+  left: 6px;
+  top: 6px;
   border-radius: 50%;
 }
 
@@ -88,23 +90,33 @@ body {
 }
 
 .noUi-value {
-  top: 16px;
+  top: 5px;
   color: #000;
+  font-weight: 600;
 }
 
 .noUi-marker-normal {
-  top: 6px;
-  height: 10px !important;
+  top: 3px;
+  border-radius: 16px;
+  height: 5px !important;
+  width: 5px!important;
 }
 
 .noUi-marker-large {
   top: 3px;
-  height: 16px !important;
+  border-radius: 16px;
+  height: 5px !important;
+  background: #fff!important;
+  width: 5px!important;
 }
 
 .noUi-tooltip {
-  font-size: 1rem;
-  border-radius: 10px;
+  font-size: 12px;
+  border-radius: 2px;
+  padding: 2px 5px;
+  background: rgba(49, 49, 49, 0.8);
+  color: #fff;
+  border: none;
 }
 
 .slider-control-player {
@@ -167,19 +179,49 @@ body {
 
 /* DIALOG */
 .dialog-component {
-  max-height: 80%;
-  max-width: 80%;
-  overflow: auto;
+  max-height: 100%;
+  max-width: 900px;
+  width: 90%;
+  box-shadow: none;
+  border: 0;
+  padding: 0;
+  top: 0;
+  overflow-y: scroll;
+  background: transparent;
+  color: white;
+  font-size: 14px;
+}
+
+.dialog-component a {
+  color: #d39a29;
+  text-decoration: none;
+}
+
+.dialog-component::backdrop {
+  background-color: rgba(0, 0, 0, 0.85);
 }
 
 .dialog-component__close {
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 0;
   border: 0;
   border-radius: 0 3px 0 0;
   cursor: pointer;
   background-color: transparent;
+}
+
+.dialog-component h2 {
+  color: #d39a29;
+  font-size: 22px;
+  margin: 25px 0;
+  text-align: left;
+}
+
+.dialog-component__close svg {
+  width: 64px!important;
+  height: 64px!important;
+  fill: #fff;
 }
 
 /* MAPBOX GL */
