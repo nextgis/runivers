@@ -7,16 +7,11 @@ import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 export function getBottomLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <a href="https://www.runivers.ru" class="runiver__logo"></a>
-    <a href="https://histgeo.ru/laboratory.html" class="laboratory__logo"
-      title="Лабораторией исторической геоинформатики"></a>
-    <div class="transneft__logo"></div>
-
-    <span class="socialLinks" style="height: 18px;">
+    <div class="socialLinks">
       <a href="http://twitter.com/#!/runivers" class="social__logo twitter"></a>
       <a href="http://www.facebook.com/Runiverse.ru" class="social__logo facebook"></a>
       <a href="http://vk.com/public35690973" class="social__logo vkontakte"></a>
-    </span>
+    </div>
   `;
   // <a href="http://runivers.livejournal.com/" class="social__logo livejournal"></a>
 
@@ -26,6 +21,19 @@ export function getBottomLinksPanel() {
   });
   panel.updateBody(block);
   return panel;
+}
+
+export function getAboutProjectLink() {
+  const block = document.createElement('span');
+  block.innerHTML = `
+    <a href="#" class="about_icon">i</a>
+  `;
+  const link = block.getElementsByTagName('a')[0];
+  link.onclick = () => {
+    openDialog({template: aboutShort});
+  };
+
+  return block;
 }
 
 export function getBottomLeftLinksPanel() {
@@ -48,10 +56,11 @@ export function getBottomLeftLinksPanel() {
 
 export function getTopLeftLinksPanel() {
   const block = document.createElement('div');
+  block.className = 'mapboxgl-ctrl-group mapboxgl-ctrl-group-home';
   block.innerHTML = `
-    <div>
-      <a href="https://www.runivers.ru/timeline/" class="graph_logo" title="График изменения территории России"></a>
-    </div>
+    <button class="mapboxgl-ctrl-icon mapboxgl-ctrl-home" type="button" title="Home" aria-label="Home">
+      <img src="images/home-button.svg" width="15" />
+    </button>
   `;
 
   const panel = new Panel({
@@ -61,22 +70,17 @@ export function getTopLeftLinksPanel() {
   return panel;
 }
 
+export function getTimelineButton() {
+  const link = document.createElement('a');
+  link.className = 'panel__toggler graph_logo';
+  link.setAttribute('href', 'https://www.runivers.ru/timeline/');
+  link.setAttribute('title', 'График изменения территории России');
+  link.setAttribute('target', '_blank');
+  return link;
+}
+
 export function getTopLinksPanel(app: App) {
   const block = document.createElement('div');
-
-  const baselayerToggler = new Toggler({
-    className: 'baselayer__toggler',
-    title: 'Скрыть подложку',
-    titleOff: 'Показать подложку',
-    toggleAction: (status) => {
-      if (status) {
-        app.webMap.showLayer('baselayer');
-      } else {
-        app.webMap.hideLayer('baselayer');
-      }
-    }
-  });
-  block.appendChild(baselayerToggler.getContainer());
 
   const periodToggler = new Toggler({
     className: 'period__toggler',
@@ -95,6 +99,23 @@ export function getTopLinksPanel(app: App) {
     periodToggler.toggle(status);
   });
 
+  block.appendChild(getTimelineButton());
+
+  const baselayerToggler = new Toggler({
+    className: 'baselayer__toggler',
+    title: 'Скрыть подложку',
+    titleOff: 'Показать подложку',
+    toggleAction: (status) => {
+      if (status) {
+        app.webMap.showLayer('baselayer');
+      } else {
+        app.webMap.hideLayer('baselayer');
+      }
+    }
+  });
+  block.appendChild(baselayerToggler.getContainer());
+
+  /*
   const yearsToggler = new Toggler({
     className: 'years__toggler',
     title: 'Скрыть панель изменения в территориальном составе',
@@ -113,6 +134,7 @@ export function getTopLinksPanel(app: App) {
     yearsToggler.toggle(status);
   });
   block.appendChild(yearsToggler.getContainer());
+  */
 
 
   const panel = new Panel({
@@ -136,6 +158,9 @@ function openDialog(options: DialogAdapterOptions) {
 }
 
 const aboutShort = `
+<div style="margin-top: 20px;"></div>
+<P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
+<h2>О проекте Границы России 1462-2018 гг.</h2></P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
 <SPAN LANG="ru-RU"><a href="https://www.runivers.ru" target="_blank">«Руниверс»</a>
 совместно с <a href="https://histgeo.ru/laboratory.html" target="_blank">Лабораторией исторической

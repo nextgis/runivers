@@ -1,8 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
 .app-header {
   position: absolute;
-  width: 100%;
   text-align: center;
   margin: 1.3rem 0;
+  margin-left: 20px;
   font-size: 1.7rem;
   color: #000000;
 }

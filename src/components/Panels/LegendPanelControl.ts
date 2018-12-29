@@ -6,7 +6,6 @@ export interface LegendPanelOptions extends PanelOptions {
 }
 
 const OPTIONS: LegendPanelOptions = {
-  headerText: 'Легенда',
   addClass: 'legend-panel'
 };
 

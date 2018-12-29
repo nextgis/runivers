@@ -66,10 +66,10 @@ export class SliderControl {
   _createContainer() {
     const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl slider-control';
-    element.appendChild(this._createPlayerContainer());
     // element.appendChild(this._createValueInput());
     element.appendChild(this._createSliderContainer());
     element.appendChild(this._createNavigationContainer());
+    // element.appendChild(this._createPlayerContainer());
     // element.appendChild(this._createAnimationStepInput());
     // element.appendChild(this._createAnimationDelayInput());
     return element;
@@ -180,14 +180,31 @@ export class SliderControl {
     return player;
   }
 
+  _createPlayerButton() {
+    const playerControl = document.createElement('button');
+    playerControl.className = 'player-button';
+    // playerControl.innerHTML = this._getPlayerControlLabel();
+    playerControl.onclick = () => {
+      this._toggleAnimation();
+    };
+    this._playerControl = playerControl;
+    return playerControl;
+  }
+
   _createNavigationContainer() {
     const playerSteps = document.createElement('div');
     playerSteps.className = 'slider-control-block slider-control-steps';
 
     const createStepBtn = (previous?: boolean) => {
       const btn = document.createElement('button');
-      btn.className = 'slider-control-steps-btn ' + (previous ? 'previous' : 'next');
+      btn.className = 'slider-control-steps-btn'; // + (previous ? 'previous' : 'next');
+      btn.innerHTML = `
+        <img src="images/rewind_${previous ? 'previous' : 'next'}.svg" width="24" height="24"/>
+      `;
       playerSteps.appendChild(btn);
+      if (previous) {
+        playerSteps.appendChild(this._createPlayerButton());
+      }
       btn.onclick = () => {
         this._stepReady((step) => {
           if (typeof step !== 'boolean') {
