@@ -35,7 +35,7 @@ export function getBottomLeftLinksPanel() {
   `;
   const link = block.getElementsByTagName('a')[0];
   link.onclick = () => {
-    openDialog({template: aboutShort});
+    openDialog({ template: aboutShort });
   };
   // <div><a  href="https://histgeo.ru/laboratory.html" class="resource__link">Лаборатория ИГ ИВИ РАН</a></div>
 
@@ -50,7 +50,12 @@ export function getTopLeftLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
     <div>
-      <a href="https://www.runivers.ru/timeline/" class="graph_logo" title="График изменения территории России"></a>
+      <a
+        href="https://www.runivers.ru/granitsy-rossii/charts/index.php"
+        target="_blank"
+        class="graph_logo"
+        title="График изменения территории России"
+      ></a>
     </div>
   `;
 
@@ -127,7 +132,7 @@ function openDialog(options: DialogAdapterOptions) {
   const dialog = new Dialog(options);
 
   const isSame = options && options.template &&
-  dialog.options.template === options.template;
+    dialog.options.template === options.template;
   if (!isSame) {
     dialog.updateContent(options.template);
   }
@@ -287,7 +292,13 @@ const aboutShort = `
 особенностях методики и ограничениях
 применявшейся методики, технических
 особенностях проекта и перспективах
-его развития см. <a href="#">ПОДРОБНЕЕ</a>.</SPAN></P>
+его развития см. <a
+  href="https://www.runivers.ru/granitsy-rossii/about/about_detailed/index.php"
+  target="_blank"
+>
+  ПОДРОБНЕЕ
+</a>.
+</SPAN></P>
 `;
 
 
