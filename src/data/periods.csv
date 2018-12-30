@@ -14,9 +14,9 @@ tech_number,number,name,years_life,years_from,years_to,description,detail_link,i
 13,11,Всеслав Брячиславич,? - 1101,1068,1069,Князь русский.,,
 14,10,Изяслав Ярославич,1024 - 1078,1069,1073,Князь русский.,,
 15,12,Святослав Ярославич,1027 - 1076,1073,1076,Князь русский.,,
-16,13,Всеволод Ярославич,1030 - 1093,1077,1077,Князь всея Руси.,,
+16,13,Всеволод Ярославич ,1030 - 1093,1077,1077,Князь всея Руси.,,
 17,10,Изяслав Ярославич,1024 - 1078,1077,1078,Князь всея Руси.,,
-18,13,Всеволод Ярославич,1030 - 1093,1078,1093,Князь всея Руси.,,
+18,13,Всеволод Ярославич ,1030 - 1093,1078,1093,Князь всея Руси.,,
 19,14,Святополк Изяславич,1050 - 1113,1093,1113,Князь всея Руси.,,
 20,15,Владимир Всеволодович Мономах,1053-1125,1113,1125,Князь всея Руси.,,
 21,16,Мстислав Владимирович,1076 - 1132,1125,1132,Князь всея Руси.,,
@@ -96,11 +96,11 @@ tech_number,number,name,years_life,years_from,years_to,description,detail_link,i
 85,57,Дмитрий Юрьевич Шемяка,? -1453,1446,1446,"Великий князь всея Руси, князь галицкий.
 ",https://www.runivers.ru/doc/rusland/knyaz1/577637/,
 86,55,Василий II Васильевич Тёмный,1415-1462,1447,1461,"Великий князь всея Руси, князь московский.",https://www.runivers.ru/doc/rusland/knyaz1/577543/,
-87,58,Иван III Васильевич Великий,1440-1505,1462,1505,Государь и великий князь всея Руси. Создатель единого Русского государства; первым стал называться «царём» и титулом «государя всея Руси.,https://www.runivers.ru/newenc/184800/,https://www.runivers.ru/upload/resize_cache/iblock/aa9/200_0_1/72_2.jpg
+87,58,Иван III Васильевич Великий,1440-1505,1462,1505,Государь и великий князь всея Руси. Создатель единого Русского государства; первым стал называться «царём» и титулом «государя всея Руси. ,https://www.runivers.ru/newenc/184800/,https://www.runivers.ru/upload/iblock/5a2/72.jpg
 88,59,Василий III Иванович (соправитель),1479-1533,1505,1533,Государь и Великий князь всея Руси. Cтарший сын Ивана III и Софьи Палеолог.,https://www.runivers.ru/newenc/184796/,https://www.runivers.ru/upload/iblock/8ed/12.jpg
 89,60,Иван IV Васильевич Грозный,1530-1584,1533,1584,"Государь, Царь и Великий Князь
 всея Руси. Московский великий князь, сын Василия III и Елены Глинской.",https://www.runivers.ru/newenc/184805/,https://www.runivers.ru/upload/iblock/223/73.jpg
-90,61,Федор Иоаннович,1557-1598,1584,1598,"Государь, Царь и Великий Князь всея Руси. Сын Ивана IV Грозного и Анастасии Романовой, последний из династии Рюриковичей. ",https://www.runivers.ru/newenc/184794/,https://www.runivers.ru/upload/iblock/ddd/%D0%A4%D0%B5%D0%B4%D0%BE%D1%80-%D0%98%D0%BE%D0%B0%D0%BD%D0%BD%D0%BE%D0%B2%D0%B8%D1%871.jpg
+90,61,Федор Иоаннович,1557-1598,1584,1598,"Государь, Царь и Великий Князь всея Руси. Сын Ивана IV Грозного и Анастасии Романовой, последний из династии Рюриковичей. ",https://www.runivers.ru/newenc/184794/,https://www.runivers.ru/upload/iblock/305/%D0%A4%D0%B5%D0%B4%D0%BE%D1%80%20%D0%98%D0%BE%D0%B0%D0%BD%D0%BD%D0%BE%D0%B2%D0%B8%D1%87.jpg
 91,62,Борис Федорович Годунов,1551 – 1605,1598,1605,"Государь, Царь и Великий Князь
 всея Руси. Боярин, шурин царя Фёдора Иоанновича, из рода костромских бояр.",https://www.runivers.ru/newenc/184798/,https://www.runivers.ru/upload/iblock/558/64.jpg
 92,63,Лжедмитрий I,? - 1606,1605,1606,"Государь, Царь и Великий Князь всея Руси. Самозванец, выдававший себя за сына Ивана IV Грозного царевича Дмитрия.",https://www.runivers.ru/newenc/184790/,https://www.runivers.ru/upload/iblock/fc0/%D0%9B%D0%B6%D0%B5%D0%B4%D0%BC%D0%B8%D1%82%D1%80%D0%B8%D0%B9%20I.JPG
@@ -113,35 +113,35 @@ tech_number,number,name,years_life,years_from,years_to,description,detail_link,i
 99,70,Иван V Алексеевич,1666 – 1696,1682,1696,"Государь, Царь и Великий Князь всея Руси. Сын царя Алексея Михайловича, старший брат и соправитель Петра I.",https://www.runivers.ru/house_of_romanov/ivan_v/ru/,https://www.runivers.ru/upload/iblock/02a/image%20n3a.jpg
 100,71,Петр I Алексеевич,1672 – 1725,1682,1725,"Государь, Царь и Великий Князь всея Руси (с 1682 г.).
 Император и Самодержец Всероссийский (с 1721 г.). ",https://www.runivers.ru/house_of_romanov/peter_i/ru/,https://www.runivers.ru/upload/iblock/256/image%20k4o.jpg
-101,72,Екатерина I Алексеевна,1684 – 1727,1725,1727,Императрица Всероссийская. Вторая жена и наследница Петра I.,https://www.runivers.ru/house_of_romanov/catherine_i/ru/,https://www.runivers.ru/upload/iblock/18e/image%20z5f.jpg
-102,73,Петр II Алексеевич,1715 – 1730,1727,1730,Император Всероссийскийю Внук Петра I (сын царевича Алексея Петровича).,https://www.runivers.ru/house_of_romanov/peter_ii/ru/,https://www.runivers.ru/upload/iblock/c98/image%20s6c.jpg
+101,72,Екатерина I Алексеевна ,1684 – 1727,1725,1727,Императрица Всероссийская. Вторая жена и наследница Петра I.,https://www.runivers.ru/house_of_romanov/catherine_i/ru/,https://www.runivers.ru/upload/iblock/18e/image%20z5f.jpg
+102,73,Петр II Алексеевич ,1715 – 1730,1727,1730,Император Всероссийскийю Внук Петра I (сын царевича Алексея Петровича).,https://www.runivers.ru/house_of_romanov/peter_ii/ru/,https://www.runivers.ru/upload/iblock/c98/image%20s6c.jpg
 103,74,Анна Иоанновна,1693 – 1740,1730,1740,"Императрица Всероссийская. Дочь царя Ивана V Алексеевича, вдова курляндского герцога.",https://www.runivers.ru/house_of_romanov/anna/ru/,https://www.runivers.ru/upload/iblock/786/image%20s7z.jpg
-104,75,Иван VI Антонович,1740 – 1764,1740,1741,Император Всероссийский. Правнук Ивана V.,https://www.runivers.ru/house_of_romanov/ivan_vi/ru/,https://www.runivers.ru/upload/iblock/f9f/image%20v8r.jpg
-105,76,Елизавета Петровна,1709 – 1761,1741,1761,Императрица Всероссийская. Дочь Петра I и Екатерины I.,https://www.runivers.ru/house_of_romanov/elizabeth/ru/,https://www.runivers.ru/upload/iblock/bee/image%20a9k.jpg
-106,77,Петр III Федорович,1728 – 1762,1761,1762,Император Всероссийский.,https://www.runivers.ru/house_of_romanov/peter_iii/ru/,https://www.runivers.ru/upload/iblock/715/image%20p11s.jpg
+104,75,Иван VI Антонович ,1740 – 1764,1740,1741,Император Всероссийский. Правнук Ивана V. ,https://www.runivers.ru/house_of_romanov/ivan_vi/ru/,https://www.runivers.ru/upload/iblock/f9f/image%20v8r.jpg
+105,76,Елизавета Петровна,1709 – 1761,1741,1761,Императрица Всероссийская. Дочь Петра I и Екатерины I. ,https://www.runivers.ru/house_of_romanov/elizabeth/ru/,https://www.runivers.ru/upload/iblock/bee/image%20a9k.jpg
+106,77,Петр III Федорович ,1728 – 1762,1761,1762,Император Всероссийский. ,https://www.runivers.ru/house_of_romanov/peter_iii/ru/,https://www.runivers.ru/upload/iblock/715/image%20p11s.jpg
 107,78,Екатерина II Великая,1729 – 1796,1762,1796,Императрица Всероссийская. Жена императора Петра III.,https://www.runivers.ru/house_of_romanov/catherine_ii/ru/,https://www.runivers.ru/upload/iblock/5fe/12_Catherine%20II%20-%20minay.jpg
-108,79,Павел I Петрович,1754 – 1801,1796,1801,Император Всероссийский. Сын Петра III и Екатерины II.,https://www.runivers.ru/house_of_romanov/paul_i/ru/,https://www.runivers.ru/upload/iblock/05a/image%20p13e.jpg
-109,80,Александр I Павлович,1777 – 1825,1801,1825,Император Всероссийский. Сын Павла I.,https://www.runivers.ru/house_of_romanov/alexander_i/ru/,https://www.runivers.ru/upload/iblock/1c1/image%20g14d.jpg
+108,79,Павел I Петрович,1754 – 1801 ,1796,1801,Император Всероссийский. Сын Петра III и Екатерины II.,https://www.runivers.ru/house_of_romanov/paul_i/ru/,https://www.runivers.ru/upload/iblock/05a/image%20p13e.jpg
+109,80,Александр I Павлович,1777 – 1825,1801,1825,Император Всероссийский. Сын Павла I. ,https://www.runivers.ru/house_of_romanov/alexander_i/ru/,https://www.runivers.ru/upload/iblock/1c1/image%20g14d.jpg
 110,81,Николай I Павлович,1796 – 1855,1825,1855,"Император Всероссийский. Сын Павла I, младший брат Александра I.",https://www.runivers.ru/house_of_romanov/nicholas_i/ru/,https://www.runivers.ru/upload/iblock/b5f/image%20q15g.jpg
 111,82,Александр II Николаевич,1818 – 1881,1855,1881,Император Всероссийский. Сын Николая I.,https://www.runivers.ru/house_of_romanov/alexander_ii/ru/,https://www.runivers.ru/upload/iblock/e67/16_Alexander%20II%20-%20lvebh.jpg
 112,83,Александр III Александрович,1845 – 1894,1881,1894,Император Всероссийский. Сын Александра II.,https://www.runivers.ru/house_of_romanov/alexander_iii/ru/,https://www.runivers.ru/upload/iblock/6ea/image%20b17o.jpg
-113,84,Николай II Александрович,1868 – 1918,1894,1917,"Император Всероссийский/ Сын Александра III, последний российский император.",https://www.runivers.ru/house_of_romanov/nicholas_ii/ru/,https://www.runivers.ru/upload/iblock/08d/image%20a18f.jpg
+113,84,Николай II Александрович ,1868 – 1918,1894,1917,"Император Всероссийский/ Сын Александра III, последний российский император.",https://www.runivers.ru/house_of_romanov/nicholas_ii/ru/,https://www.runivers.ru/upload/iblock/08d/image%20a18f.jpg
 114,85,Георгий Евгеньевич Львов,1861 — 1925,1917,1917,"Министр-председатель Временного правительства
 2 марта - 7 июля 1917 г.",,"https://www.runivers.ru/upload/iblock/838/Georgy_Lvov,_1918.jpg"
-115,86,Александр Федорович Керенский,1881 — 1970,1917,1917,"Министр-председатель Всероссийского Временного Правительства
+115,86,Александр Федорович Керенский,1881 — 1970 ,1917,1917,"Министр-председатель Всероссийского Временного Правительства
 7 июля 1917 - 26 октября 1917 г.",,https://www.runivers.ru/upload/iblock/9ef/Karenskiy_AF_1917.jpg
 116,87,Владимир Ильич Ленин (Ульянов),1870 — 1924,1917,1924,Председатель Совета Народных Комиссаров СССР,,https://www.runivers.ru/upload/iblock/afd/lenin.jpg
-117,88,Иосиф Виссарионович Сталин (Джугашвили),"(1878 , 1879 ???) — 1953",1924,1953,"Генеральный секретарь ЦК ВКП(б) (1922-1934 гг.) 
+117,88,Иосиф Виссарионович Сталин (Джугашвили) ,"(1878 , 1879 ???) — 1953",1924,1953,"Генеральный секретарь ЦК ВКП(б) (1922-1934 гг.) 
 Секретарь ЦК ВКП(б) (1934-1952 гг.)
 Секретарь ЦК КПСС (1952-1953 гг.)",,https://www.runivers.ru/upload/iblock/43d/logosfera_Stalin.jpg
-118,89,Никита Сергеевич Хрущев,1894 – 1971,1953,1964,Генеральный секретарь ЦК КПСС,,https://www.runivers.ru/upload/iblock/14f/09-22-hruschev.jpg
+118,89,Никита Сергеевич Хрущев ,1894 – 1971 ,1953,1964,Генеральный секретарь ЦК КПСС,,https://www.runivers.ru/upload/iblock/14f/09-22-hruschev.jpg
 119,90,Леонид Ильич Брежнев,1906 - 1982,1964,1982,Генеральный секретарь ЦК КПСС,,https://www.runivers.ru/upload/iblock/09c/09-21-brezshnev.jpg
 120,91,Юрий Владимирович Андропов,1914 — 1984,1982,1984,Генеральный секретарь ЦК КПСС,,https://www.runivers.ru/upload/iblock/df8/09-23-andropov.jpg
 121,92,Константин Устинович Черненко,1911 — 1985,1984,1985,Генеральный секретарь ЦК КПСС,,https://www.runivers.ru/upload/iblock/b2f/09-24-chernenko.jpg
-122,93,Михаил Сергеевич Горбачев,1931 —,1985,1991,"Генеральный секретарь ЦК КПСС
+122,93,Михаил Сергеевич Горбачев ,1931 —,1985,1991,"Генеральный секретарь ЦК КПСС
 Президент СССР",,https://www.runivers.ru/upload/iblock/483/09-25-gorbachev.jpg
 123,94,Борис Николаевич Ельцин,"1931 — 2007,",1991,1999,"Генеральный секретарь ЦК КПСС
 Президент СССР",,https://www.runivers.ru/upload/iblock/873/09-35-yeltsin.jpg
-124,95,Владимир Владимирович Путин,1952 -,2000,2008,Президент Российской Федерации,,https://www.runivers.ru/upload/iblock/c41/jZLnaO60tUCfOBbB16AccjZVlpnhAZyn_%D0%B0%D0%BD%D0%BE%D0%BD%D1%81.jpg
+124,95,Владимир Владимирович Путин,1952 - ,2000,2008,Президент Российской Федерации,,https://www.runivers.ru/upload/iblock/c41/jZLnaO60tUCfOBbB16AccjZVlpnhAZyn_%D0%B0%D0%BD%D0%BE%D0%BD%D1%81.jpg
 125,96,Дмитрий Анатольевич Медведев,1965 -,2008,2012,Президент Российской Федерации,,https://www.runivers.ru/upload/iblock/76f/0B2aYn3k8ZGl1ptNxaynbkGzUg9A3nev.png
-126,97,Владимир Владимирович Путин,1952 -,2012,2018,Президент Российской Федерации,,https://www.runivers.ru/upload/iblock/c41/jZLnaO60tUCfOBbB16AccjZVlpnhAZyn_%D0%B0%D0%BD%D0%BE%D0%BD%D1%81.jpg
+126,97,Владимир Владимирович Путин ,1952 - ,2012,2018,Президент Российской Федерации,,https://www.runivers.ru/upload/iblock/c41/jZLnaO60tUCfOBbB16AccjZVlpnhAZyn_%D0%B0%D0%BD%D0%BE%D0%BD%D1%81.jpg

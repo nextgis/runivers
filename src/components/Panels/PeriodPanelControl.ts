@@ -18,7 +18,10 @@ export interface Period {
   img_link?: string;
 }
 
-const OPTIONS = { headerText: 'Правители' };
+const OPTIONS = {
+    headerText: 'Правители',
+    addClass: 'period-panel'
+  };
 
 
 export class PeriodPanelControl extends Panel {
@@ -53,19 +56,20 @@ export class PeriodPanelControl extends Panel {
 
     let imageHtml: string;
     if (period.img_link) {
-      imageHtml = `<div class="panel-body__period--image"><img src="${period.img_link}"></div>`;
+      // imageHtml = `<div class="panel-body__period--image" style="background-image: url('${period.img_link}');"></div>`;
+      imageHtml = `<div class="panel-body__period--image" style="background-image: url('https://www.runivers.ru/upload/resize_cache/iblock/aa9/200_0_1/72_2.jpg');"></div>`;
     }
 
     periodElement.innerHTML = `
       ${imageHtml ? imageHtml : ''}
       <div class="panel-body__period--name">${period.name}</div>
+      <div class="panel-body__period--period">${period.years_from} – ${period.years_to} гг.</div>
       <div class="panel-body__period--description">${period.description}</div>
-      <div class="panel-body__period--description">
+      <div class="panel-body__period--description panel-body__period--area_wrap">
         Общая площадь - <span class="panel-body__period--area">
           ${formatArea(areaStat.area)}
         </span>
       </div>
-      <div class="panel-body__period--period">${period.years_from} – ${period.years_to} гг.</div>
     `;
     element.appendChild(periodElement);
 

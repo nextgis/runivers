@@ -20,7 +20,7 @@ import Color from 'color';
 
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
-import { getBottomLinksPanel, getTopLinksPanel, getBottomLeftLinksPanel, getTopLeftLinksPanel } from './components/Links/Links';
+import { getBottomLinksPanel, getTopLinksPanel, getBottomLeftLinksPanel, getTopLeftLinksPanel, getAboutProjectLink } from './components/Links/Links';
 import { Panel } from './components/Panels/PanelControl';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 import { formatArea, onlyUnique } from './utils/utils';
@@ -187,12 +187,13 @@ export class App {
         webMap.showLayer(layer.name);
       });
 
-      webMap.addControl('ZOOM', 'top-left');
       webMap.addControl(this.legendPanel, 'top-left');
+      webMap.addControl('ZOOM', 'top-left');
 
       webMap.addControl('ATTRIBUTION', 'bottom-left', {
         customAttribution: [
-          '<a href="http://nextgis.ru" target="_blank">©NextGIS</a>',
+          ''
+          // '<a href="http://nextgis.ru" target="_blank">©NextGIS</a>',
           // '<a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>',
         ]
       });
@@ -261,8 +262,8 @@ export class App {
       this.webMap.addControl(this.periodsPanelControl, 'top-right');
       this.webMap.addControl(this.yearsStatPanelControl, 'top-right');
 
-      this.webMap.addControl(this._bottomLeftLink, 'bottom-left');
-      this.webMap.addControl(this._bottomLink, 'bottom-right');
+      // this.webMap.addControl(this._bottomLeftLink, 'bottom-left');
+      this.webMap.addControl(this._bottomLink, 'bottom-left');
 
       this._headerElement = this._createHeader();
 
@@ -306,9 +307,15 @@ export class App {
   _createHeader() {
     const header = document.createElement('div');
     header.className = 'font-effect-shadow-multiple app-header';
-    header.innerHTML = `Границы России ${this._minYear}-${this._maxYear} гг.`;
+    const headerText = document.createElement('span');
+    headerText.innerHTML = `Границы России ${this._minYear}-${this._maxYear} гг.`;
+    header.appendChild(headerText);
+    header.appendChild(getAboutProjectLink());
+
     const mapContainer = this.webMap.mapAdapter.getContainer();
+
     mapContainer.appendChild(header);
+
     return header;
   }
 
@@ -696,26 +703,30 @@ export class App {
           propBlock.innerHTML += `<div class="popup__property--name">${x.name}</div>`;
         }
         propBlock.innerHTML = `
-          <div class="popup__property--value">${prop}</div>
+          <div class="popup__property--value prop"><h2>${prop}</h2></div>
         `;
         if (props.status) {
           const alias = this.options.statusAliases[props.status];
           if (alias) {
             propBlock.innerHTML += `
-              <div class="popup__property--value">${alias}</div>
+              <div class="popup__property--value status"><p>${alias}</p></div>
             `;
           }
           if (props.status > 0 && props.status < 6) {
             propBlock.innerHTML += `
-              <div class="popup__property--value">
-                ${this._formatDateStr(props.lwdate)} - ${this._formatDateStr(props.updtrl)}
+              <div class="popup__property--value dates">
+                <span>
+                  ${this._formatDateStr(props.lwdate)} - ${this._formatDateStr(props.updtrl)}
+                </span>
               </div>
             `;
           }
           if (props.Area) {
             propBlock.innerHTML += `
-              <div class="popup__property--value">
-                ${formatArea(props.Area / 1000000)}
+              <div class="popup__property--value area">
+                <span>
+                  ${formatArea(props.Area / 1000000)}
+                </span>
               </div>
             `;
           }

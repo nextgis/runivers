@@ -104,7 +104,7 @@ export class Panel {
       element.classList.add(this.options.addClass);
     }
     if (this.options.headerText) {
-      element.appendChild(this._createHeader());
+      // element.appendChild(this._createHeader());
     }
     element.appendChild(this._createBody());
 

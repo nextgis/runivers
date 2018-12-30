@@ -5,16 +5,22 @@
 }
 
 .panel-body__period--name {
-  font-size: 1.3rem;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .panel-body__period--period {
-  font-size: 1rem;
+  font-size: 14px;
+  font-weight: bolder;
+  color: rgb(187, 16, 16);
+  margin: 5px 0 10px 0;
 }
 
 .panel-body__period--description {
   line-height: 1rem;
   padding: 0.2rem;
+  margin-bottom: 5px;
+  text-align: left;
 }
 
 .panel-body__period--area {
@@ -22,12 +28,25 @@
 }
 
 .panel-body__period--image {
-  width: 100%;
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 20px auto;
+  text-align: center;
+  border-radius: 50%;
+  background-position: center;
+  background-size: cover;
 }
 
 .panel-body__period--image img {
-  max-width: 150px;
-  max-height: 150px;
-  float: left;
-  padding: 0 10px 10px 0;
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl .panel {
+  background: #fff;
+}
+
+.panel-body__period--area_wrap {
+  color: #b9b9b9;
+  font-size: 13px;
 }

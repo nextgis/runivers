@@ -25,7 +25,10 @@ export interface YearStat {
   count?: number;
 }
 
-const OPTIONS = { headerText: 'Изменения в территориальном составе' };
+const OPTIONS = {
+  headerText: 'Изменения в территориальном составе',
+  addClass: 'stat-panel'
+};
 
 export class YearsStatPanelControl extends Panel {
 
@@ -64,13 +67,22 @@ export class YearsStatPanelControl extends Panel {
     const element = document.createElement('div');
     element.className = 'panel-body__yearstat';
 
+    const sliderBlock = document.createElement('div');
+    sliderBlock.className = 'panel-body__period--slider';
+    sliderBlock.innerHTML = `
+      <a href='#' class='panel_slider prev'></a>
+      <div class='panel_slider-counter'>1 из 2</div>
+      <a href='#' class='panel_slider next'></a>
+    `;
+    element.appendChild(sliderBlock);
+
     const yearBlock = document.createElement('div');
-    // yearBlock.className = 'panel-body__period--description';
+    yearBlock.className = 'panel-body__period--year';
     yearBlock.innerHTML = `${yearStat.year} г.`;
     element.appendChild(yearBlock);
 
     if (this.areaStat) {
-      const gain = this.areaStat.plus;
+      const gain = 54353; // this.areaStat.plus;
       if (gain) {
         element.appendChild(this._createGainBlock(gain));
       }
@@ -86,6 +98,7 @@ export class YearsStatPanelControl extends Panel {
     const descrBlock = this._createDescriptionBlock(yearStat);
     if (descrBlock) {
       element.appendChild(descrBlock);
+      element.appendChild(this.createControlButton(() => console.log('test'))); // added for test
     }
     const descrLong = yearStat.description_long;
     if (descrLong) {
