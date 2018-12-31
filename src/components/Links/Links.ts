@@ -109,9 +109,9 @@ export function getTopLinksPanel(app: App) {
     titleOff: 'Показать подложку',
     toggleAction: (status) => {
       if (status) {
-        app.webMap.showLayer(baselayer);
+        app.webMap.showLayer('qms-487');
       } else {
-        app.webMap.hideLayer(baselayer);
+        app.webMap.hideLayer('qms-487');
       }
     }
   });
