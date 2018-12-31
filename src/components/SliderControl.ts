@@ -6,6 +6,9 @@ import noUiSlider from 'nouislider';
 import wNumb from 'wnumb';
 import 'nouislider/distribute/nouislider.css';
 
+import './Links/img/rewind_next.svg';
+import './Links/img/rewind_previous.svg';
+
 export interface SliderOptions {
   type: string;
   min: number;

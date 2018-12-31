@@ -56,8 +56,13 @@ export class PeriodPanelControl extends Panel {
 
     let imageHtml: string;
     if (period.img_link) {
-      // imageHtml = `<div class="panel-body__period--image" style="background-image: url('${period.img_link}');"></div>`;
-      imageHtml = `<div class="panel-body__period--image" style="background-image: url('https://www.runivers.ru/upload/resize_cache/iblock/aa9/200_0_1/72_2.jpg');"></div>`;
+      imageHtml = `<div
+        class="panel-body__period--image" style="background-image: url('${period.img_link}');">
+      </div>`;
+      // imageHtml = `<div
+      // class="panel-body__period--image"
+      // style="background-image: url('https://www.runivers.ru/upload/resize_cache/iblock/aa9/200_0_1/72_2.jpg');">
+      // </div>`;
     }
 
     periodElement.innerHTML = `

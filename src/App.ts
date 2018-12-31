@@ -182,6 +182,7 @@ export class App {
 
       // webMap.addBaseLayer('osm', 'OSM');
       webMap.addBaseLayer('QMS', {
+        id: 'baselayer',
         qmsid: 487
       }).then((layer) => {
         webMap.showLayer(layer.name);

@@ -4,6 +4,8 @@ import { App } from '../../App';
 import { Toggler } from './Toggler';
 import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 
+import './img/home-button.svg';
+
 export function getBottomLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
@@ -73,7 +75,7 @@ export function getTopLeftLinksPanel() {
 export function getTimelineButton() {
   const link = document.createElement('a');
   link.className = 'panel__toggler graph_logo';
-  link.setAttribute('href', 'https://www.runivers.ru/timeline/');
+  link.setAttribute('href', 'https://www.runivers.ru/granitsy-rossii/charts/index.php');
   link.setAttribute('title', 'График изменения территории России');
   link.setAttribute('target', '_blank');
   return link;
@@ -100,16 +102,16 @@ export function getTopLinksPanel(app: App) {
   });
 
   block.appendChild(getTimelineButton());
-
+  const baselayer = 'qms-487';
   const baselayerToggler = new Toggler({
     className: 'baselayer__toggler',
     title: 'Скрыть подложку',
     titleOff: 'Показать подложку',
     toggleAction: (status) => {
       if (status) {
-        app.webMap.showLayer('baselayer');
+        app.webMap.showLayer(baselayer);
       } else {
-        app.webMap.hideLayer('baselayer');
+        app.webMap.hideLayer(baselayer);
       }
     }
   });
@@ -135,7 +137,6 @@ export function getTopLinksPanel(app: App) {
   });
   block.appendChild(yearsToggler.getContainer());
   */
-
 
   const panel = new Panel({
     addClass: 'top-links'
@@ -312,7 +313,12 @@ const aboutShort = `
 особенностях методики и ограничениях
 применявшейся методики, технических
 особенностях проекта и перспективах
-его развития см. <a href="#">ПОДРОБНЕЕ</a>.</SPAN></P>
+его развития см. <a
+  href="https://www.runivers.ru/granitsy-rossii/about/about_detailed/index.php"
+  target="_blank"
+>
+  ПОДРОБНЕЕ
+</a>.</SPAN></P>
 `;
 
 
