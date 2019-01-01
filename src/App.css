@@ -10,7 +10,15 @@ body {
   margin: 1.3rem 0;
   margin-left: 20px;
   font-size: 1.7rem;
+  line-height: 1.7rem;
   color: #000000;
+}
+.app-header span {
+  vertical-align: middle;
+}
+.app-header .about_icon {
+  vertical-align: middle;
+  line-height: 15px;
 }
 
 .popup__propertyblock {

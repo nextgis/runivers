@@ -26,12 +26,11 @@ export function getBottomLinksPanel() {
 }
 
 export function getAboutProjectLink() {
-  const block = document.createElement('span');
-  block.innerHTML = `
-    <a href="#" class="about_icon">i</a>
-  `;
-  const link = block.getElementsByTagName('a')[0];
-  link.onclick = () => {
+  const block = document.createElement('a');
+  block.className = 'about_icon';
+  block.setAttribute('href', '#');
+  block.innerHTML = `i`;
+  block.onclick = () => {
     openDialog({template: aboutShort});
   };
 
@@ -117,7 +116,6 @@ export function getTopLinksPanel(app: App) {
   });
   block.appendChild(baselayerToggler.getContainer());
 
-  /*
   const yearsToggler = new Toggler({
     className: 'years__toggler',
     title: 'Скрыть панель изменения в территориальном составе',
@@ -136,7 +134,6 @@ export function getTopLinksPanel(app: App) {
     yearsToggler.toggle(status);
   });
   block.appendChild(yearsToggler.getContainer());
-  */
 
   const panel = new Panel({
     addClass: 'top-links'

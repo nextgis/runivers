@@ -39,6 +39,10 @@
   border-radius: 0px 0px 6px 6px;
 }
 
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl.stat-panel.lost {
+  background-color: #d16847;
+}
+
 .mapboxgl-ctrl-top-right .mapboxgl-ctrl.period-panel {
   margin-top: 0;
   background-color: #fff;
