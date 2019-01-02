@@ -191,6 +191,7 @@ export class App {
       webMap.addControl(this.legendPanel, 'top-left');
       webMap.addControl('ZOOM', 'top-left');
 
+      /*
       webMap.addControl('ATTRIBUTION', 'bottom-left', {
         customAttribution: [
           ''
@@ -198,6 +199,7 @@ export class App {
           // '<a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>',
         ]
       });
+      */
 
       webMap.mapAdapter.emitter.on('data-loaded', (data) => this._onData(data));
 

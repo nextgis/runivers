@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 57 57" style="enable-background:new 0 0 57 57;" xml:space="preserve">
-<g>
-	<path d="M0.5,48.4c0.3,0.2,0.7,0.1,1-0.1L28,29.7v17.8c0,0.4,0.2,0.7,0.5,0.9c0.3,0.2,0.7,0.1,1-0.1l27-19c0.3-0.2,0.4-0.5,0.4-0.8
-		s-0.2-0.6-0.4-0.8l-27-19c-0.2-0.1-0.4-0.2-0.6-0.2c-0.2,0-0.3,0-0.5,0.1C28.2,8.8,28,9.1,28,9.5v17.8L1.6,8.7
-		C1.4,8.6,1.2,8.5,1,8.5c-0.2,0-0.3,0-0.5,0.1C0.2,8.8,0,9.1,0,9.5v38C0,47.9,0.2,48.2,0.5,48.4z"/>
+<!-- Generator: Adobe Illustrator 22.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+<g id="Page-1">
+	<g id="RF-2" transform="translate(-1388.000000, -860.000000)">
+		<g id="Group-9-Copy-2" transform="translate(1304.000000, 854.000000)">
+			<g id="Group-8-Copy-3" transform="translate(80.000000, 0.000000)">
+				<g id="Group-8-Copy-4" transform="translate(12.000000, 12.000000) rotate(-360.000000) translate(-12.000000, -12.000000) ">
+					<g id="Group-4" transform="translate(12.000000, 12.000000) scale(-1, 1) translate(-12.000000, -12.000000) ">
+						<path id="Combined-Shape" d="M9,16.667L16,12v12l-7-4.667V24l-9-6l9-6V16.667z"/>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
 </g>
 </svg>

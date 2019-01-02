@@ -24,6 +24,11 @@ export class LegendPanelControl extends Panel {
       element.appendChild(this._createLegendItem(c));
     });
 
+    const buttonBlock = document.createElement('div');
+    buttonBlock.className = 'panel-body__legend--button';
+    buttonBlock.innerHTML = `<a href="#" class="btn panel-button">ГРАФИК ИЗМЕНЕНИЯ ТЕРРИТОРИИ</a>`;
+    element.appendChild(buttonBlock);
+
     this.updateBody(element);
     return element;
   }

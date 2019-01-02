@@ -60,7 +60,7 @@ export function getTopLeftLinksPanel() {
   block.className = 'mapboxgl-ctrl-group mapboxgl-ctrl-group-home';
   block.innerHTML = `
     <button class="mapboxgl-ctrl-icon mapboxgl-ctrl-home" type="button" title="Home" aria-label="Home">
-      <img src="images/home-button.svg" width="15" />
+      <img src="images/home-button.svg"/>
     </button>
   `;
 

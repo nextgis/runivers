@@ -82,7 +82,7 @@ export class YearsStatPanelControl extends Panel {
     element.appendChild(yearBlock);
 
     if (this.areaStat) {
-      const gain = 54353; // this.areaStat.plus;
+      const gain = this.areaStat.plus;
       if (gain) {
         element.appendChild(this._createGainBlock(gain));
       }
@@ -98,7 +98,7 @@ export class YearsStatPanelControl extends Panel {
     const descrBlock = this._createDescriptionBlock(yearStat);
     if (descrBlock) {
       element.appendChild(descrBlock);
-      element.appendChild(this.createControlButton(() => console.log('test'))); // added for test
+      element.appendChild(this.createControlButton(() => console.log('test')));
     }
     const descrLong = yearStat.description_long;
     if (descrLong) {
