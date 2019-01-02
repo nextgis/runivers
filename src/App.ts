@@ -165,7 +165,7 @@ export class App {
   }
 
   createWebMap() {
-    const options = Object.assign({}, this.options);
+    const options = {...this.options};
     const webMap = new WebMap({
       mapAdapter: new MapboxglAdapter(),
       starterKits: [new QmsKit()],
@@ -257,7 +257,7 @@ export class App {
       this._bottomLink = getBottomLinksPanel();
       this._bottomLeftLink = getBottomLeftLinksPanel();
       this._topLink = getTopLinksPanel(this);
-      this._topLeftLink = getTopLeftLinksPanel();
+      this._topLeftLink = getTopLeftLinksPanel(this);
 
       this.webMap.addControl(this._topLink, 'top-right');
       this.webMap.addControl(this._topLeftLink, 'top-left');

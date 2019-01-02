@@ -101,14 +101,14 @@
 }
 
 .panel__toggler {
-  opacity: 0.5;
+  opacity: 0.4;
   display: inline-block;
   width: 30px;
   height: 30px;
   margin-left: 5px;
   cursor: pointer;
   &.active {
-    opacity: 0.7;
+    opacity: 0.8;
   }
   &:hover {
     opacity: 1;
@@ -120,7 +120,8 @@
 }
 
 .years__toggler {
-  background: url(./img/years.png) no-repeat;
+  // background: url(./img/years.png) no-repeat;
+  background: url(./img/graph.svg) no-repeat;
 }
 
 .baselayer__toggler {

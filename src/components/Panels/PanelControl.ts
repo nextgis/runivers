@@ -30,6 +30,10 @@ export class Panel {
     this._container = this._createContainer();
   }
 
+  getContainer() {
+    return this._container;
+  }
+
   onAdd(map) {
     this.map = map;
     return this._container;

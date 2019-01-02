@@ -11,7 +11,7 @@
 }
 
 .panel-body__yearstat--gain.lost {
-  color: darkred;
+  /* color: darkred; */
 }
 
 .state-switcher {
@@ -85,6 +85,11 @@ a.panel_slider {
   background-position: center;
   background-size: contain;
 }
+
+a.panel_slider.hidden {
+  opacity: .5;
+}
+
 a.panel_slider:hover {
   opacity: 1;
 }

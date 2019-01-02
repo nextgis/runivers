@@ -55,7 +55,7 @@ export function getBottomLeftLinksPanel() {
   return panel;
 }
 
-export function getTopLeftLinksPanel() {
+export function getTopLeftLinksPanel(app: App) {
   const block = document.createElement('div');
   block.className = 'mapboxgl-ctrl-group mapboxgl-ctrl-group-home';
   block.innerHTML = `
@@ -63,7 +63,10 @@ export function getTopLeftLinksPanel() {
       <img src="images/home-button.svg"/>
     </button>
   `;
-
+  const button = block.getElementsByTagName('button')[0];
+  button.addEventListener('click', () => {
+    app.webMap.setView([96, 63], 2);
+  });
   const panel = new Panel({
     addClass: 'top-links'
   });
@@ -78,6 +81,23 @@ export function getTimelineButton() {
   link.setAttribute('title', 'График изменения территории России');
   link.setAttribute('target', '_blank');
   return link;
+}
+
+function getbaseLayerToggler(app) {
+  const baselayer = 'qms-487';
+  const baselayerToggler = new Toggler({
+    className: 'baselayer__toggler',
+    title: 'Скрыть подложку',
+    titleOff: 'Показать подложку',
+    toggleAction: (status) => {
+      if (status) {
+        app.webMap.showLayer(baselayer);
+      } else {
+        app.webMap.hideLayer(baselayer);
+      }
+    }
+  });
+  return baselayerToggler;
 }
 
 export function getTopLinksPanel(app: App) {
@@ -100,21 +120,7 @@ export function getTopLinksPanel(app: App) {
     periodToggler.toggle(status);
   });
 
-  block.appendChild(getTimelineButton());
-  const baselayer = 'qms-487';
-  const baselayerToggler = new Toggler({
-    className: 'baselayer__toggler',
-    title: 'Скрыть подложку',
-    titleOff: 'Показать подложку',
-    toggleAction: (status) => {
-      if (status) {
-        app.webMap.showLayer('qms-487');
-      } else {
-        app.webMap.hideLayer('qms-487');
-      }
-    }
-  });
-  block.appendChild(baselayerToggler.getContainer());
+  // block.appendChild(getTimelineButton());
 
   const yearsToggler = new Toggler({
     className: 'years__toggler',
@@ -134,6 +140,9 @@ export function getTopLinksPanel(app: App) {
     yearsToggler.toggle(status);
   });
   block.appendChild(yearsToggler.getContainer());
+
+  const baselayerToggler = getbaseLayerToggler(app);
+  block.appendChild(baselayerToggler.getContainer());
 
   const panel = new Panel({
     addClass: 'top-links'

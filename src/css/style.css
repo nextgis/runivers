@@ -169,7 +169,7 @@ body {
 
 .btn:focus {
   outline-color: rgba(255, 255, 255, 0);
-  box-shadow: 0 0 0 0.1rem rgba(187, 16, 16, 0.5);
+  /* box-shadow: 0 0 0 0.1rem rgba(187, 16, 16, 0.5); */
 }
 
 .dialog-component {

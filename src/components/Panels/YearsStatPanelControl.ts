@@ -67,14 +67,10 @@ export class YearsStatPanelControl extends Panel {
     const element = document.createElement('div');
     element.className = 'panel-body__yearstat';
 
-    const sliderBlock = document.createElement('div');
-    sliderBlock.className = 'panel-body__period--slider';
-    sliderBlock.innerHTML = `
-      <a href='#' class='panel_slider prev'></a>
-      <div class='panel_slider-counter'>1 из 2</div>
-      <a href='#' class='panel_slider next'></a>
-    `;
-    element.appendChild(sliderBlock);
+    if (this.yearStats.length > 1) {
+      element.appendChild(this._createStateSwitcher());
+    }
+
 
     const yearBlock = document.createElement('div');
     yearBlock.className = 'panel-body__period--year';
@@ -87,18 +83,20 @@ export class YearsStatPanelControl extends Panel {
         element.appendChild(this._createGainBlock(gain));
       }
       const lost = this.areaStat.minus;
+      const container = this.getContainer();
       if (lost) {
         element.appendChild(this._createGainBlock(lost, true));
+        container.classList.add('lost');
+      } else {
+        container.classList.remove('lost');
       }
-      if (this.yearStats.length > 1) {
-        element.appendChild(this._createStateSwitcher());
-      }
+
     }
 
     const descrBlock = this._createDescriptionBlock(yearStat);
     if (descrBlock) {
       element.appendChild(descrBlock);
-      element.appendChild(this.createControlButton(() => console.log('test')));
+      // element.appendChild(this.createControlButton(() => console.log('test')));
     }
     const descrLong = yearStat.description_long;
     if (descrLong) {
@@ -115,8 +113,8 @@ export class YearsStatPanelControl extends Panel {
   }
 
   private _createStateSwitcher(): Node {
-    const block = document.createElement('div');
-    block.className = 'state-switcher';
+    const sliderBlock = document.createElement('div');
+    sliderBlock.className = 'panel-body__period--slider';
     const yearStat = this.yearStat;
     const index = this.yearStats.indexOf(yearStat);
     const isFirst = index === 0;
@@ -124,11 +122,14 @@ export class YearsStatPanelControl extends Panel {
     const isLast = index === length - 1;
 
     const createDirectionFlow = (previous?: boolean, isActive?: boolean) => {
-      const flow = document.createElement('div');
-      flow.className = 'state-switcher__flow state-switcher__flow--' +
-        (previous ? 'back' : 'forward') +
-        (isActive ? '' : ' hiden');
-      flow.innerHTML = previous ? '<<' : '>>';
+      const flow = document.createElement('a');
+      flow.setAttribute('href', '#');
+      // flow.className = '' +
+      //   (previous ? 'back' : 'forward') +
+      //   (isActive ? '' : ' hiden');
+      flow.className = (previous ?
+      `panel_slider prev` :
+      `panel_slider next`) + (isActive ? '' : ' hidden');
       if (isActive) {
         flow.onclick = (e) => {
           e.preventDefault();
@@ -139,16 +140,16 @@ export class YearsStatPanelControl extends Panel {
       return flow;
     };
 
-    block.appendChild(createDirectionFlow(true, !isFirst));
+    sliderBlock.appendChild(createDirectionFlow(true, !isFirst));
 
     const flowCounter = document.createElement('div');
-    flowCounter.className = 'state-switcher__flow state-switcher__flow--counter';
-    flowCounter.innerHTML = `<b>${yearStat.numb}</b> <small>/ ${yearStat.count}</small>`;
-    block.appendChild(flowCounter);
+    flowCounter.className = 'panel_slider-counter';
+    flowCounter.innerHTML = `${yearStat.numb} из ${yearStat.count}`;
+    sliderBlock.appendChild(flowCounter);
 
-    block.appendChild(createDirectionFlow(false, !isLast));
+    sliderBlock.appendChild(createDirectionFlow(false, !isLast));
 
-    return block;
+    return sliderBlock;
   }
 
   private _createDescriptionBlock(yearStat: YearStat): HTMLElement {

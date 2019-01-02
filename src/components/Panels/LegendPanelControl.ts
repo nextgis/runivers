@@ -26,7 +26,11 @@ export class LegendPanelControl extends Panel {
 
     const buttonBlock = document.createElement('div');
     buttonBlock.className = 'panel-body__legend--button';
-    buttonBlock.innerHTML = `<a href="#" class="btn panel-button">ГРАФИК ИЗМЕНЕНИЯ ТЕРРИТОРИИ</a>`;
+    buttonBlock.innerHTML = `<a
+      href="https://www.runivers.ru/granitsy-rossii/charts/index.php"
+      target='_blank'
+      class="btn panel-button">ГРАФИК ИЗМЕНЕНИЯ ТЕРРИТОРИИ
+    </a>`;
     element.appendChild(buttonBlock);
 
     this.updateBody(element);
