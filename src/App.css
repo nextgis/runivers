@@ -49,15 +49,26 @@ body {
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  background: green;
+  background: #9c9c9c;
   width: 23px;
   height: 23px;
+}
+.map-marker.active {
+  background: black!important;
+}
+
+.map-marker--inner {
+  border-radius: 50%;
+  border: 1px solid #fff;
+  width: 15px;
+  height: 15px;
+  margin: 3px;
 }
 
 .map-marker__label {
   color: white;
   text-align: center;
-  line-height: 23px;
+  line-height: 15px;
 }
 
 .popup__property--value, .popup__property--value span, .popup__property--value p {
@@ -108,5 +119,9 @@ body {
 
 .mapboxgl-popup-content {
   padding: 10px;
+}
+
+.backdrop {
+  background-color: rgba(0, 0, 0, 0.85)!important;
 }
 
