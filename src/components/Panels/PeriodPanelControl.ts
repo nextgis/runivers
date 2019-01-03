@@ -42,7 +42,7 @@ export class PeriodPanelControl extends Panel {
         this.period = period;
       }
     } else {
-      this.updateBody('<div class="panel-body__period empty">Данные не предоставленны</div>');
+      this.updateBody('<div class="panel-body__period empty">В этом году изменений территории не было</div>');
       this.period = null;
     }
   }
