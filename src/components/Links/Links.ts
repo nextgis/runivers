@@ -5,6 +5,7 @@ import { Toggler } from './Toggler';
 import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 
 import './img/home-button.svg';
+import './img/nextgis.png';
 
 export function getBottomLinksPanel() {
   const block = document.createElement('div');
@@ -167,9 +168,9 @@ function openDialog(options: DialogAdapterOptions) {
 const aboutShort = `
 <div style="margin-top: 40px;"></div>
 <div class="partner_logos">
-<a href="#" target="_blank"><img src="images/Runivers-Logo.png" /></a>
+<a href="#" target="_blank"><img src="images/Runivers-Logo-color.svg" /></a>
 <a href="#" target="_blank"><img src="images/Transneft_logo1.png" /></a>
-<a href="#" target="_blank"><img src="images/laboratory.png" /></a>
+<a href="#" target="_blank"><img src="images/geolab.png" /></a>
 <a href="#" target="_blank"><img src="images/nextgis.png" /></a>
 </div>
 <div style="margin-top: 40px;"></div>
