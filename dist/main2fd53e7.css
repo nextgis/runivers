@@ -47,15 +47,26 @@
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  background: green;
+  background: #9c9c9c;
   width: 23px;
   height: 23px;
+}
+.map-marker.active {
+  background: black!important;
+}
+
+.map-marker--inner {
+  border-radius: 50%;
+  border: 1px solid #fff;
+  width: 15px;
+  height: 15px;
+  margin: 3px;
 }
 
 .map-marker__label {
   color: white;
   text-align: center;
-  line-height: 23px;
+  line-height: 15px;
 }
 
 .popup__property--value, .popup__property--value span, .popup__property--value p {
@@ -106,6 +117,10 @@
 
 .mapboxgl-popup-content {
   padding: 10px;
+}
+
+.backdrop {
+  background-color: rgba(0, 0, 0, 0.85)!important;
 }
 
 .slider-control {
@@ -290,7 +305,7 @@
   color: #b9b9b9;
   font-size: 13px;
 }.panel-body__yearstat {
-  text-align: center;
+  text-align: left;
   margin-bottom: 10px;
   width: 90%;
   margin: 0 auto;
@@ -422,7 +437,7 @@ a.panel_slider.next {
 .laboratory__logo {
   vertical-align: middle;
   display: inline-block;
-  background: url(./images/laboratory.png) no-repeat;
+  background: url(./images/geolab.png) no-repeat;
   width: 81px;
   height: 26px; }
 
@@ -432,6 +447,21 @@ a.panel_slider.next {
   background-color: rgba(255, 255, 255, 0.5);
   margin: 0;
   text-decoration: none; }
+
+.partner_logos {
+  border-radius: 10px;
+  background-color: #fff;
+  padding: 10px; }
+
+.partner_logos a {
+  display: inline-block;
+  width: 24%;
+  height: auto;
+  vertical-align: middle; }
+
+.partner_logos a img {
+  vertical-align: middle;
+  width: 90%; }
 
 .resource__link:hover {
   text-decoration: underline; }
@@ -458,7 +488,7 @@ a.panel_slider.next {
 .runiver__logo {
   vertical-align: middle;
   display: inline-block;
-  background: url(./images/Runivers-Logo.png) no-repeat;
+  background: url(./images/Runivers-Logo-color.svg) no-repeat;
   height: 18px;
   width: 63px;
   margin-right: 4px; }
@@ -827,6 +857,12 @@ body {
 
 .dialog-component {
   max-width: 600px;
+  scrollbar-width: none;
+}
+
+.dialog-component::-webkit-scrollbar {
+  width: 0px;
+  display: none;
 }
 
 /* DIALOG */
