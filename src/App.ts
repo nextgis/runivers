@@ -501,8 +501,13 @@ export class App {
     const map: Map = this.webMap.mapAdapter.map;
     // create a DOM element for the marker
     const el = document.createElement('div');
-    el.className = 'map-marker';
-    el.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
+    el.className = 'map-marker'; // есть класс aсtive, что бы выделить активную метку
+
+    const el_inner = document.createElement('div');
+    el_inner.className = 'map-marker--inner';
+    el_inner.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
+
+    el.appendChild(el_inner);
     // el.innerHTML = typeof id !== 'boolean' ? `<div class="map-marker__label">${id + 1}</div>` : '';
     // el.style.backgroundImage = 'url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
 

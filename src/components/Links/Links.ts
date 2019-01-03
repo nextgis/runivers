@@ -165,7 +165,14 @@ function openDialog(options: DialogAdapterOptions) {
 }
 
 const aboutShort = `
-<div style="margin-top: 20px;"></div>
+<div style="margin-top: 40px;"></div>
+<div class="partner_logos">
+<a href="#" target="_blank"><img src="images/Runivers-Logo.png" /></a>
+<a href="#" target="_blank"><img src="images/Transneft_logo1.png" /></a>
+<a href="#" target="_blank"><img src="images/laboratory.png" /></a>
+<a href="#" target="_blank"><img src="images/nextgis.png" /></a>
+</div>
+<div style="margin-top: 40px;"></div>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
 <h2>О проекте Границы России 1462-2018 гг.</h2></P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">

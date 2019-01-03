@@ -27,6 +27,24 @@
 	text-decoration: none;
 }
 
+.partner_logos {
+  border-radius: 10px;
+  background-color: #fff;
+  padding: 10px;
+}
+
+.partner_logos a {
+  display: inline-block;
+  width: 24%;
+  height: auto;
+  vertical-align: middle;
+}
+
+.partner_logos a img {
+  vertical-align: middle;
+  width: 90%;
+}
+
 .resource__link:hover {
 	text-decoration: underline;
 }
