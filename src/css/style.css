@@ -175,6 +175,7 @@ body {
 .dialog-component {
   max-width: 600px;
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .dialog-component::-webkit-scrollbar {
@@ -189,8 +190,8 @@ body {
   width: 90%;
   box-shadow: none;
   border: 0;
-  padding: 0;
-  top: 0;
+  padding: 0 20px;
+  overflow-x: hidden;
   overflow-y: scroll;
   background: transparent;
   color: white;

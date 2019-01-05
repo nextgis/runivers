@@ -24,6 +24,10 @@
   margin: 5px;
 }
 
+.button-wrap {
+  text-align: center;
+}
+
 .state-switcher__flow.hiden {
   opacity: 0.3;
 }

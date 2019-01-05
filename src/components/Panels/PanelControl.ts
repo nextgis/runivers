@@ -81,6 +81,7 @@ export class Panel {
 
   openDialog(options?: DialogAdapterOptions) {
     if (!this._dialog) {
+      console.log(options);
       this._dialog = new Dialog(options);
     }
     const isSame = options && options.template &&
