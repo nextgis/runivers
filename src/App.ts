@@ -4,7 +4,7 @@ import './App.css';
 // import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/mapbox-gl-adapter';
 // import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
 
-import WebMap from '@nextgis/webmap';
+import WebMap, { MapControls } from '@nextgis/webmap';
 import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
 import QmsKit from '@nextgis/qms-kit';
 
@@ -20,10 +20,10 @@ import Color from 'color';
 
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
-import { getBottomLinksPanel, getTopLinksPanel, getBottomLeftLinksPanel, getTopLeftLinksPanel, getAboutProjectLink } from './components/Links/Links';
-import { Panel } from './components/Panels/PanelControl';
-import { LegendPanelControl } from './components/Panels/LegendPanelControl';
+
 import { formatArea, onlyUnique } from './utils/utils';
+import { getAboutProjectLink } from './components/Links/Links';
+import { MapControl } from './MapControls';
 
 export interface AreaStat {
   year: number;
@@ -128,7 +128,6 @@ export class App {
 
   periodsPanelControl = new PeriodPanelControl();
   yearsStatPanelControl = new YearsStatPanelControl();
-  legendPanel: Panel;
   webMap: WebMap;
 
   currentLayerId: string;
@@ -137,10 +136,8 @@ export class App {
   emitter = new EventEmitter();
 
   _headerElement: HTMLElement;
-  _bottomLink: Panel;
-  _bottomLeftLink: Panel;
-  _topLink: Panel;
-  _topLeftLink: Panel;
+
+  private controls: MapControl;
 
   private _minYear: number;
   private _maxYear: number;
@@ -160,6 +157,7 @@ export class App {
       this.options.currentYear = fromYear;
     }
     this.currentYear = this.options.currentYear;
+    this.controls = new MapControl(this);
     this.createWebMap();
     this._buildApp();
   }
@@ -171,13 +169,6 @@ export class App {
       starterKits: [new QmsKit()],
     });
 
-    this.legendPanel = new LegendPanelControl({
-      // colors: this.options.lineColor,
-      colors: this.options.lineColorLegend,
-    });
-
-    this.legendPanel.emitter.on('change', (colors) => this._updateLayersColor());
-
     webMap.create(options).then(() => {
 
       // webMap.addBaseLayer('osm', 'OSM');
@@ -187,9 +178,6 @@ export class App {
       }).then((layer) => {
         webMap.showLayer(layer.name);
       });
-
-      webMap.addControl(this.legendPanel, 'top-left');
-      webMap.addControl('ZOOM', 'top-left');
 
       /*
       webMap.addControl('ATTRIBUTION', 'bottom-left', {
@@ -254,21 +242,9 @@ export class App {
 
       this.slider = this._createSlider();
 
-      this._bottomLink = getBottomLinksPanel();
-      this._bottomLeftLink = getBottomLeftLinksPanel();
-      this._topLink = getTopLinksPanel(this);
-      this._topLeftLink = getTopLeftLinksPanel(this);
-
-      this.webMap.addControl(this._topLink, 'top-right');
-      this.webMap.addControl(this._topLeftLink, 'top-left');
-
-      this.webMap.addControl(this.periodsPanelControl, 'top-right');
-      this.webMap.addControl(this.yearsStatPanelControl, 'top-right');
-
-      // this.webMap.addControl(this._bottomLeftLink, 'bottom-left');
-      this.webMap.addControl(this._bottomLink, 'bottom-left');
-
       this._headerElement = this._createHeader();
+
+      this.controls.addControls();
 
       this.webMap.mapAdapter.onMapLoad(() => {
         this.updateByYear(this.currentYear);
@@ -503,11 +479,11 @@ export class App {
     const el = document.createElement('div');
     el.className = 'map-marker'; // есть класс aсtive, что бы выделить активную метку
 
-    const el_inner = document.createElement('div');
-    el_inner.className = 'map-marker--inner';
-    el_inner.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
+    const elInner = document.createElement('div');
+    elInner.className = 'map-marker--inner';
+    elInner.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
 
-    el.appendChild(el_inner);
+    el.appendChild(elInner);
     // el.innerHTML = typeof id !== 'boolean' ? `<div class="map-marker__label">${id + 1}</div>` : '';
     // el.style.backgroundImage = 'url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
 
