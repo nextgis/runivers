@@ -1,7 +1,7 @@
 import { Panel } from './PanelControl';
 import './YearsStatPanelControl.css';
-import { AreaStat } from '../../App';
 import { formatArea } from '../../utils/utils';
+import { AreaStat } from '../../interfaces';
 
 /**
  * @typedef {Object} YearStat - information about changes in territorial integrity
@@ -58,7 +58,7 @@ export class YearsStatPanelControl extends Panel {
       }
     } else {
       this.hide();
-      this.updateBody('<div class="panel-body__period empty">Данные не предоставленны</div>');
+      this.updateBody('<div class="panel-body__period empty">В этом году изменений территории не было</div>');
       this.yearStat = null;
     }
   }

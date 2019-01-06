@@ -134,6 +134,11 @@
   }
 }
 
+.mobile .switcher-panel-control .panel__toggler {
+	display: block;
+	margin-bottom: 5px;
+}
+
 .period__toggler {
   background: url(./img/rulers.svg) no-repeat;
 }
@@ -145,6 +150,10 @@
 
 .baselayer__toggler {
   background: url(./img/baselayer.svg) no-repeat;
+}
+
+.legend__toggler {
+	background: url(./img/legend.svg) no-repeat;
 }
 
 .mapboxgl-ctrl-group.mapboxgl-ctrl-group-home {

@@ -16,8 +16,10 @@ export class Panel {
 
   emitter = new EventEmitter();
 
+  isHide: boolean;
   _header: HTMLElement;
   _blocked: boolean = false;
+
   private _container: HTMLElement;
   private _body: HTMLElement;
   private _dialog: Dialog;
@@ -40,10 +42,10 @@ export class Panel {
   }
 
   onRemove() {
-    // const parentNode = this._container && this._container.parentNode;
-    // if (parentNode) {
-    //   parentNode.removeChild(this._container);
-    // }
+    const parentNode = this._container && this._container.parentNode;
+    if (parentNode) {
+      parentNode.removeChild(this._container);
+    }
   }
 
   updateBody(content) {
@@ -56,12 +58,14 @@ export class Panel {
   }
 
   hide() {
+    this.isHide = true;
     this._container.classList.add('panel-hide');
     this.emitter.emit('toggle', false);
   }
 
   show() {
     if (!this._blocked) {
+      this.isHide = false;
       this._container.classList.remove('panel-hide');
       this.emitter.emit('toggle', true);
     }
@@ -81,7 +85,6 @@ export class Panel {
 
   openDialog(options?: DialogAdapterOptions) {
     if (!this._dialog) {
-      console.log(options);
       this._dialog = new Dialog(options);
     }
     const isSame = options && options.template &&

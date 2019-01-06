@@ -1,11 +1,35 @@
 import './Links.scss';
 import { Panel } from '../Panels/PanelControl';
-import { App } from '../../App';
 import { Toggler } from './Toggler';
 import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
+import { Controls } from '../../Controls';
 
 import './img/home-button.svg';
 import './img/nextgis.png';
+
+export function getSwitcherPanelControl(controls: Controls) {
+  const block = document.createElement('div');
+  block.className = 'switcher-panel-control';
+
+  const legendToggle = getLegendToggler(controls);
+  block.appendChild(legendToggle.getContainer());
+
+  const periodToggler = getPeriodToggler(controls);
+  block.appendChild(periodToggler.getContainer());
+  // block.appendChild(getTimelineButton());
+
+  const yearsToggler = getYearsToggler(controls);
+  block.appendChild(yearsToggler.getContainer());
+
+  const baseLayerToggler = getBaseLayerToggler(controls);
+  block.appendChild(baseLayerToggler.getContainer());
+
+  const panel = new Panel({
+    addClass: 'top-links'
+  });
+  panel.updateBody(block);
+  return panel;
+}
 
 export function getBottomLinksPanel() {
   const block = document.createElement('div');
@@ -17,7 +41,6 @@ export function getBottomLinksPanel() {
     </div>
   `;
   // <a href="http://runivers.livejournal.com/" class="social__logo livejournal"></a>
-
 
   const panel = new Panel({
     addClass: 'bottom-links'
@@ -32,7 +55,7 @@ export function getAboutProjectLink() {
   block.setAttribute('href', '#');
   block.innerHTML = `i`;
   block.onclick = () => {
-    openDialog({template: aboutShort});
+    openDialog({ template: aboutShort });
   };
 
   return block;
@@ -45,7 +68,7 @@ export function getBottomLeftLinksPanel() {
   `;
   const link = block.getElementsByTagName('a')[0];
   link.onclick = () => {
-    openDialog({template: aboutShort});
+    openDialog({ template: aboutShort });
   };
   // <div><a  href="https://histgeo.ru/laboratory.html" class="resource__link">Лаборатория ИГ ИВИ РАН</a></div>
 
@@ -56,7 +79,7 @@ export function getBottomLeftLinksPanel() {
   return panel;
 }
 
-export function getTopLeftLinksPanel(app: App) {
+export function getHomeBtnControl(control: Controls) {
   const block = document.createElement('div');
   block.className = 'mapboxgl-ctrl-group mapboxgl-ctrl-group-home';
   block.innerHTML = `
@@ -66,7 +89,7 @@ export function getTopLeftLinksPanel(app: App) {
   `;
   const button = block.getElementsByTagName('button')[0];
   button.addEventListener('click', () => {
-    app.webMap.setView([96, 63], 2);
+    control.app.webMap.setView([96, 63], 2);
   });
   const panel = new Panel({
     addClass: 'top-links'
@@ -84,72 +107,82 @@ export function getTimelineButton() {
   return link;
 }
 
-function getbaseLayerToggler(app) {
-  const baselayer = 'qms-487';
-  const baselayerToggler = new Toggler({
+function getBaseLayerToggler(app) {
+  const baseLayer = 'qms-487';
+  const baseLayerToggler = new Toggler({
     className: 'baselayer__toggler',
     title: 'Скрыть подложку',
     titleOff: 'Показать подложку',
     toggleAction: (status) => {
       if (status) {
-        app.webMap.showLayer(baselayer);
+        app.webMap.showLayer(baseLayer);
       } else {
-        app.webMap.hideLayer(baselayer);
+        app.webMap.hideLayer(baseLayer);
       }
     }
   });
-  return baselayerToggler;
+  return baseLayerToggler;
 }
 
-export function getTopLinksPanel(app: App) {
-  const block = document.createElement('div');
+function getLegendToggler(controls: Controls) {
+  const legendToggler = new Toggler({
+    className: 'legend__toggler',
+    title: 'Скрыть легенду',
+    titleOff: 'Показать легенду',
+    toggleAction: (status) => {
+      if (status) {
+        controls.legendPanel.show();
+      } else {
+        controls.legendPanel.hide();
+      }
+    }
+  });
 
+  controls.legendPanel.emitter.on('toggle', (status) => {
+    legendToggler.toggle(status);
+  });
+  return legendToggler;
+}
+
+function getPeriodToggler(controls: Controls) {
   const periodToggler = new Toggler({
     className: 'period__toggler',
     title: 'Скрыть панель правителей',
     titleOff: 'Показать панель правителей',
     toggleAction: (status) => {
       if (status) {
-        app.periodsPanelControl.show();
+        controls.periodsPanelControl.show();
       } else {
-        app.periodsPanelControl.hide();
+        controls.periodsPanelControl.hide();
       }
     }
   });
-  block.appendChild(periodToggler.getContainer());
-  app.periodsPanelControl.emitter.on('toggle', (status) => {
+
+  controls.periodsPanelControl.emitter.on('toggle', (status) => {
     periodToggler.toggle(status);
   });
+  return periodToggler;
+}
 
-  // block.appendChild(getTimelineButton());
-
+function getYearsToggler(controls: Controls) {
   const yearsToggler = new Toggler({
     className: 'years__toggler',
     title: 'Скрыть панель изменения в территориальном составе',
     titleOff: 'Показать панель изменения в территориальном составе',
     toggleAction: (status) => {
       if (status) {
-        app.yearsStatPanelControl._blocked = false;
-        app.yearsStatPanelControl.show();
+        controls.yearsStatPanelControl._blocked = false;
+        controls.yearsStatPanelControl.show();
       } else {
-        app.yearsStatPanelControl.hide();
-        app.yearsStatPanelControl._blocked = true;
+        controls.yearsStatPanelControl.hide();
+        controls.yearsStatPanelControl._blocked = true;
       }
     }
   });
-  app.yearsStatPanelControl.emitter.on('toggle', (status) => {
+  controls.yearsStatPanelControl.emitter.on('toggle', (status) => {
     yearsToggler.toggle(status);
   });
-  block.appendChild(yearsToggler.getContainer());
-
-  const baselayerToggler = getbaseLayerToggler(app);
-  block.appendChild(baselayerToggler.getContainer());
-
-  const panel = new Panel({
-    addClass: 'top-links'
-  });
-  panel.updateBody(block);
-  return panel;
+  return yearsToggler;
 }
 
 function openDialog(options: DialogAdapterOptions) {
@@ -157,7 +190,7 @@ function openDialog(options: DialogAdapterOptions) {
   const dialog = new Dialog(options);
 
   const isSame = options && options.template &&
-  dialog.options.template === options.template;
+    dialog.options.template === options.template;
   if (!isSame) {
     dialog.updateContent(options.template);
   }

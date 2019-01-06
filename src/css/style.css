@@ -232,9 +232,13 @@ body {
 
 /* MAPBOX GL */
 
+.mapboxgl-ctrl-top-left {
+  top: 64px;
+}
+
 .mapboxgl-ctrl-bottom-left,
 .mapboxgl-ctrl-bottom-right {
-  margin-bottom: 60px;
+  margin-bottom: 64px;
   z-index: 0;
 }
 

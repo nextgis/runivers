@@ -36,18 +36,18 @@
   font-size: 0.6rem;
 }
 
-.mapboxgl-ctrl-top-right .mapboxgl-ctrl.stat-panel {
+.mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
   margin-top: 0;
   background-color: #7ccf78;
   color: #fff;
   border-radius: 0px 0px 6px 6px;
 }
 
-.mapboxgl-ctrl-top-right .mapboxgl-ctrl.stat-panel.lost {
+.mapboxgl-control-container .mapboxgl-ctrl.stat-panel.lost {
   background-color: #d16847;
 }
 
-.mapboxgl-ctrl-top-right .mapboxgl-ctrl.period-panel {
+.mapboxgl-control-container .mapboxgl-ctrl.period-panel {
   margin-top: 0;
   background-color: #fff;
   border-radius: 6px 6px 0 0;
@@ -110,6 +110,18 @@ a.panel_slider.next {
 
 .panel_slider-counter {
   display: inline-block;
+}
+
+/* MOBILE */
+
+.mobile .mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
+  border-radius: 6px;
+}
+
+
+
+.mobile .mapboxgl-control-container .mapboxgl-ctrl.period-panel {
+  border-radius: 6px;
 }
 
 

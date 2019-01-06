@@ -1,7 +1,7 @@
 import { Panel } from './PanelControl';
 import './PeriodPanelControl.css';
-import { AreaStat } from '../../App';
 import { formatArea } from '../../utils/utils';
+import { AreaStat } from '../../interfaces';
 
 /**
  * Information about the ruler in the time interval

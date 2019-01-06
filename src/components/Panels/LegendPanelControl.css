@@ -4,10 +4,10 @@
   max-width: 450px;
   margin: auto;
   margin-left: 15px;
+  margin-right: 10px;
   color: #f1f1f1;
   background: rgba(49, 49, 49, 0.8);
   position: relative;
-  top: 80px;
 }
 
 .panel .panel-body {

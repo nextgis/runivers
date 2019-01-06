@@ -1,10 +1,6 @@
 import './App.css';
 
-// import { WebMap } from '../nextgisweb_frontend/packages/webmap/src/entities/WebMap';
-// import { MapboxglAdapter } from '../nextgisweb_frontend/packages/mapbox-gl-adapter/src/mapbox-gl-adapter';
-// import { QmsKit } from '../nextgisweb_frontend/packages/qms-kit/src/QmsKit';
-
-import WebMap, { MapControls } from '@nextgis/webmap';
+import WebMap from '@nextgis/webmap';
 import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
 import QmsKit from '@nextgis/qms-kit';
 
@@ -13,8 +9,8 @@ import { Popup, Marker, Map } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
 import { getPoints, getPointGeojson } from './services/GetPointsService';
 
-import { PeriodPanelControl, Period } from './components/Panels/PeriodPanelControl';
-import { YearsStatPanelControl, YearStat } from './components/Panels/YearsStatPanelControl';
+import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
+import { YearsStatPanelControl } from './components/Panels/YearsStatPanelControl';
 import { EventEmitter } from 'events';
 import Color from 'color';
 
@@ -23,75 +19,17 @@ import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
 
 import { formatArea, onlyUnique } from './utils/utils';
 import { getAboutProjectLink } from './components/Links/Links';
-import { MapControl } from './MapControls';
 
-export interface AreaStat {
-  year: number;
-  area: number;
-  plus?: number;
-  minus?: number;
-}
+import {
+  AppOptions,
+  LayerMeta,
+  PointProperties,
+  PointMeta,
+  AreaStat,
+  HistoryLayerProperties
+} from './interfaces';
 
-export interface AppOptions {
-  baseUrl?: string;
-  target: string;
-  fromYear?: number;
-  currentYear?: number;
-  animationStep?: number;
-  animationDelay?: number;
-  periods?: Period[];
-  yearsStat?: YearStat[];
-  areaStat?: AreaStat[];
-  version?: string;
-  lineColor?: Array<[number, string]>;
-  lineColorLegend?: Array<[number, string, string]>;
-  statusAliases?: { [name: string]: string };
-}
-
-export interface HistoryLayerProperties {
-  cat: number;
-  fid: number;
-  id: number;
-  linecomnt: string;
-  lwdate: string;
-  lwdtappr: number;
-  status: number;
-  updtappr: number;
-  updtrl: string;
-  upperdat: string;
-  Area: number;
-}
-
-export interface LayerMeta {
-  name: string;
-  from: number;
-  to: number;
-  id: number;
-}
-
-interface PointMeta {
-  name: string;
-  year: number;
-  month: number;
-  day: number;
-  id: string;
-}
-
-export interface PointProperties {
-  status: number; // 6
-  lwdate: string; // 1945-06-29,
-  lwdtappr: number; // 0,
-  srcdata: any;
-  upperdat: string; // 1946-06-29,
-  eventstart: string; // по договору СССР с Чехословакией Украинской ССР передана Закарпатская область,
-  cat: number; // 342,
-  fid: number; // 547,
-  updtrl: any;
-  linecomnt: string; // Передача СССР Кенигсберга,
-  updtappr: any;
-  name: any;
-  numb?: number;
-}
+import { Controls } from './Controls';
 
 export class App {
 
@@ -126,8 +64,6 @@ export class App {
   currentYear: number;
   slider: SliderControl;
 
-  periodsPanelControl = new PeriodPanelControl();
-  yearsStatPanelControl = new YearsStatPanelControl();
   webMap: WebMap;
 
   currentLayerId: string;
@@ -137,7 +73,7 @@ export class App {
 
   _headerElement: HTMLElement;
 
-  private controls: MapControl;
+  controls: Controls;
 
   private _minYear: number;
   private _maxYear: number;
@@ -157,13 +93,13 @@ export class App {
       this.options.currentYear = fromYear;
     }
     this.currentYear = this.options.currentYear;
-    this.controls = new MapControl(this);
+    this.controls = new Controls(this);
     this.createWebMap();
     this._buildApp();
   }
 
   createWebMap() {
-    const options = {...this.options};
+    const options = { ...this.options };
     const webMap = new WebMap({
       mapAdapter: new MapboxglAdapter(),
       starterKits: [new QmsKit()],
@@ -300,7 +236,7 @@ export class App {
 
   _updatePeriodBlockByYear(year: number, areaStat: AreaStat) {
     const period = this._findPeriodByYear(year);
-    this.periodsPanelControl.updatePeriod(period, areaStat);
+    this.controls.periodsPanelControl.updatePeriod(period, areaStat);
   }
 
   _findPeriodByYear(year) {
@@ -312,7 +248,7 @@ export class App {
 
   _updateYearStatBlockByYear(year: number, areaStat: AreaStat) {
     const yearStat = this._findYearStatsByYear(year);
-    this.yearsStatPanelControl.updateYearStats(yearStat, areaStat);
+    this.controls.yearsStatPanelControl.updateYearStats(yearStat, areaStat);
   }
 
   _findYearInDateStr(dateStr: string): number {
@@ -477,35 +413,20 @@ export class App {
     const map: Map = this.webMap.mapAdapter.map;
     // create a DOM element for the marker
     const el = document.createElement('div');
-    el.className = 'map-marker'; // есть класс aсtive, что бы выделить активную метку
+    el.className = 'map-marker'; // use class `aсtive` for selected
 
     const elInner = document.createElement('div');
     elInner.className = 'map-marker--inner';
     elInner.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
 
     el.appendChild(elInner);
-    // el.innerHTML = typeof id !== 'boolean' ? `<div class="map-marker__label">${id + 1}</div>` : '';
-    // el.style.backgroundImage = 'url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
 
     const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);
     // add marker to map
     const m = new Marker(el);
     this._markers.push(m);
     m.setLngLat(coordEPSG4326);
-    // const date = properties.lwdate.split('-').reverse().join('-');
-    // const popupHtml = `
-    //   <div class="popup__property--center">${date}</div>
-    //   <div>${properties.eventstart || properties.linecomnt}</div>
-    // `;
 
-    // el.addEventListener('click', (e) => {
-    //   e.stopPropagation();
-    //   this._removePopup();
-    //   this._popup = new Popup()
-    //     .setLngLat(coordEPSG4326)
-    //     .setHTML(popupHtml)
-    //     .addTo(map);
-    // });
     m.addTo(map);
   }
 
