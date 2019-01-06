@@ -96,17 +96,20 @@ export class YearsStatPanelControl extends Panel {
     const descrBlock = this._createDescriptionBlock(yearStat);
     if (descrBlock) {
       element.appendChild(descrBlock);
-      // element.appendChild(this.createControlButton(() => console.log('test')));
     }
     const descrLong = yearStat.description_long;
     if (descrLong) {
 
       const template = document.createElement('div');
-      template.innerHTML = `
-        <div class="panel-body__period--description">${descrLong}</div>
-      `;
-      element.appendChild(this.createControlButton(() => this.openDialog({ template })));
+      template.className = 'panel-body__period--description';
+      template.innerHTML = `${descrLong}`;
 
+      const buttonWrap = document.createElement('div');
+
+      buttonWrap.className = 'button-wrap';
+      buttonWrap.appendChild(this.createControlButton(() => this.openDialog({ template })));
+
+      element.appendChild(buttonWrap);
     }
 
     return element;
