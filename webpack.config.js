@@ -1,6 +1,7 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+let FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 let alias = {};
 try {
@@ -128,7 +129,8 @@ module.exports = (env, argv) => {
     plugins: [
       new ForkTsCheckerWebpackPlugin({ vue: true }),
       new ExtractTextPlugin({ filename: '[name][hash:7].css', allChunks: true }),
-      new HtmlWebpackPlugin({ template: 'src/index.html' })
+      new HtmlWebpackPlugin({ template: 'src/index.html' }),
+      new FaviconsWebpackPlugin('./src/img/favicon.png')
     ],
 
     optimization: {

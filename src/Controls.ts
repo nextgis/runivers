@@ -39,6 +39,7 @@ export class Controls {
   constructor(public app: App) {
     this.checkMobile();
     this.initControls();
+    this._updateTimeSlider();
     this._addEventsListeners();
   }
 

@@ -74,7 +74,7 @@ export function getAffiliatedLinks() {
   >
   </a>
   <div class="transneft__logo__min"></div>
-  <a href="https://nextgis.com" class="nextgis__logo__min" target="_blank"
+  <a href="https://nextgis.ru" class="nextgis__logo__min" target="_blank"
     title="Nextgis"
   >
   </a>
@@ -213,10 +213,10 @@ function openDialog(options: DialogAdapterOptions) {
 const aboutShort = `
 <div style="margin-top: 40px;"></div>
 <div class="partner_logos">
-<a href="#" target="_blank"><img src="images/Runivers-Logo-color.svg" /></a>
+<a href="https://www.runivers.ru" target="_blank"><img src="images/Runivers-Logo-color.svg" /></a>
 <a href="#" target="_blank"><img src="images/Transneft_logo1.png" /></a>
-<a href="#" target="_blank"><img src="images/geolab.png" /></a>
-<a href="#" target="_blank"><img src="images/nextgis.png" /></a>
+<a href="https://histgeo.ru/laboratory.html" target="_blank"><img src="images/geolab.png" /></a>
+<a href="https://nextgis.ru" target="_blank"><img src="images/nextgis.png" /></a>
 </div>
 <div style="margin-top: 40px;"></div>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
