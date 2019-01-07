@@ -166,7 +166,6 @@ export class App {
       const pointId = this._getPointIdByYear(this.currentYear);
       this.updatePoint(pointId);
     });
-
   }
 
   _createSlider() {

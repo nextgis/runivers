@@ -1,7 +1,7 @@
 import { App } from './App';
 import { Panel } from './components/Panels/PanelControl';
 import { getBottomLinksPanel, getSwitcherPanelControl, getHomeBtnControl, getAffiliatedLinks } from './components/Links/Links';
-import { ControlPositions } from 'nextgisweb_frontend/packages/webmap/src';
+import { ControlPositions } from '@nextgis/webmap';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
 import { YearsStatPanelControl } from './components/Panels/YearsStatPanelControl';
