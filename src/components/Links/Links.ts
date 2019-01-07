@@ -61,16 +61,17 @@ export function getAboutProjectLink() {
   return block;
 }
 
-export function getBottomLeftLinksPanel() {
+export function getAffiliatedLinks() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <div><a href="#" class="resource__link">О проекте</a></div>
+  <a href="https://www.runivers.ru" class="runiver__logo__min"></a>
+  <a href="https://histgeo.ru/laboratory.html" class="laboratory__logo__min"
+    title="Лабораторией исторической геоинформатики"></a>
+  <div class="transneft__logo__min"></div>
+  <a href="https://nextgis.com" class="nextgis__logo__min"
+    title="Nextgis"></a>
   `;
-  const link = block.getElementsByTagName('a')[0];
-  link.onclick = () => {
-    openDialog({ template: aboutShort });
-  };
-  // <div><a  href="https://histgeo.ru/laboratory.html" class="resource__link">Лаборатория ИГ ИВИ РАН</a></div>
+
 
   const panel = new Panel({
     addClass: 'bottom-links'

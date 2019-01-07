@@ -48,7 +48,7 @@ body {
 }
 
 .noUi-target {
-  height: 11px;
+  height: 10px;
   border-radius: 7px;
   margin: 0 115px 0 0;
   background: rgba(49, 49, 49, 0.8);
@@ -98,16 +98,16 @@ body {
 .noUi-marker-normal {
   top: 3px;
   border-radius: 16px;
-  height: 5px !important;
-  width: 5px!important;
+  height: 4px !important;
+  width: 4px!important;
 }
 
 .noUi-marker-large {
   top: 3px;
   border-radius: 16px;
-  height: 5px !important;
+  height: 4px !important;
+  width: 4px!important;
   background: #fff!important;
-  width: 5px!important;
 }
 
 .noUi-tooltip {
@@ -238,7 +238,7 @@ body {
 
 .mapboxgl-ctrl-bottom-left,
 .mapboxgl-ctrl-bottom-right {
-  margin-bottom: 64px;
+  margin-bottom: 54px;
   z-index: 0;
 }
 

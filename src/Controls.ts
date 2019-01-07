@@ -1,6 +1,6 @@
 import { App } from './App';
 import { Panel } from './components/Panels/PanelControl';
-import { getBottomLinksPanel, getSwitcherPanelControl, getHomeBtnControl } from './components/Links/Links';
+import { getBottomLinksPanel, getSwitcherPanelControl, getHomeBtnControl, getAffiliatedLinks } from './components/Links/Links';
 import { ControlPositions } from 'nextgisweb_frontend/packages/webmap/src';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
@@ -20,7 +20,7 @@ export class Controls {
   private isMobile = false;
 
   private socialLinks: Panel;
-  // private _bottomLeftLink: Panel;
+  private _bottomLeftLink: Panel;
   private _switchersControl: Panel;
   private homeBtnControl: Panel;
 
@@ -77,7 +77,7 @@ export class Controls {
     });
     // this.legendPanel.emitter.on('change', (colors) => this.app._updateLayersColor());
     this.socialLinks = getBottomLinksPanel();
-    // this._bottomLeftLink = getBottomLeftLinksPanel();
+    this._bottomLeftLink = getAffiliatedLinks();
     this._switchersControl = getSwitcherPanelControl(this);
     this.homeBtnControl = getHomeBtnControl(this);
 
@@ -106,8 +106,9 @@ export class Controls {
     this._addControl(this.periodsPanelControl, 'top-right');
     this._addControl(this.yearsStatPanelControl, 'top-right');
 
-    // this.webMap.addControl(this._bottomLeftLink, 'bottom-left');
     this._addControl(this.socialLinks, 'bottom-left');
+
+    this._addControl(this._bottomLeftLink, 'bottom-right');
   }
 
   private _addMobileControls() {
@@ -116,12 +117,14 @@ export class Controls {
     this._addControl('ZOOM', 'top-left');
     this._addControl(this.homeBtnControl, 'top-left');
 
+    this._addControl(this._bottomLeftLink, 'bottom-right');
+
     this._addControl(this.legendPanel, 'bottom-right');
     this._addControl(this.yearsStatPanelControl, 'bottom-right');
     this._addControl(this.periodsPanelControl, 'bottom-right');
 
-    // this.webMap.addControl(this._bottomLeftLink, 'bottom-left');
     this._addControl(this.socialLinks, 'bottom-left');
+
   }
 
   private checkMobile() {
