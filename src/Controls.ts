@@ -13,8 +13,8 @@ interface ScreenSize {
 
 export class Controls {
 
-  periodsPanelControl = new PeriodPanelControl();
-  yearsStatPanelControl = new YearsStatPanelControl();
+  periodsPanelControl: PeriodPanelControl;
+  yearsStatPanelControl: YearsStatPanelControl;
   legendPanel: Panel;
 
   private isMobile = false;
@@ -71,6 +71,10 @@ export class Controls {
   }
 
   private initControls() {
+
+    this.periodsPanelControl = new PeriodPanelControl({ webMap: this.app.webMap });
+    this.yearsStatPanelControl = new YearsStatPanelControl({ webMap: this.app.webMap });
+
     this.legendPanel = new LegendPanelControl({
       // colors: this.options.lineColor,
       colors: this.app.options.lineColorLegend,
@@ -86,6 +90,8 @@ export class Controls {
       this.yearsStatPanelControl,
       this.legendPanel
     ];
+
+    this._mobileTogglePanels.forEach((x) => x.show());
   }
 
   private async _addControl(control: any, position: ControlPositions, options?) {
@@ -132,12 +138,35 @@ export class Controls {
     return this.isMobile;
   }
 
+  private _updateTimeSlider() {
+    // remove intermediat pips from slider on mobile
+    const pipsNodes = document.querySelectorAll('.noUi-marker.noUi-marker-horizontal.noUi-marker-normal');
+    let hideElements = Array.from(pipsNodes);
+
+    const labelNodes = document.querySelectorAll('.noUi-value.noUi-value-horizontal.noUi-value-large');
+    // leave labels for minimum and maximum
+    // no check for second and second last signature, admit that they are always
+    hideElements = hideElements.concat([labelNodes[0 + 1], labelNodes[labelNodes.length - 2]]);
+
+    if (window.innerWidth <= this._mobSizeConst.width) {
+      hideElements.forEach((x: HTMLElement) => {
+        x.style.visibility = 'hidden';
+      });
+
+    } else {
+      hideElements.forEach((x: HTMLElement) => {
+        x.style.visibility = '';
+      });
+    }
+  }
+
   private _onWindowResize(e) {
     const isMobile = this.isMobile;
     this.checkMobile();
     if (isMobile !== this.isMobile) {
       this.addControls();
     }
+    this._updateTimeSlider();
   }
 
   private _addEventsListeners() {

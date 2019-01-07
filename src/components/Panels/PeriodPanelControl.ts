@@ -33,6 +33,20 @@ export class PeriodPanelControl extends Panel {
     this.period = null;
   }
 
+  hide() {
+    super.hide();
+    const container = this.webMap.getContainer();
+    container.classList.remove('period-panel');
+  }
+
+  show() {
+    super.show();
+    if (!this.isHide) {
+      const container = this.webMap.getContainer();
+      container.classList.add('period-panel');
+    }
+  }
+
   updatePeriod(period: Period, areaStat: AreaStat) {
     const exist = this.period;
     this.closeDialog();

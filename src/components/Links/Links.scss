@@ -136,6 +136,10 @@
   opacity: 0.7;
 }
 
+.mobile .social__logo {
+	display: inline-block;
+}
+
 .social__logo:hover {
   opacity: 1;
 }

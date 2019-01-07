@@ -10,10 +10,6 @@
   color: green;
 }
 
-.panel-body__yearstat--gain.lost {
-  /* color: darkred; */
-}
-
 .state-switcher {
   user-select: none;
 }
@@ -38,19 +34,32 @@
 
 .mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
   margin-top: 0;
-  background-color: #7ccf78;
   color: #fff;
-  border-radius: 0px 0px 6px 6px;
+  background-color: #7ccf78;
+  border-radius: 6px;
 }
 
+.mapboxgl-control-container .mapboxgl-ctrl.stat-panel.gain {
+  color: #fff;
+  background-color: #7ccf78;
+}
 .mapboxgl-control-container .mapboxgl-ctrl.stat-panel.lost {
+  color: #fff;
   background-color: #d16847;
 }
 
 .mapboxgl-control-container .mapboxgl-ctrl.period-panel {
   margin-top: 0;
   background-color: #fff;
+  border-radius: 6px;
+}
+
+.years-panel .mapboxgl-control-container .mapboxgl-ctrl.period-panel {
   border-radius: 6px 6px 0 0;
+}
+
+.period-panel .mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
+  border-radius: 0px 0px 6px 6px;
 }
 
 .stat-panel .btn {
@@ -117,7 +126,6 @@ a.panel_slider.next {
 .mobile .mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
   border-radius: 6px;
 }
-
 
 
 .mobile .mapboxgl-control-container .mapboxgl-ctrl.period-panel {

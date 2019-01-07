@@ -6,13 +6,14 @@ import { EventEmitter } from 'events';
 export interface PanelOptions {
   headerText?: string;
   addClass?: string;
+  webMap?: WebMap;
 }
 
 export class Panel {
 
   options: PanelOptions;
 
-  map: WebMap;
+  webMap: WebMap;
 
   emitter = new EventEmitter();
 
@@ -25,7 +26,8 @@ export class Panel {
   private _dialog: Dialog;
 
   constructor(options?: PanelOptions) {
-    this.options = Object.assign({}, this.options, options);
+    this.options = { ...this.options, ...options };
+    this.webMap = this.options.webMap;
     this._container = null;
     this._header = null;
     this._body = null;
@@ -37,7 +39,7 @@ export class Panel {
   }
 
   onAdd(map: WebMap) {
-    this.map = map;
+    this.webMap = map;
     return this._container;
   }
 
@@ -69,6 +71,7 @@ export class Panel {
       this._container.classList.remove('panel-hide');
       this.emitter.emit('toggle', true);
     }
+
   }
 
   createControlButton(onclick, text = 'Подробнее') {

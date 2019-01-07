@@ -64,12 +64,20 @@ export function getAboutProjectLink() {
 export function getAffiliatedLinks() {
   const block = document.createElement('div');
   block.innerHTML = `
-  <a href="https://www.runivers.ru" class="runiver__logo__min"></a>
-  <a href="https://histgeo.ru/laboratory.html" class="laboratory__logo__min"
-    title="Лабораторией исторической геоинформатики"></a>
+  <a href="https://www.runivers.ru"
+    title="Электронная  энциклопедия и библиотека Руниверс"
+    class="runiver__logo__min" target="_blank"
+  >
+  </a>
+  <a href="https://histgeo.ru/laboratory.html" class="laboratory__logo__min" target="_blank"
+    title="Лабораторией исторической геоинформатики"
+  >
+  </a>
   <div class="transneft__logo__min"></div>
-  <a href="https://nextgis.com" class="nextgis__logo__min"
-    title="Nextgis"></a>
+  <a href="https://nextgis.com" class="nextgis__logo__min" target="_blank"
+    title="Nextgis"
+  >
+  </a>
   `;
 
 
@@ -146,6 +154,7 @@ function getLegendToggler(controls: Controls) {
 }
 
 function getPeriodToggler(controls: Controls) {
+
   const periodToggler = new Toggler({
     className: 'period__toggler',
     title: 'Скрыть панель правителей',
@@ -166,6 +175,8 @@ function getPeriodToggler(controls: Controls) {
 }
 
 function getYearsToggler(controls: Controls) {
+
+
   const yearsToggler = new Toggler({
     className: 'years__toggler',
     title: 'Скрыть панель изменения в территориальном составе',

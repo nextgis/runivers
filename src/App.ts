@@ -91,7 +91,6 @@ export class App {
       this.options.currentYear = fromYear;
     }
     this.currentYear = this.options.currentYear;
-    this.controls = new Controls(this);
     this.createWebMap();
     this._buildApp();
   }
@@ -177,7 +176,7 @@ export class App {
       this.slider = this._createSlider();
 
       this._headerElement = this._createHeader();
-
+      this.controls = new Controls(this);
       this.controls.addControls();
 
       this.webMap.mapAdapter.onMapLoad(() => {
@@ -237,8 +236,7 @@ export class App {
     this.controls.periodsPanelControl.updatePeriod(period, areaStat);
   }
 
-  _findPeriodByYear(year) {
-    year = parseInt(year, 10);
+  _findPeriodByYear(year: number) {
     const periods = this.options.periods || [];
     const period = periods.find((x) => (year >= x.years_from) && (year <= x.years_to));
     return period;

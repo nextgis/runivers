@@ -38,8 +38,21 @@ export class YearsStatPanelControl extends Panel {
   areaStat: AreaStat;
 
   constructor(options?) {
-    super(Object.assign({}, OPTIONS, options));
+    super({ ...OPTIONS, ...options });
+  }
 
+  hide() {
+    super.hide();
+    const container = this.webMap.getContainer();
+    container.classList.remove('years-panel');
+  }
+
+  show() {
+    super.show();
+    if (!this.isHide) {
+      const container = this.webMap.getContainer();
+      container.classList.add('years-panel');
+    }
   }
 
   updateYearStats(yearStats: YearStat[], areaStat?: AreaStat) {
@@ -50,14 +63,17 @@ export class YearsStatPanelControl extends Panel {
 
   updateYearStat(yearStat: YearStat) {
     const exist = this.yearStat;
+    const container = this.getContainer();
+    container.classList.remove('gain');
+    container.classList.remove('lost');
     if (yearStat) {
       if (exist !== yearStat) {
-        this.show();
+        // this.show();
         this.yearStat = yearStat;
         this.updateBody(this._createPeriodBody(yearStat));
       }
     } else {
-      this.hide();
+      // this.hide();
       this.updateBody('<div class="panel-body__period empty">В этом году изменений территории не было</div>');
       this.yearStat = null;
     }
@@ -70,7 +86,6 @@ export class YearsStatPanelControl extends Panel {
     if (this.yearStats.length > 1) {
       element.appendChild(this._createStateSwitcher());
     }
-
 
     const yearBlock = document.createElement('div');
     yearBlock.className = 'panel-body__period--year';
@@ -88,7 +103,7 @@ export class YearsStatPanelControl extends Panel {
         element.appendChild(this._createGainBlock(lost, true));
         container.classList.add('lost');
       } else {
-        container.classList.remove('lost');
+        container.classList.add('gain');
       }
 
     }
@@ -131,8 +146,8 @@ export class YearsStatPanelControl extends Panel {
       //   (previous ? 'back' : 'forward') +
       //   (isActive ? '' : ' hiden');
       flow.className = (previous ?
-      `panel_slider prev` :
-      `panel_slider next`) + (isActive ? '' : ' hidden');
+        `panel_slider prev` :
+        `panel_slider next`) + (isActive ? '' : ' hidden');
       if (isActive) {
         flow.onclick = (e) => {
           e.preventDefault();
