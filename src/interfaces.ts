@@ -1,5 +1,6 @@
 import { Period } from './components/Panels/PeriodPanelControl';
 import { YearStat } from './components/Panels/YearsStatPanelControl';
+import { LayerExtent } from 'nextgisweb_frontend/packages/webmap/src';
 
 export interface AreaStat {
   year: number;
@@ -15,6 +16,7 @@ export interface AppOptions {
   currentYear?: number;
   animationStep?: number;
   animationDelay?: number;
+  bounds?: LayerExtent;
   periods?: Period[];
   yearsStat?: YearStat[];
   areaStat?: AreaStat[];

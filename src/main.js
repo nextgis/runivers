@@ -17,10 +17,14 @@ const app = new App({
   currentYear: 1300,
   animationDelay: 100,
   animationStep: 1,
+  bounds: [0, 0, 180, 90],
   periods: periods,
   yearsStat: yearsStat,
   areaStat: areaStat,
-  version: version
+  version: version,
+  lineColor: config.lineColor,
+  lineColorLegend: config.lineColorLegend,
+  statusAliases: config.statusAliases
 });
 
 // remove first and last slider pips

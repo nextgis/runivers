@@ -20,3 +20,9 @@
 .mapboxgl-ctrl-top-left {
   height: 100%;
 }
+
+@media screen and (max-width: 600px) {
+  .panel {
+    width: 290px!important;
+  }
+}

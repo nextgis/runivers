@@ -63,12 +63,13 @@ export class LegendPanelControl extends Panel {
 
       block.appendChild(nameBlock);
     } else {
+      const c = new Color(color);
+
       const colorSymbol = document.createElement('div');
       colorSymbol.className = 'panel-body__legend--color';
-      colorSymbol.style.backgroundColor = color;
+      colorSymbol.style.backgroundColor = c.fade(0.3);
 
-      const borderColor = new Color(color);
-      colorSymbol.style.border = '2px solid ' + borderColor.darken(0.5);
+      colorSymbol.style.border = '2px solid ' + c.darken(0.5);
 
       block.appendChild(colorSymbol);
 

@@ -32,32 +32,7 @@ import { Controls } from './Controls';
 export class App {
 
   options: AppOptions = {
-    target: '#app',
-    lineColor: [
-      [1, '#33b850'],
-      [2, '#79d254'],
-      [3, '#01d0a4'],
-      [4, '#01d0a4'],
-      [5, '#01d0a4'],
-      [6, '#33b850'],
-      [7, '#a3ada3'],
-      [null, '#ccc']/* other */
-    ],
-    lineColorLegend: [
-      [1, '#33b850', 'Территория России, новые территории'],
-      [2, '#79d254', 'Территории под протекторатом'],
-      [3, '#01d0a4', 'Аренда, совместное владение, спорная территория'],
-      [4, '#a3ada3', 'Утраченная территория'],
-    ],
-    statusAliases: {
-      1: 'Территория России',
-      2: 'Зависимые территории',
-      3: 'Аренда',
-      4: 'Совместное владение',
-      5: 'Спорная территория',
-      6: 'Новая территория',
-      7: 'Утраченная территория',
-    }
+    target: '#app'
   };
   currentYear: number;
   slider: SliderControl;
@@ -85,7 +60,7 @@ export class App {
   private _markers: Marker[] = [];
 
   constructor(options: AppOptions) {
-    this.options = Object.assign({}, this.options, options);
+    this.options = {...this.options, ...options};
     const { fromYear, currentYear } = this.options;
     if (fromYear && currentYear && currentYear < fromYear) {
       this.options.currentYear = fromYear;
@@ -111,16 +86,6 @@ export class App {
       }).then((layer) => {
         webMap.showLayer(layer.name);
       });
-
-      /*
-      webMap.addControl('ATTRIBUTION', 'bottom-left', {
-        customAttribution: [
-          ''
-          // '<a href="http://nextgis.ru" target="_blank">©NextGIS</a>',
-          // '<a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>',
-        ]
-      });
-      */
 
       webMap.mapAdapter.emitter.on('data-loaded', (data) => this._onData(data));
 
