@@ -9,8 +9,6 @@ import { Popup, Marker, Map } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
 import { getPoints, getPointGeojson } from './services/GetPointsService';
 
-import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
-import { YearsStatPanelControl } from './components/Panels/YearsStatPanelControl';
 import { EventEmitter } from 'events';
 import Color from 'color';
 

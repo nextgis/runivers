@@ -1,6 +1,6 @@
 import { Panel, PanelOptions } from './PanelControl';
 import './LegendPanelControl.css';
-
+import Color from 'color';
 export interface LegendPanelOptions extends PanelOptions {
   colors?: Array<[number, string, string?]>;
 }
@@ -37,7 +37,7 @@ export class LegendPanelControl extends Panel {
     return element;
   }
 
-  private _createLegendItem(c, interactive = false) {
+  private _createLegendItem(c: [number, string, string?], interactive = false) {
     const block = document.createElement('div');
     block.className = 'panel-body__legend--block';
 
@@ -66,6 +66,10 @@ export class LegendPanelControl extends Panel {
       const colorSymbol = document.createElement('div');
       colorSymbol.className = 'panel-body__legend--color';
       colorSymbol.style.backgroundColor = color;
+
+      const borderColor = new Color(color);
+      colorSymbol.style.border = '2px solid ' + borderColor.darken(0.5);
+
       block.appendChild(colorSymbol);
 
       const nameBlock = document.createElement('div');

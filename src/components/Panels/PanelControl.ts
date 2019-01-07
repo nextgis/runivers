@@ -36,7 +36,7 @@ export class Panel {
     return this._container;
   }
 
-  onAdd(map) {
+  onAdd(map: WebMap) {
     this.map = map;
     return this._container;
   }
@@ -109,7 +109,7 @@ export class Panel {
     const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl panel';
     if (this.options.addClass) {
-      element.classList.add(this.options.addClass);
+      this.options.addClass.split(' ').forEach((x) => element.classList.add(x));
     }
     if (this.options.headerText) {
       // element.appendChild(this._createHeader());

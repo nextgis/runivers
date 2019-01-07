@@ -92,7 +92,7 @@ export function getHomeBtnControl(control: Controls) {
     control.app.webMap.setView([96, 63], 2);
   });
   const panel = new Panel({
-    addClass: 'top-links'
+    addClass: 'top-links home-button'
   });
   panel.updateBody(block);
   return panel;
@@ -107,7 +107,7 @@ export function getTimelineButton() {
   return link;
 }
 
-function getBaseLayerToggler(app) {
+function getBaseLayerToggler(controls: Controls) {
   const baseLayer = 'qms-487';
   const baseLayerToggler = new Toggler({
     className: 'baselayer__toggler',
@@ -115,9 +115,9 @@ function getBaseLayerToggler(app) {
     titleOff: 'Показать подложку',
     toggleAction: (status) => {
       if (status) {
-        app.webMap.showLayer(baseLayer);
+        controls.app.webMap.showLayer(baseLayer);
       } else {
-        app.webMap.hideLayer(baseLayer);
+        controls.app.webMap.hideLayer(baseLayer);
       }
     }
   });

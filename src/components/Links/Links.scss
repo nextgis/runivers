@@ -1,6 +1,11 @@
 .panel.bottom-links, .panel.top-links {
   width: auto;
 	background: transparent;
+	margin: 0;
+}
+
+.panel.top-links.home-button .panel-body {
+	margin: 0;
 }
 
 .transneft__logo {
@@ -156,9 +161,5 @@
 	background: url(./img/legend.svg) no-repeat;
 }
 
-.mapboxgl-ctrl-group.mapboxgl-ctrl-group-home {
-  margin: 0!important;
-  transform: translateY(-50%) translateY(52px)!important;
-}
 
 
