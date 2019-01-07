@@ -98,7 +98,8 @@ export function getHomeBtnControl(control: Controls) {
   `;
   const button = block.getElementsByTagName('button')[0];
   button.addEventListener('click', () => {
-    control.app.webMap.setView([96, 63], 2);
+    console.log(control.app.webMap.mapAdapter.map.getBounds());
+    control.app.webMap.fit(control.app.options.bounds);
   });
   const panel = new Panel({
     addClass: 'top-links home-button'

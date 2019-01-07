@@ -17,7 +17,7 @@ const app = new App({
   currentYear: 1300,
   animationDelay: 100,
   animationStep: 1,
-  bounds: [0, 0, 180, 90],
+  bounds: [2, 27, 203, 82],
   periods: periods,
   yearsStat: yearsStat,
   areaStat: areaStat,
