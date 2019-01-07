@@ -168,11 +168,11 @@
   margin-left: 5px;
   cursor: pointer;
   &.active {
-    opacity: 0.8;
-  }
-  &:hover {
     opacity: 1;
   }
+  // &:hover {
+  //   opacity: 1;
+  // }
 }
 
 .mobile .switcher-panel-control .panel__toggler {

@@ -3,6 +3,7 @@ import './App.css';
 import WebMap from '@nextgis/webmap';
 import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
 import QmsKit from '@nextgis/qms-kit';
+import UrlParams from '@nextgis/url-runtime-params';
 
 import { SliderControl } from './components/SliderControl';
 import { Popup, Marker, Map } from 'mapbox-gl';
@@ -42,11 +43,14 @@ export class App {
   currentLayerId: string;
   currentPointId: string;
 
+  urlParams = new UrlParams();
+
   emitter = new EventEmitter();
 
   _headerElement: HTMLElement;
 
   controls: Controls;
+
 
   private _minYear: number;
   private _maxYear: number;
@@ -60,8 +64,15 @@ export class App {
   private _markers: Marker[] = [];
 
   constructor(options: AppOptions) {
-    this.options = {...this.options, ...options};
+    this.options = { ...this.options, ...options };
+
+    const urlYear = this.urlParams.get('year');
+    if (urlYear) {
+      this.options.currentYear = parseInt(urlYear, 10);
+    }
+
     const { fromYear, currentYear } = this.options;
+
     if (fromYear && currentYear && currentYear < fromYear) {
       this.options.currentYear = fromYear;
     }
@@ -96,7 +107,7 @@ export class App {
     return webMap;
   }
 
-  updateByYear(year, previous?) {
+  updateByYear(year: number, previous?: boolean) {
     const layerId = this._getLayerIdByYear(year, previous);
     this.updateLayer(layerId);
 
@@ -109,6 +120,7 @@ export class App {
     const areaStat = this._findAreaStatByYear(year);
     this._updatePeriodBlockByYear(year, areaStat);
     this._updateYearStatBlockByYear(year, areaStat);
+    this.urlParams.set('year', String(year));
   }
 
   updateLayer(layerId: string) {
