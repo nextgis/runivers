@@ -2,7 +2,7 @@ import { Panel, PanelOptions } from './PanelControl';
 import './LegendPanelControl.css';
 import Color from 'color';
 export interface LegendPanelOptions extends PanelOptions {
-  colors?: Array<[number, string, string?]>;
+  colors?: Array<[number, string, string, number[]]>;
 }
 
 const OPTIONS: LegendPanelOptions = {
@@ -12,18 +12,25 @@ const OPTIONS: LegendPanelOptions = {
 export class LegendPanelControl extends Panel {
 
   constructor(public options: LegendPanelOptions) {
-    super(Object.assign({}, OPTIONS, options));
+    super({ ...OPTIONS, ...options });
     this._createLegendBody();
+
+    this._addEventsListener();
   }
 
-  private _createLegendBody() {
+  createLegendBlock(interactive = false) {
     const element = document.createElement('div');
     element.className = 'panel-body__legend';
 
     this.options.colors.forEach((c) => {
-      element.appendChild(this._createLegendItem(c));
+      element.appendChild(this._createLegendItem(c, interactive));
     });
 
+    return element;
+  }
+
+  private _createLegendBody() {
+    const element = this.createLegendBlock();
     const buttonBlock = document.createElement('div');
     buttonBlock.className = 'panel-body__legend--button';
     buttonBlock.innerHTML = `<a
@@ -32,12 +39,11 @@ export class LegendPanelControl extends Panel {
       class="btn panel-button">ГРАФИК ИЗМЕНЕНИЯ ТЕРРИТОРИИ
     </a>`;
     element.appendChild(buttonBlock);
-
     this.updateBody(element);
     return element;
   }
 
-  private _createLegendItem(c: [number, string, string?], interactive = false) {
+  private _createLegendItem(c: [number, string, string, number[]], interactive = false) {
     const block = document.createElement('div');
     block.className = 'panel-body__legend--block';
 
@@ -52,10 +58,11 @@ export class LegendPanelControl extends Panel {
         const changedColor = this.options.colors.find((x) => x[0] === name);
         changedColor[1] = colorInput.value;
         nameBlock.innerHTML = getName(colorInput.value);
+
         this.emitter.emit('change', this.options.colors);
       };
-      const getName = (value) => {
-        return ` - ${name} (${value})`;
+      const getName = (value: string) => {
+        return ` - ${text} (${value})`;
       };
       const nameBlock = document.createElement('span');
       nameBlock.className = 'panel-body__legend--name';
@@ -63,13 +70,13 @@ export class LegendPanelControl extends Panel {
 
       block.appendChild(nameBlock);
     } else {
-      const c = new Color(color);
+      const _color = new Color(color);
 
       const colorSymbol = document.createElement('div');
       colorSymbol.className = 'panel-body__legend--color';
-      colorSymbol.style.backgroundColor = c.fade(0.3);
+      colorSymbol.style.backgroundColor = _color.fade(0.3);
 
-      colorSymbol.style.border = '2px solid ' + c.darken(0.5);
+      colorSymbol.style.border = '2px solid ' + _color.darken(0.5);
 
       block.appendChild(colorSymbol);
 
@@ -79,6 +86,12 @@ export class LegendPanelControl extends Panel {
       block.appendChild(nameBlock);
     }
     return block;
+  }
+
+  private _addEventsListener() {
+    this.emitter.on('change', () => {
+      this._createLegendBody();
+    });
   }
 
 }

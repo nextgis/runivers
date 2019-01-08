@@ -4,8 +4,11 @@ import { Toggler } from './Toggler';
 import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 import { Controls } from '../../Controls';
 
+
 import './img/home-button.svg';
 import './img/nextgis.png';
+import { App } from 'src/App';
+import { SliderOptions } from '../SliderControl';
 
 export function getSwitcherPanelControl(controls: Controls) {
   const block = document.createElement('div');
@@ -61,7 +64,7 @@ export function getAboutProjectLink() {
   return block;
 }
 
-export function getAffiliatedLinks() {
+export function getAffiliatedLinks(controls: Controls) {
   const block = document.createElement('div');
   block.innerHTML = `
   <a href="https://www.runivers.ru"
@@ -77,10 +80,18 @@ export function getAffiliatedLinks() {
   <a href="https://nextgis.ru" class="nextgis__logo__min" target="_blank"
     title="Nextgis"
   >
+  <a href="#" class="settings__logo__min" target="_blank" title="Настройки"
+  >
   </a>
   `;
 
-
+  const settings = block.getElementsByClassName('settings__logo__min')[0] as HTMLElement;
+  if (settings) {
+    settings.onclick = (e) => {
+      e.preventDefault();
+      openSettingsDialog(controls.app);
+    };
+  }
   const panel = new Panel({
     addClass: 'bottom-links'
   });
@@ -209,6 +220,42 @@ function openDialog(options: DialogAdapterOptions) {
   }
   dialog.show();
   return Dialog;
+}
+
+interface SliderSettings {
+  name: keyof SliderOptions;
+  label: string;
+  type: 'number';
+}
+
+export function openSettingsDialog(app: App) {
+  const template = document.createElement('div');
+  const s = app.slider;
+  const settings: SliderSettings[] = [
+    { name: 'animationDelay', label: 'Задержка анимации, мс', type: 'number' },
+    { name: 'step', label: 'Шаг изменения года', type: 'number' },
+    { name: 'animationStep', label: 'Шаг изменения года (анимация)', type: 'number' },
+  ];
+
+  settings.forEach((x) => {
+    const id = x.name + '-' + Math.round(Math.random() * 10000);
+    const inputBlock = document.createElement('label');
+    inputBlock.className = 'settings-dialog__input-block';
+    inputBlock.innerHTML = `${x.label}:
+      <input class="${id}" class=type=${x.type} value=${s.options[x.name]}>
+      </input>
+    `;
+    const input = inputBlock.getElementsByClassName(id)[0] as HTMLInputElement;
+    input.addEventListener('input', () => {
+      s.options[x.name] = x.type === 'number' ? parseInt(input.value, 10) : input.value;
+    });
+
+    template.appendChild(inputBlock);
+
+  });
+  const legend = app.controls.legendPanel.createLegendBlock(true);
+  template.appendChild(legend);
+  openDialog({ template });
 }
 
 const aboutShort = `

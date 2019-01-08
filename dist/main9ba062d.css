@@ -308,6 +308,13 @@
   width: 69px;
   height: 14px; }
 
+.settings__logo__min {
+  vertical-align: middle;
+  display: inline-block;
+  background: url(./images/settings_min_bw.png) no-repeat;
+  width: 14px;
+  height: 14px; }
+
 .graph_logo {
   background: url(./images/graph.svg) no-repeat;
   background-size: contain;
@@ -317,7 +324,6 @@
   margin-left: 10px; }
 
 .social__logo {
-  vertical-align: middle;
   display: block;
   height: 20px;
   width: 20px;
@@ -352,7 +358,7 @@
 
 .mobile .switcher-panel-control .panel__toggler {
   display: block;
-  margin-bottom: 5px; }
+  margin-bottom: 10px; }
 
 .period__toggler {
   background: url(./images/rulers.svg) no-repeat; }
@@ -365,6 +371,10 @@
 
 .legend__toggler {
   background: url(./images/legend.svg) no-repeat; }
+
+.settings-dialog__input-block {
+  display: block;
+  text-align: left; }
 .panel {
   background: rgba(255,255,255, 0.8);
   width: 300px;
@@ -393,6 +403,31 @@
     width: 290px!important;
   }
 }
+.dialog-component {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.dialog-component::backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-component__close {
+  margin-top: -2px;
+  float: right;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  filter: alpha(opacity=20);
+  opacity: .2;
+}
+
 .panel.legend-panel {
   width: auto;
   border-radius: 6px;
@@ -636,7 +671,6 @@ a.panel_slider.next {
 .mobile .mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
   border-radius: 6px;
 }
-
 
 .mobile .mapboxgl-control-container .mapboxgl-ctrl.period-panel {
   border-radius: 6px;

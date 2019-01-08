@@ -213,7 +213,7 @@ export class SliderControl {
           if (typeof step !== 'boolean') {
             this._nextStep(step);
           }
-        }, previous);
+        }, previous, this.options.step);
       };
       return btn;
     };
@@ -305,8 +305,8 @@ export class SliderControl {
     this._onChange(step);
   }
 
-  _stepReady(callback, previous?: boolean) {
-    const nextValue = this._getNextValue(previous);
+  _stepReady(callback, previous?: boolean, stepLength?: number) {
+    const nextValue = this._getNextValue(previous, stepLength);
     const inRange = (this.options.value <= this.options.max) &&
       (this.options.value >= this.options.min);
     if (nextValue && inRange) {
@@ -330,11 +330,12 @@ export class SliderControl {
     return value;
   }
 
-  _getNextValue(previous?: boolean) {
+  _getNextValue(previous?: boolean, stepLength?: number) {
     const current = parseInt(this._slider.get(), 10);
+    const step = stepLength ? stepLength : this.options.animationStep;
     const next = previous ?
-      current - this.options.animationStep :
-      current + this.options.animationStep;
+      current - step :
+      current + step;
     return this._getAllowedValue(next);
   }
 

@@ -15,7 +15,7 @@ export class Controls {
 
   periodsPanelControl: PeriodPanelControl;
   yearsStatPanelControl: YearsStatPanelControl;
-  legendPanel: Panel;
+  legendPanel: LegendPanelControl;
 
   private isMobile = false;
 
@@ -80,9 +80,9 @@ export class Controls {
       // colors: this.options.lineColor,
       colors: this.app.options.lineColorLegend,
     });
-    // this.legendPanel.emitter.on('change', (colors) => this.app._updateLayersColor());
+    this.legendPanel.emitter.on('change', (colors) => this.app.updateLayersColor());
     this.socialLinks = getBottomLinksPanel();
-    this._bottomLeftLink = getAffiliatedLinks();
+    this._bottomLeftLink = getAffiliatedLinks(this);
     this._switchersControl = getSwitcherPanelControl(this);
     this.homeBtnControl = getHomeBtnControl(this);
 

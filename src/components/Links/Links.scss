@@ -116,6 +116,14 @@
   height: 14px;
 }
 
+.settings__logo__min {
+  vertical-align: middle;
+  display: inline-block;
+  background: url(./img/bw_min/settings_min_bw.png) no-repeat;
+  width: 14px;
+  height: 14px;
+}
+
 .graph_logo {
 	background: url(./img/graph.svg) no-repeat;
   background-size: contain;
@@ -127,13 +135,13 @@
 }
 
 .social__logo {
-  vertical-align: middle;
-  display: block;
+	display: block;
   height: 20px;
   width: 20px;
   margin-left: 3px;
   margin-top: 10px;
   opacity: 0.7;
+  // vertical-align: middle;
 }
 
 // .mobile .social__logo {
@@ -177,7 +185,7 @@
 
 .mobile .switcher-panel-control .panel__toggler {
 	display: block;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 }
 
 .period__toggler {
@@ -195,6 +203,11 @@
 
 .legend__toggler {
 	background: url(./img/legend.svg) no-repeat;
+}
+
+.settings-dialog__input-block {
+	display: block;
+	text-align: left;
 }
 
 

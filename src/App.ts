@@ -61,7 +61,7 @@ export class App {
   private _layersLoaded: { [layerId: string]: boolean } = {};
 
   private _pointsConfig: PointMeta[] = [];
-  private _markers: Marker[] = [];
+  private _markers: Array<{ marker: Marker, element: HTMLElement, fid: number }> = [];
 
   constructor(options: AppOptions) {
     this.options = { ...this.options, ...options };
@@ -134,8 +134,9 @@ export class App {
       if (this.currentPointId) {
         // this._removePoint(this.currentPointId);
         this._markers.forEach((x) => {
-          x.remove();
+          x.marker.remove();
         });
+        this._markers = [];
       }
       this.currentPointId = pointId;
       if (pointId) {
@@ -144,8 +145,21 @@ export class App {
     }
   }
 
+  updateLayersColor() {
+    for (const l in this._layersLoaded) {
+      if (this._layersLoaded.hasOwnProperty(l)) {
+        if (l.indexOf('-bound') !== -1) {
+          this.webMap.mapAdapter.map.setPaintProperty(l, 'line-color', this._getFillColor({ darken: 0.5 }));
+        } else {
+          this.webMap.mapAdapter.map.setPaintProperty(l, 'fill-color', this._getFillColor());
+        }
+      }
+
+    }
+  }
+
   // region App control
-  _buildApp() {
+  private _buildApp() {
     getLayers((data) => {
       this._layersConfig = this._processLayersMeta(data);
       this._layersConfig.sort((a, b) => a.from < b.from ? -1 : 1);
@@ -168,7 +182,7 @@ export class App {
     });
   }
 
-  _createSlider() {
+  private _createSlider() {
     const slider = new SliderControl({
       min: this._minYear,
       max: this._maxYear,
@@ -192,7 +206,7 @@ export class App {
     return slider;
   }
 
-  _createHeader() {
+  private _createHeader() {
     const header = document.createElement('div');
     header.className = 'font-effect-shadow-multiple app-header';
     const headerText = document.createElement('span');
@@ -207,33 +221,33 @@ export class App {
     return header;
   }
 
-  _updatePeriodBlockByYear(year: number, areaStat: AreaStat) {
+  private _updatePeriodBlockByYear(year: number, areaStat: AreaStat) {
     const period = this._findPeriodByYear(year);
     this.controls.periodsPanelControl.updatePeriod(period, areaStat);
   }
 
-  _findPeriodByYear(year: number) {
+  private _findPeriodByYear(year: number) {
     const periods = this.options.periods || [];
     const period = periods.find((x) => (year >= x.years_from) && (year <= x.years_to));
     return period;
   }
 
-  _updateYearStatBlockByYear(year: number, areaStat: AreaStat) {
+  private _updateYearStatBlockByYear(year: number, areaStat: AreaStat) {
     const yearStat = this._findYearStatsByYear(year);
     this.controls.yearsStatPanelControl.updateYearStats(yearStat, areaStat);
   }
 
-  _findYearInDateStr(dateStr: string): number {
+  private _findYearInDateStr(dateStr: string): number {
     const datePattern = /(\d{4})/;
     const date = datePattern.exec(dateStr);
     return Number(date[0]);
   }
 
-  _findAreaStatByYear(year: number): AreaStat {
+  private _findAreaStatByYear(year: number): AreaStat {
     return this.options.areaStat.find((x) => x.year === year);
   }
 
-  _findYearStatsByYear(year: number) {
+  private _findYearStatsByYear(year: number) {
     year = Number(year);
     const yearsStat = this.options.yearsStat || [];
     const yearStat = yearsStat.filter((x) => {
@@ -255,7 +269,7 @@ export class App {
   // endregion
 
   // region Map control
-  async _switchLayer(fromId: string, toId: string) {
+  private async _switchLayer(fromId: string, toId: string) {
     this._removePopup();
     if (toId && fromId !== toId) {
       await this._showLayer(toId);
@@ -268,7 +282,7 @@ export class App {
     }
   }
 
-  _stepReady(year: number, callback: (year: number) => void, previous?: boolean) {
+  private _stepReady(year: number, callback: (year: number) => void, previous?: boolean) {
     let nextLayer = this._getLayerByYear(year, previous);
     if (!nextLayer) {
       nextLayer = this._getNextLayer(year, previous);
@@ -294,11 +308,11 @@ export class App {
     }
   }
 
-  _isHistoryLayer(layerId) {
+  private _isHistoryLayer(layerId) {
     return !this.webMap.isBaseLayer(layerId);
   }
 
-  _onData(data) {
+  private _onData(data) {
     const layerId = data.target;
     const loadedYet = this._layersLoaded[layerId];
     const isCurrentLayer = data.target === this.currentLayerId || data.target === this.currentLayerId + '-bound';
@@ -308,7 +322,7 @@ export class App {
     }
   }
 
-  _onSourceIsLoaded() {
+  private _onSourceIsLoaded() {
     if (this._layersLoaded[this.currentLayerId] && this._layersLoaded[this.currentLayerId + '-bound']) {
       this._hideNotCurrentLayers();
       this._setLayerOpacity(this.currentLayerId, 0.8);
@@ -320,7 +334,7 @@ export class App {
     }
   }
 
-  _hideNotCurrentLayers() {
+  private _hideNotCurrentLayers() {
     const layers = this.webMap.getLayers();
     layers.forEach((l) => {
       if (!this.webMap.isBaseLayer(l)) {
@@ -332,11 +346,11 @@ export class App {
     });
   }
 
-  _hideLayer(layerId) {
+  private _hideLayer(layerId) {
     this._toggleLayer(layerId, false);
   }
 
-  _showLayer(id): Promise<any> {
+  private _showLayer(id): Promise<any> {
     const toggle = () => {
       this.webMap.toggleLayer(id, true);
       this.webMap.toggleLayer(id + '-bound', true);
@@ -353,13 +367,13 @@ export class App {
     }
   }
 
-  _setLayerOpacity(id: string, value: number) {
+  private _setLayerOpacity(id: string, value: number) {
     this.webMap.setLayerOpacity(id, value);
     this.webMap.setLayerOpacity(id + '-bound', value);
   }
 
   // TODO: Mapboxgl specific method
-  _addPoint(id: string) {
+  private _addPoint(id: string) {
 
     getPointGeojson(id).then((data: FeatureCollection<MultiPoint, PointProperties>) => {
       const _many = data.features.length > 1 &&
@@ -381,41 +395,28 @@ export class App {
   }
 
   // TODO: Mapboxgl specific method
-  _addMarkerToMap(coordinates: [number, number], properties: PointProperties, many: boolean) {
+  private _addMarkerToMap(coordinates: [number, number], properties: PointProperties, many: boolean) {
     const map: Map = this.webMap.mapAdapter.map;
     // create a DOM element for the marker
-    const el = document.createElement('div');
-    el.className = 'map-marker'; // use class `aсtive` for selected
+    const element = document.createElement('div');
+    element.className = 'map-marker'; // use class `aсtive` for selected
 
     const elInner = document.createElement('div');
     elInner.className = 'map-marker--inner';
     elInner.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
 
-    el.appendChild(elInner);
+    element.appendChild(elInner);
 
     const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);
     // add marker to map
-    const m = new Marker(el);
-    this._markers.push(m);
-    m.setLngLat(coordEPSG4326);
+    const marker = new Marker(element);
+    this._markers.push({ marker, element, fid: properties.fid });
+    marker.setLngLat(coordEPSG4326);
 
-    m.addTo(map);
+    marker.addTo(map);
   }
 
-  _updateLayersColor() {
-    for (const l in this._layersLoaded) {
-      if (this._layersLoaded.hasOwnProperty(l)) {
-        if (l.indexOf('-bound') !== -1) {
-          this.webMap.mapAdapter.map.setPaintProperty(l, 'line-color', this._getFillColor({ darken: 0.5 }));
-        } else {
-          this.webMap.mapAdapter.map.setPaintProperty(l, 'fill-color', this._getFillColor());
-        }
-      }
-
-    }
-  }
-
-  _getFillColor(opt: {
+  private _getFillColor(opt: {
     lighten?: number,
     darken?: number
   } = {}) {
@@ -424,6 +425,15 @@ export class App {
       'match',
       ['get', 'status']
     ];
+    // update lineColor by legend colors
+    this.options.lineColorLegend.forEach((x) => {
+      const linksToLineColors = x[3];
+      linksToLineColors.forEach((y) => {
+        const lineColor = this.options.lineColor.find((z) => z[0] === y);
+        lineColor[1] = x[1];
+      });
+    });
+
     const colors = this.options.lineColor.reduce((a, b) => {
       const [param, color] = b;
       const c = Color(color);
@@ -439,7 +449,7 @@ export class App {
     return meta.concat(colors);
   }
 
-  _addLayer(url: string, id: string): Promise<any> {
+  private _addLayer(url: string, id: string): Promise<any> {
     const paint = {
       'fill-opacity': 0.8,
       'fill-opacity-transition': {
@@ -468,7 +478,7 @@ export class App {
     ]);
   }
 
-  _toggleLayer(id, status) {
+  private _toggleLayer(id, status) {
     this._layersLoaded[id] = false;
     this._layersLoaded[id + '-bound'] = false;
     if (status) {
@@ -481,28 +491,28 @@ export class App {
 
   }
 
-  _getLayerByYear(year: number, previous?: boolean): LayerMeta | false {
+  private _getLayerByYear(year: number, previous?: boolean): LayerMeta | false {
     const layers = this._layersConfig.filter((d) => ((year >= d.from) && (year <= d.to)));
     // return previous ? layers[0] : layers[layers.length - 1];
     return layers[layers.length - 1];
   }
 
-  _getLayerIdByYear(year: number, previous?: boolean): string {
+  private _getLayerIdByYear(year: number, previous?: boolean): string {
     const filteredLayer = this._getLayerByYear(year, previous);
     return filteredLayer && String(filteredLayer.id);
   }
 
-  _getPointByYear(year: number): PointMeta {
+  private _getPointByYear(year: number): PointMeta {
     return this._pointsConfig.find((x) => x.year === year);
   }
 
-  _getPointIdByYear(year: number): string {
+  private _getPointIdByYear(year: number): string {
     const point = this._getPointByYear(year);
     return point && point.id;
   }
 
   // get next or previous territory changed layer
-  _getNextLayer(year: number, previous?: boolean): LayerMeta | false {
+  private _getNextLayer(year: number, previous?: boolean): LayerMeta | false {
     const filteredLayer = this._getLayerByYear(year);
     if (filteredLayer) {
       if (String(filteredLayer.id) === this.currentLayerId) {
@@ -525,7 +535,7 @@ export class App {
     return false;
   }
 
-  _processLayersMeta(layersMeta) {
+  private _processLayersMeta(layersMeta) {
     const layers: LayerMeta[] = [];
     layersMeta.forEach(({ resource }) => {
       const name = resource.display_name;
@@ -540,7 +550,7 @@ export class App {
     return layers;
   }
 
-  _processPointsMeta(pointsMeta): PointMeta[] {
+  private _processPointsMeta(pointsMeta): PointMeta[] {
     return pointsMeta.map(({ resource }) => {
       const name = resource.display_name;
       // const [year, month, day] = name.match('(\\d{4})-(\\d{2})-(\\d{2})*$').slice(1).map((x) => Number(x));
@@ -550,7 +560,7 @@ export class App {
     });
   }
 
-  _createPopupContent(props: HistoryLayerProperties): HTMLElement {
+  private _createPopupContent(props: HistoryLayerProperties): HTMLElement {
     const fields = [
       // { name: 'Fid', field: 'fid' },
       { field: 'name' },
@@ -562,12 +572,12 @@ export class App {
     return this._createPropBlock(fields, props);
   }
 
-  _formatDateStr(str: string): string {
+  private _formatDateStr(str: string): string {
     const formated = str.split('-').reverse().join('.');
     return formated;
   }
 
-  _createPropBlock(fields: Array<{ name?: string, field: string }>, props: HistoryLayerProperties) {
+  private _createPropBlock(fields: Array<{ name?: string, field: string }>, props: HistoryLayerProperties) {
     const block = document.createElement('div');
 
     fields.forEach((x) => {

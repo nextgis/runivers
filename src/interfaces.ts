@@ -22,7 +22,8 @@ export interface AppOptions {
   areaStat?: AreaStat[];
   version?: string;
   lineColor?: Array<[number, string]>;
-  lineColorLegend?: Array<[number, string, string]>;
+  /** self id, color, label, array of link to lineColor id */
+  lineColorLegend?: Array<[number, string, string, number[]]>;
   statusAliases?: { [name: string]: string };
 }
 
