@@ -17,7 +17,7 @@ import proj4 from 'proj4';
 import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
 
 import { formatArea, onlyUnique } from './utils/utils';
-import { getAboutProjectLink } from './components/Links/Links';
+import { getAboutProjectLink, getAffiliatedLinks } from './components/Links/Links';
 
 import {
   AppOptions,
@@ -47,9 +47,10 @@ export class App {
 
   emitter = new EventEmitter();
 
-  _headerElement: HTMLElement;
-
   controls: Controls;
+
+  private _headerElement: HTMLElement;
+  private _affiliatedElement: HTMLElement;
 
 
   private _minYear: number;
@@ -167,6 +168,7 @@ export class App {
       this.slider = this._createSlider();
 
       this._headerElement = this._createHeader();
+      this._affiliatedElement = this._createAffiliatedLogos();
       this.controls = new Controls(this);
       this.controls.addControls();
 
@@ -219,6 +221,19 @@ export class App {
     mapContainer.appendChild(header);
 
     return header;
+  }
+
+  private _createAffiliatedLogos() {
+    const logos = document.createElement('div');
+    logos.className = 'app-affiliated-logos';
+
+    logos.appendChild(getAffiliatedLinks(this));
+
+    const mapContainer = this.webMap.mapAdapter.getContainer();
+
+    mapContainer.appendChild(logos);
+
+    return logos;
   }
 
   private _updatePeriodBlockByYear(year: number, areaStat: AreaStat) {

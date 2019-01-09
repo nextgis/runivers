@@ -59,6 +59,10 @@
   width: auto;
 }
 
+.editable-legend__color-input {
+  cursor: pointer;
+}
+
 
 
 

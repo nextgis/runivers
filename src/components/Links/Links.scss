@@ -84,44 +84,45 @@
   margin-right: 4px;
 }
 
-.runiver__logo__min {
+.affiliated-logo {
   vertical-align: middle;
-  display: inline-block;
-  background: url(./img/bw_min/runiverse_min_bw.png) no-repeat;
-  width: 49px;
-  height: 18px;
+	display: inline-block;
+	margin: 3px 12px 3px 0;
+	opacity: .55;
+}
+
+.affiliated-logo:hover {
+	opacity: 1;
+}
+
+.runiver__logo__min {
+  background: url(./img/bw_min/runivers.png) no-repeat;
+  width: 56px;
+  height: 16px;
 }
 
 .laboratory__logo__min {
-  vertical-align: middle;
-  display: inline-block;
-  background: url(./img/bw_min/lab_min_bw.png) no-repeat;
-  width: 46px;
-  height: 14px;
+  background: url(./img/bw_min/istGeoLab.png) no-repeat;
+  width: 49px;
+  height: 16px;
 }
 
 .transneft__logo__min {
-  vertical-align: middle;
-  display: inline-block;
-  background: url(./img/bw_min/transneft_min_bw.png) no-repeat;
-  width: 107px;
-  height: 14px;
+  background: url(./img/bw_min/transneft.png) no-repeat;
+  width: 98px;
+  height: 10px;
 }
 
 .nextgis__logo__min {
-  vertical-align: middle;
-  display: inline-block;
-  background: url(./img/bw_min/nextgis_min_bw.png) no-repeat;
-  width: 69px;
-  height: 14px;
+  background: url(./img/bw_min/nextgis_min.png) no-repeat;
+  width: 59px;
+  height: 8px;
 }
 
 .settings__logo__min {
-  vertical-align: middle;
-  display: inline-block;
-  background: url(./img/bw_min/settings_min_bw.png) no-repeat;
-  width: 14px;
-  height: 14px;
+  background: url(./img/bw_min/settings.png) no-repeat;
+  width: 7px;
+  height: 7px;
 }
 
 .graph_logo {
@@ -144,9 +145,9 @@
   // vertical-align: middle;
 }
 
-// .mobile .social__logo {
-// 	display: inline-block;
-// }
+.mobile .social__logo {
+	display: inline-block;
+}
 
 .social__logo:hover {
   opacity: 1;
@@ -208,6 +209,11 @@
 .settings-dialog__input-block {
 	display: block;
 	text-align: left;
+}
+
+.settings-dialog__input-block--label {
+	width: 220px;
+	display: inline-block;
 }
 
 

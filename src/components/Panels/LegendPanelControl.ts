@@ -52,6 +52,7 @@ export class LegendPanelControl extends Panel {
     if (interactive) {
       const colorInput = document.createElement('input');
       colorInput.setAttribute('type', 'color');
+      colorInput.className = 'editable-legend__color-input';
       colorInput.value = color;
       block.appendChild(colorInput);
       colorInput.onchange = () => {

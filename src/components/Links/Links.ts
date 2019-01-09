@@ -38,7 +38,7 @@ export function getBottomLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
     <div class="socialLinks">
-      <a href="http://twitter.com/#!/runivers" class="social__logo twitter"></a>
+      <a href="http://twitter.com/runivers" class="social__logo twitter"></a>
       <a href="http://www.facebook.com/Runiverse.ru" class="social__logo facebook"></a>
       <a href="http://vk.com/public35690973" class="social__logo vkontakte"></a>
     </div>
@@ -64,34 +64,41 @@ export function getAboutProjectLink() {
   return block;
 }
 
-export function getAffiliatedLinks(controls: Controls) {
+export function getAffiliatedLinks(app: App): HTMLElement {
   const block = document.createElement('div');
   block.innerHTML = `
   <a href="https://www.runivers.ru"
     title="Электронная  энциклопедия и библиотека Руниверс"
-    class="runiver__logo__min" target="_blank"
-  >
-  </a>
-  <a href="https://histgeo.ru/laboratory.html" class="laboratory__logo__min" target="_blank"
-    title="Лабораторией исторической геоинформатики"
-  >
-  </a>
-  <div class="transneft__logo__min"></div>
-  <a href="https://nextgis.ru" class="nextgis__logo__min" target="_blank"
-    title="Nextgis"
-  >
-  <a href="#" class="settings__logo__min" target="_blank" title="Настройки"
-  >
-  </a>
+    class="affiliated-logo runiver__logo__min" target="_blank"
+  ></a>
+  <a href="https://histgeo.ru/laboratory.html"
+    class="affiliated-logo laboratory__logo__min" target="_blank"
+    title="Лаборатория исторической геоинформатики"
+  ></a>
+  <a href="https://www.transneft.ru"
+    class="affiliated-logo transneft__logo__min" target="_blank"
+    title="ПАО «Транснефть»"
+  ></a>
+  <a href="https://nextgis.ru"
+    class="affiliated-logo nextgis__logo__min" target="_blank"
+    title="Разработка ГИС и проекты"
+  ></a>
+  <a href="#" class="affiliated-logo settings__logo__min" target="_blank" title="Настройки"></a>
   `;
 
   const settings = block.getElementsByClassName('settings__logo__min')[0] as HTMLElement;
   if (settings) {
     settings.onclick = (e) => {
       e.preventDefault();
-      openSettingsDialog(controls.app);
+      openSettingsDialog(app);
     };
   }
+  return block;
+}
+
+export function getAffiliatedPanel(controls: Controls) {
+  const block = getAffiliatedLinks(controls.app);
+
   const panel = new Panel({
     addClass: 'bottom-links'
   });
@@ -241,7 +248,7 @@ export function openSettingsDialog(app: App) {
     const id = x.name + '-' + Math.round(Math.random() * 10000);
     const inputBlock = document.createElement('label');
     inputBlock.className = 'settings-dialog__input-block';
-    inputBlock.innerHTML = `${x.label}:
+    inputBlock.innerHTML = `<div class="settings-dialog__input-block--label">${x.label}: </div>
       <input class="${id}" class=type=${x.type} value=${s.options[x.name]}>
       </input>
     `;
@@ -253,6 +260,8 @@ export function openSettingsDialog(app: App) {
     template.appendChild(inputBlock);
 
   });
+
+  // editable legend
   const legend = app.controls.legendPanel.createLegendBlock(true);
   template.appendChild(legend);
   openDialog({ template });
@@ -262,7 +271,7 @@ const aboutShort = `
 <div style="margin-top: 40px;"></div>
 <div class="partner_logos">
 <a href="https://www.runivers.ru" target="_blank"><img src="images/Runivers-Logo-color.svg" /></a>
-<a href="#" target="_blank"><img src="images/Transneft_logo1.png" /></a>
+<a href="https://www.transneft.ru" target="_blank"><img src="images/Transneft_logo1.png" /></a>
 <a href="https://histgeo.ru/laboratory.html" target="_blank"><img src="images/geolab.png" /></a>
 <a href="https://nextgis.ru" target="_blank"><img src="images/nextgis.png" /></a>
 </div>

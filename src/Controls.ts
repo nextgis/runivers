@@ -1,6 +1,6 @@
 import { App } from './App';
 import { Panel } from './components/Panels/PanelControl';
-import { getBottomLinksPanel, getSwitcherPanelControl, getHomeBtnControl, getAffiliatedLinks } from './components/Links/Links';
+import { getBottomLinksPanel, getSwitcherPanelControl, getHomeBtnControl, getAffiliatedPanel } from './components/Links/Links';
 import { ControlPositions } from '@nextgis/webmap';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
@@ -19,10 +19,10 @@ export class Controls {
 
   private isMobile = false;
 
-  private socialLinks: Panel;
-  private _bottomLeftLink: Panel;
-  private _switchersControl: Panel;
-  private homeBtnControl: Panel;
+  private _socialLinksPanel: Panel;
+  private _switchersPanel: Panel;
+  private _homeBtnPanel: Panel;
+  // private _affiliatedPanel: Panel;
 
   private _installedControls: any[] = [];
 
@@ -81,10 +81,10 @@ export class Controls {
       colors: this.app.options.lineColorLegend,
     });
     this.legendPanel.emitter.on('change', (colors) => this.app.updateLayersColor());
-    this.socialLinks = getBottomLinksPanel();
-    this._bottomLeftLink = getAffiliatedLinks(this);
-    this._switchersControl = getSwitcherPanelControl(this);
-    this.homeBtnControl = getHomeBtnControl(this);
+    this._socialLinksPanel = getBottomLinksPanel();
+    // this._affiliatedPanel = getAffiliatedPanel(this);
+    this._switchersPanel = getSwitcherPanelControl(this);
+    this._homeBtnPanel = getHomeBtnControl(this);
 
     this._mobileTogglePanels = [
       this.periodsPanelControl,
@@ -107,30 +107,30 @@ export class Controls {
     this._addControl(this.legendPanel, 'top-left');
     this._addControl('ZOOM', 'top-left');
 
-    this._addControl(this._switchersControl, 'top-right');
-    this._addControl(this.homeBtnControl, 'top-left');
+    this._addControl(this._switchersPanel, 'top-right');
+    this._addControl(this._homeBtnPanel, 'top-left');
 
     this._addControl(this.periodsPanelControl, 'top-right');
     this._addControl(this.yearsStatPanelControl, 'top-right');
 
-    this._addControl(this.socialLinks, 'bottom-left');
+    this._addControl(this._socialLinksPanel, 'bottom-left');
 
-    this._addControl(this._bottomLeftLink, 'bottom-right');
+    // this._addControl(this._affiliatedPanel, 'bottom-right');
   }
 
   private _addMobileControls() {
 
-    this._addControl(this._switchersControl, 'top-left');
+    this._addControl(this._switchersPanel, 'top-left');
     this._addControl('ZOOM', 'top-left');
-    this._addControl(this.homeBtnControl, 'top-left');
+    this._addControl(this._homeBtnPanel, 'top-left');
 
-    this._addControl(this._bottomLeftLink, 'bottom-right');
+    // this._addControl(this._affiliatedPanel, 'bottom-right');
 
     this._addControl(this.legendPanel, 'bottom-right');
     this._addControl(this.yearsStatPanelControl, 'bottom-right');
     this._addControl(this.periodsPanelControl, 'bottom-right');
 
-    this._addControl(this.socialLinks, 'bottom-left');
+    this._addControl(this._socialLinksPanel, 'bottom-left');
 
   }
 
