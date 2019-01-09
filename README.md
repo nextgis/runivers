@@ -1,6 +1,8 @@
 # russia-history
 
-[Demo](http://213.248.47.89/static/ea960d4a9c1cbc99792ea6ed8425937a/asset/test/)
+This cartographic project contains historical geodata about the political boundaries of modern Russia from 1462-2018.
+
+[Web site](http://map.runivers.ru)
 
 ## Installation
 
