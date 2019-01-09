@@ -1,6 +1,7 @@
 import { Period } from './components/Panels/PeriodPanelControl';
 import { YearStat } from './components/Panels/YearsStatPanelControl';
 import { LayerExtent } from '@nextgis/webmap';
+import { Marker } from 'mapbox-gl';
 
 export interface AreaStat {
   year: number;
@@ -57,17 +58,32 @@ export interface PointMeta {
 }
 
 export interface PointProperties {
-  status: number; // 6
-  lwdate: string; // 1945-06-29,
-  lwdtappr: number; // 0,
-  srcdata: any;
-  upperdat: string; // 1946-06-29,
-  eventstart: string; // по договору СССР с Чехословакией Украинской ССР передана Закарпатская область,
-  cat: number; // 342,
-  fid: number; // 547,
-  updtrl: any;
-  linecomnt: string; // Передача СССР Кенигсберга,
-  updtappr: any;
-  name: any;
-  numb?: number;
+
+  areasum: number;
+  count: number;
+  ident: number;
+  numb: number;
+  row_number: number;
+  status: number;
+  year: number;
+
+  // status: number; // 6
+  // lwdate: string; // 1945-06-29,
+  // lwdtappr: number; // 0,
+  // srcdata: any;
+  // upperdat: string; // 1946-06-29,
+  // eventstart: string; // по договору СССР с Чехословакией Украинской ССР передана Закарпатская область,
+  // cat: number; // 342,
+  // fid: number; // 547,
+  // updtrl: any;
+  // linecomnt: string; // Передача СССР Кенигсберга,
+  // updtappr: any;
+  // name: any;
+  // numb?: number;
+}
+
+export interface AppMarkerMem {
+  marker: Marker;
+  element: HTMLElement;
+  properties: PointProperties;
 }

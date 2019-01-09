@@ -74,6 +74,14 @@ export class Panel {
 
   }
 
+  block() {
+    this._blocked = true;
+  }
+
+  unBlock() {
+    this._blocked = false;
+  }
+
   createControlButton(onclick, text = 'Подробнее') {
     const element = document.createElement('button');
     element.className = 'btn panel-button';

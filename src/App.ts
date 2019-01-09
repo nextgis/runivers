@@ -25,7 +25,8 @@ import {
   PointProperties,
   PointMeta,
   AreaStat,
-  HistoryLayerProperties
+  HistoryLayerProperties,
+  AppMarkerMem
 } from './interfaces';
 
 import { Controls } from './Controls';
@@ -52,7 +53,6 @@ export class App {
   private _headerElement: HTMLElement;
   private _affiliatedElement: HTMLElement;
 
-
   private _minYear: number;
   private _maxYear: number;
   private _popup: Popup;
@@ -62,7 +62,7 @@ export class App {
   private _layersLoaded: { [layerId: string]: boolean } = {};
 
   private _pointsConfig: PointMeta[] = [];
-  private _markers: Array<{ marker: Marker, element: HTMLElement, fid: number }> = [];
+  private _markers: AppMarkerMem[] = [];
 
   constructor(options: AppOptions) {
     this.options = { ...this.options, ...options };
@@ -176,6 +176,7 @@ export class App {
         this.updateByYear(this.currentYear);
       });
       this.emitter.emit('build');
+      this._addEventsListeners();
     });
     getPoints().then((points) => {
       this._pointsConfig = this._processPointsMeta(points);
@@ -414,7 +415,10 @@ export class App {
     const map: Map = this.webMap.mapAdapter.map;
     // create a DOM element for the marker
     const element = document.createElement('div');
-    element.className = 'map-marker'; // use class `aсtive` for selected
+    const yearStat = this.controls.yearsStatPanelControl.yearStat;
+    const isActive = yearStat && yearStat.year === properties.year && yearStat.numb === properties.numb;
+
+    element.className = 'map-marker' + (isActive ? ' active' : ''); // use class `aсtive` for selected
 
     const elInner = document.createElement('div');
     elInner.className = 'map-marker--inner';
@@ -422,13 +426,42 @@ export class App {
 
     element.appendChild(elInner);
 
+
     const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);
     // add marker to map
     const marker = new Marker(element);
-    this._markers.push({ marker, element, fid: properties.fid });
+    const markerMem = { marker, element, properties };
+    this._markers.push(markerMem);
     marker.setLngLat(coordEPSG4326);
 
     marker.addTo(map);
+
+    element.addEventListener('click', (e) => {
+      e.preventDefault();
+      this._setMarkerActive(markerMem, properties);
+    });
+  }
+
+  private _setMarkerActive(markerMem: AppMarkerMem, properties: PointProperties) {
+    const yearControl = this.controls.yearsStatPanelControl;
+    const yearStat = yearControl.yearStats.find((x) => {
+      return x.year === properties.year && x.numb === properties.numb;
+    });
+    if (yearStat) {
+      yearControl.updateYearStat(yearStat);
+      yearControl.unBlock();
+      yearControl.show();
+    }
+  }
+
+  private _updateActiveMarker(yearsStat: { year: number, numb: number }) {
+    this._markers.forEach((x) => {
+      if (x.properties.year === yearsStat.year && x.properties.numb === yearsStat.numb) {
+        x.element.classList.add('active');
+      } else {
+        x.element.classList.remove('active');
+      }
+    });
   }
 
   private _getFillColor(opt: {
@@ -697,5 +730,11 @@ export class App {
 
     map.getCanvas().style.cursor = '';
     this._removePopup();
+  }
+
+  private _addEventsListeners() {
+    this.controls.yearsStatPanelControl.emitter.on('update', ({ yearStat }) => {
+      this._updateActiveMarker(yearStat);
+    });
   }
 }

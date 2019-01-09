@@ -77,6 +77,7 @@ export class YearsStatPanelControl extends Panel {
       this.updateBody('<div class="panel-body__period empty">В этом году изменений территории не было</div>');
       this.yearStat = null;
     }
+    this.emitter.emit('update', { yearStat: this.yearStat });
   }
 
   private _createPeriodBody(yearStat: YearStat) {
