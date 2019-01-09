@@ -605,7 +605,7 @@ export class App {
           propBlock.innerHTML += `<div class="popup__property--name">${x.name}</div>`;
         }
         propBlock.innerHTML = `
-          <div class="popup__property--value prop"><h2>${prop}</h2></div>
+          <div class="popup__property--value prop header"><h2>${prop}</h2></div>
         `;
         if (props.status) {
           const alias = this.options.statusAliases[props.status];
