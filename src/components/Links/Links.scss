@@ -1,11 +1,10 @@
-.panel.bottom-links, .panel.top-links {
+.panel.panel-links {
   width: auto;
 	background: transparent;
-	margin: 0;
 }
 
-.panel.top-links.home-button .panel-body {
-	margin: 0;
+.panel.home-button .panel-body {
+	// margin: 0;
 }
 
 .transneft__logo {
@@ -131,9 +130,9 @@
   opacity: 1!important;
 }
 
-.socialLinks {
-  margin-left: 10px;
-}
+// .social-links {
+//   margin-left: 10px;
+// }
 
 .social__logo {
 	display: block;

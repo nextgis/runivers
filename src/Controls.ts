@@ -1,6 +1,6 @@
 import { App } from './App';
 import { Panel } from './components/Panels/PanelControl';
-import { getBottomLinksPanel, getSwitcherPanelControl, getHomeBtnControl, getAffiliatedPanel } from './components/Links/Links';
+import { getSocialLinksPanel, getSwitcherPanelControl, getHomeBtnControl } from './components/Links/Links';
 import { ControlPositions } from '@nextgis/webmap';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
@@ -21,7 +21,7 @@ export class Controls {
 
   private _socialLinksPanel: Panel;
   private _switchersPanel: Panel;
-  private _homeBtnPanel: Panel;
+  private _homeBtnPanel: any | Promise<any>;
   // private _affiliatedPanel: Panel;
 
   private _installedControls: any[] = [];
@@ -71,7 +71,7 @@ export class Controls {
     });
   }
 
-  private initControls() {
+  private async initControls() {
 
     this.periodsPanelControl = new PeriodPanelControl({ webMap: this.app.webMap });
     this.yearsStatPanelControl = new YearsStatPanelControl({ webMap: this.app.webMap });
@@ -81,7 +81,7 @@ export class Controls {
       colors: this.app.options.lineColorLegend,
     });
     this.legendPanel.emitter.on('change', (colors) => this.app.updateLayersColor());
-    this._socialLinksPanel = getBottomLinksPanel();
+    this._socialLinksPanel = getSocialLinksPanel();
     // this._affiliatedPanel = getAffiliatedPanel(this);
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
@@ -102,36 +102,35 @@ export class Controls {
     }
   }
 
-  private _addFullSizeControls() {
+  private async _addFullSizeControls() {
 
-    this._addControl(this.legendPanel, 'top-left');
-    this._addControl('ZOOM', 'top-left');
+    await this._addControl(this.legendPanel, 'top-left');
 
-    this._addControl(this._switchersPanel, 'top-right');
-    this._addControl(this._homeBtnPanel, 'top-left');
+    await this._addControl(this._switchersPanel, 'top-right');
 
-    this._addControl(this.periodsPanelControl, 'top-right');
-    this._addControl(this.yearsStatPanelControl, 'top-right');
+    await this._addControl(this.periodsPanelControl, 'top-right');
+    await this._addControl(this.yearsStatPanelControl, 'top-right');
 
-    this._addControl(this._socialLinksPanel, 'bottom-left');
+    await this._addControl(this._socialLinksPanel, 'bottom-left');
+    await this._addControl(this._homeBtnPanel, 'bottom-left');
+    await this._addControl('ZOOM', 'bottom-left');
 
     // this._addControl(this._affiliatedPanel, 'bottom-right');
   }
 
-  private _addMobileControls() {
+  private async _addMobileControls() {
 
-    this._addControl(this._switchersPanel, 'top-left');
-    this._addControl('ZOOM', 'top-left');
-    this._addControl(this._homeBtnPanel, 'top-left');
+    await this._addControl(this._switchersPanel, 'top-left');
 
     // this._addControl(this._affiliatedPanel, 'bottom-right');
 
-    this._addControl(this.legendPanel, 'bottom-right');
-    this._addControl(this.yearsStatPanelControl, 'bottom-right');
-    this._addControl(this.periodsPanelControl, 'bottom-right');
+    await this._addControl(this.legendPanel, 'bottom-right');
+    await this._addControl(this.yearsStatPanelControl, 'bottom-right');
+    await this._addControl(this.periodsPanelControl, 'bottom-right');
 
-    this._addControl(this._socialLinksPanel, 'bottom-left');
-
+    await this._addControl('ZOOM', 'top-left');
+    await this._addControl(this._homeBtnPanel, 'top-left');
+    await this._addControl(this._socialLinksPanel, 'bottom-left');
   }
 
   private checkMobile() {

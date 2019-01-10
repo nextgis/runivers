@@ -5,7 +5,7 @@ import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 import { Controls } from '../../Controls';
 
 
-import './img/home-button.svg';
+
 import './img/nextgis.png';
 import { App } from 'src/App';
 import { SliderOptions } from '../SliderControl';
@@ -28,16 +28,16 @@ export function getSwitcherPanelControl(controls: Controls) {
   block.appendChild(baseLayerToggler.getContainer());
 
   const panel = new Panel({
-    addClass: 'top-links'
+    addClass: 'panel-links'
   });
   panel.updateBody(block);
   return panel;
 }
 
-export function getBottomLinksPanel() {
+export function getSocialLinksPanel() {
   const block = document.createElement('div');
   block.innerHTML = `
-    <div class="socialLinks">
+    <div class="social-links">
       <a href="http://twitter.com/runivers" class="social__logo twitter"></a>
       <a href="http://www.facebook.com/Runiverse.ru" class="social__logo facebook"></a>
       <a href="http://vk.com/public35690973" class="social__logo vkontakte"></a>
@@ -46,7 +46,7 @@ export function getBottomLinksPanel() {
   // <a href="http://runivers.livejournal.com/" class="social__logo livejournal"></a>
 
   const panel = new Panel({
-    addClass: 'bottom-links'
+    addClass: 'panel-links'
   });
   panel.updateBody(block);
   return panel;
@@ -100,7 +100,7 @@ export function getAffiliatedPanel(controls: Controls) {
   const block = getAffiliatedLinks(controls.app);
 
   const panel = new Panel({
-    addClass: 'bottom-links'
+    addClass: 'panel-links'
   });
   panel.updateBody(block);
   return panel;
@@ -108,22 +108,13 @@ export function getAffiliatedPanel(controls: Controls) {
 
 export function getHomeBtnControl(control: Controls) {
   const block = document.createElement('div');
-  block.className = 'mapboxgl-ctrl-group mapboxgl-ctrl-group-home';
-  block.innerHTML = `
-    <button class="mapboxgl-ctrl-icon mapboxgl-ctrl-home" type="button" title="Home" aria-label="Home">
-      <img src="images/home-button.svg"/>
-    </button>
-  `;
-  const button = block.getElementsByTagName('button')[0];
-  button.addEventListener('click', () => {
-    console.log(control.app.webMap.mapAdapter.map.getBounds());
-    control.app.webMap.fit(control.app.options.bounds);
+
+  const _control = control.app.webMap.createButtonControl({
+    addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
+    onClick: () => control.app.webMap.fit(control.app.options.bounds)
   });
-  const panel = new Panel({
-    addClass: 'top-links home-button'
-  });
-  panel.updateBody(block);
-  return panel;
+
+  return _control;
 }
 
 export function getTimelineButton() {

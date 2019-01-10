@@ -261,23 +261,6 @@ body {
   z-index: 0;
 }
 
-.mapboxgl-ctrl-bottom-left .mapboxgl-ctrl.panel.bottom-links {
-  margin: 0;
-}
-
-/* .mapboxgl-ctrl.mapboxgl-ctrl-attrib {
-
-} */
-
-
-.mapboxgl-ctrl-top-left .mapboxgl-ctrl-group {
-  margin-left: 15px;
-  /* position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  overflow: visible; */
-}
-
 .mapboxgl-ctrl-group {
   border-radius: 0;
   -moz-box-shadow: none;
@@ -285,6 +268,10 @@ body {
   box-shadow: none;
   overflow: hidden;
   background: none;
+}
+
+.mapboxgl-ctrl-bottom-left .mapboxgl-ctrl .mapboxgl-ctrl-group {
+  margin: 0 0 3px 10px;
 }
 
 .mapboxgl-ctrl-group > button + button {
@@ -308,9 +295,11 @@ body {
 }
 
 .mapboxgl-ctrl-icon.mapboxgl-ctrl-home {
-  background: rgba(49, 49, 49, 0);
-  opacity: 0.65;
-  margin-top: 3px;
+  background-image: url(../components/Links/img/home-button.svg)!important;
+  opacity: 0.8;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  background-position: center;
 }
 .mapboxgl-ctrl-icon.mapboxgl-ctrl-home:hover {
   opacity: 1;

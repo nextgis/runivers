@@ -2,15 +2,12 @@
   width: auto;
   border-radius: 6px;
   max-width: 450px;
-  margin: auto;
-  margin-left: 15px;
-  margin-right: 10px;
   color: #f1f1f1;
   background: rgba(49, 49, 49, 0.8);
   position: relative;
 }
 
-.panel .panel-body {
+.panel.legend-panel .panel-body {
   margin: 10px 5px;
 }
 

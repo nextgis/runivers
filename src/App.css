@@ -105,8 +105,7 @@
 .app-header {
   position: absolute;
   text-align: center;
-  margin: 1.3rem 0;
-  margin-left: 20px;
+  margin: 1.3rem 15px;
   font-size: 1.7rem;
   line-height: 1.7rem;
   color: #000000;
