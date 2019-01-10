@@ -22,7 +22,6 @@ export class Controls {
   private _socialLinksPanel: Panel;
   private _switchersPanel: Panel;
   private _homeBtnPanel: any | Promise<any>;
-  // private _affiliatedPanel: Panel;
 
   private _installedControls: any[] = [];
 
@@ -69,6 +68,7 @@ export class Controls {
     this._installedControls.forEach((x) => {
       this.app.webMap.removeControl(x);
     });
+    this._installedControls = [];
   }
 
   private async initControls() {
@@ -82,7 +82,6 @@ export class Controls {
     });
     this.legendPanel.emitter.on('change', (colors) => this.app.updateLayersColor());
     this._socialLinksPanel = getSocialLinksPanel();
-    // this._affiliatedPanel = getAffiliatedPanel(this);
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
 
@@ -115,14 +114,11 @@ export class Controls {
     await this._addControl(this._homeBtnPanel, 'bottom-left');
     await this._addControl('ZOOM', 'bottom-left');
 
-    // this._addControl(this._affiliatedPanel, 'bottom-right');
   }
 
   private async _addMobileControls() {
 
     await this._addControl(this._switchersPanel, 'top-left');
-
-    // this._addControl(this._affiliatedPanel, 'bottom-right');
 
     await this._addControl(this.legendPanel, 'bottom-right');
     await this._addControl(this.yearsStatPanelControl, 'bottom-right');
