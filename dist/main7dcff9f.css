@@ -345,16 +345,28 @@
 .panel__toggler {
   opacity: 0.4;
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  margin-left: 5px;
+  width: 24px;
+  height: 24px;
   cursor: pointer; }
   .panel__toggler.active {
     opacity: 1; }
 
+.switcher-panel-control {
+  margin: 10px 0; }
+
+.switcher-panel-control .panel__toggler {
+  margin-right: 20px; }
+
+.switcher-panel-control .panel__toggler:last-child {
+  margin-right: 0; }
+
+.mobile .switcher-panel-control {
+  margin: 0; }
+
 .mobile .switcher-panel-control .panel__toggler {
   display: block;
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+  margin-right: 0; }
 
 .period__toggler {
   background: url(./images/rulers.svg) no-repeat; }
@@ -545,8 +557,8 @@
   color: #b9b9b9;
   font-size: 13px;
 }.panel-body__yearstat {
+  padding: 10px 0;
   text-align: left;
-  margin-bottom: 10px;
   width: 90%;
   margin: 0 auto;
 }

@@ -44,10 +44,10 @@ export class SliderControl {
 
   _animationStepInput: HTMLInputElement;
   _sliderContainer: HTMLElement;
-  _slider;
+  _slider: noUiSlider;
   private _container: HTMLElement;
   private _input: HTMLInputElement;
-  private _animationStatus: HTMLInputElement;
+  private _animationStatus: boolean;
   private _playerControl: HTMLElement;
   // private _nextStepTimeoutId: number;
 
@@ -161,8 +161,12 @@ export class SliderControl {
     });
 
     slider.on('change', (values, handle) => {
-      this._onChange(parseInt(values[0], 10));
+      this._onSliderClick(parseInt(values[0], 10));
     });
+    const sliderElement = slider.target as HTMLElement;
+    sliderElement.addEventListener('click', () => {
+      this.stopAnimation();
+    }, true);
 
     this._sliderContainer = span;
     this._slider = slider;
@@ -249,14 +253,30 @@ export class SliderControl {
     };
   }
 
+  startAnimathin() {
+    this._toggleAnimation(true);
+  }
+
   stopAnimation() {
     this._toggleAnimation(false);
   }
 
-  _onChange(value) {
+  _onSliderClick(value: number) {
+    const isAnimation = this._animationStatus;
+    if (this._animationStatus) {
+      this.stopAnimation();
+    }
+    this._onChange(value);
+    // if (isAnimation) {
+    //   this.startAnimathin();
+    // }
+  }
+
+  _onChange(value: number) {
+
     this._slider.set(value);
     if (this._input) {
-      this._input.value = value;
+      this._input.value = String(value);
     }
     this.emitter.emit('change', value);
   }
@@ -265,7 +285,7 @@ export class SliderControl {
   //   return this._animationStatus ? 'stop' : 'start';
   // }
 
-  _toggleAnimation(status?) {
+  _toggleAnimation(status?: boolean) {
     status = status !== undefined ? status : !this._animationStatus;
     this._animationStatus = status;
     // this._playerControl.innerHTML = this._getPlayerControlLabel();
@@ -282,14 +302,16 @@ export class SliderControl {
       const timerStart = new Date().getTime();
       this._stepReady((step: number) => {
         const isReady = typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
-        if (isReady) {
+        if (isReady && this._animationStatus) {
           const stepDelay = new Date().getTime() - timerStart;
           let delay = this.options.animationDelay - stepDelay;
           delay = delay >= 0 ? delay : 0;
           // this._nextStepTimeoutId = setTimeout(() => {
           setTimeout(() => {
-            this._nextStep(step);
-            this._startAnimation();
+            if (this._animationStatus) {
+              this._nextStep(step);
+              this._startAnimation();
+            }
           }, delay);
         } else {
           this.stopAnimation();

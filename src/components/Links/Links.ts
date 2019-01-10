@@ -228,6 +228,16 @@ interface SliderSettings {
 
 export function openSettingsDialog(app: App) {
   const template = document.createElement('div');
+
+  // link to blog
+  const header = document.createElement('div');
+  header.className = 'settings-dialog__header';
+  header.innerHTML = `
+    <h2>Настройки</h2>
+  `;
+  template.appendChild(header);
+
+  // settings input
   const s = app.slider;
   const settings: SliderSettings[] = [
     { name: 'animationDelay', label: 'Задержка анимации, мс', type: 'number' },
@@ -255,6 +265,16 @@ export function openSettingsDialog(app: App) {
   // editable legend
   const legend = app.controls.legendPanel.createLegendBlock(true);
   template.appendChild(legend);
+
+  // link to blog
+  const readMore = document.createElement('div');
+  readMore.className = 'settings-dialog__read-more';
+  readMore.innerHTML = `
+    Описание технической реализации проекта доступно по
+    <a href="http://nextgis.ru/blog/runivers/" target="_blank">ссылке</a>.
+  `;
+  template.appendChild(readMore);
+
   openDialog({ template });
 }
 
@@ -398,7 +418,10 @@ const aboutShort = `
 решением, разработанным в <a href="https://histgeo.ru/laboratory.html" target="_blank">Лабораторией исторической
 геоинформатики</a> Института
 всеобщей истории РАН совместно с
-<a href="http://nextgis.ru/" target="_blank">NextGIS</a>.</SPAN></P>
+<a href="http://nextgis.ru/" target="_blank">NextGIS</a>.
+Описание технической реализации проекта доступно по
+<a href="http://nextgis.ru/blog/runivers/" target="_blank">ссылке</a>.
+</SPAN></P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
 <SPAN LANG="ru-RU">Прикладное
 значение данного проекта для использования
