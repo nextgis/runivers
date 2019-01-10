@@ -27,6 +27,7 @@ export class Controls {
 
   private _mobileTogglePanels: Panel[] = [];
   private _openPanels: Panel[] = [];
+  private _eventBindings: { [name: string]: (...args: any[]) => void } = { onMapClick: null };
 
   private _mobSizeConst: ScreenSize = {
     height: 600,
@@ -36,9 +37,12 @@ export class Controls {
   private _togglerEvents: Array<[Panel, () => void]> = [];
 
   constructor(public app: App) {
+    this._eventBindings.onMapClick = () => this._onMapClick();
+
     this.checkMobile();
     this.initControls();
     this._updateTimeSlider();
+    this._updateMapEvents();
     this._addEventsListeners();
   }
 
@@ -134,6 +138,14 @@ export class Controls {
     return this.isMobile;
   }
 
+  private _updateMapEvents() {
+    if (this.isMobile) {
+      this._addMapClickEvent();
+    } else {
+      this._removeMapClickEvent();
+    }
+  }
+
   private _updateTimeSlider() {
     // remove intermediat pips from slider on mobile
     const pipsNodes = document.querySelectorAll('.noUi-marker.noUi-marker-horizontal.noUi-marker-normal');
@@ -154,29 +166,6 @@ export class Controls {
         x.style.visibility = '';
       });
     }
-  }
-
-  private _onWindowResize(e) {
-    const isMobile = this.isMobile;
-    this.checkMobile();
-    if (isMobile !== this.isMobile) {
-      this.addControls();
-    }
-    this._updateTimeSlider();
-  }
-
-  private _addEventsListeners() {
-    window.addEventListener('resize', (e) => this._onWindowResize(e), false);
-  }
-
-  private _hideAllPanels() {
-    this._openPanels = [];
-    this._mobileTogglePanels.forEach((x) => {
-      if (!x.isHide) {
-        this._openPanels.push(x);
-      }
-      x.hide();
-    });
   }
 
   private _onPanelToggle(panel: Panel) {
@@ -206,5 +195,42 @@ export class Controls {
         x.emitter.removeListener('toggle', mem[1]);
       }
     });
+  }
+
+  private _onMapClick() {
+    this._hideAllPanels();
+  }
+
+
+  private _onWindowResize(e) {
+    const isMobile = this.isMobile;
+    this.checkMobile();
+    if (isMobile !== this.isMobile) {
+      this.addControls();
+    }
+    this._updateTimeSlider();
+    this._updateMapEvents();
+  }
+
+  private _addEventsListeners() {
+    window.addEventListener('resize', (e) => this._onWindowResize(e), false);
+  }
+
+  private _hideAllPanels() {
+    this._openPanels = [];
+    this._mobileTogglePanels.forEach((x) => {
+      if (!x.isHide) {
+        this._openPanels.push(x);
+      }
+      x.hide();
+    });
+  }
+
+  private _addMapClickEvent() {
+    this.app.webMap.emitter.on('click', this._eventBindings.onMapClick);
+  }
+
+  private _removeMapClickEvent() {
+    this.app.webMap.emitter.removeListener('click', this._eventBindings.onMapClick);
   }
 }

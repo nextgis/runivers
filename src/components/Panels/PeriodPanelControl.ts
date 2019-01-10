@@ -85,7 +85,7 @@ export class PeriodPanelControl extends Panel {
       <div class="panel-body__period--period">${period.years_from} – ${period.years_to} гг.</div>
       <div class="panel-body__period--description">${period.description}</div>
       <div class="panel-body__period--description panel-body__period--area_wrap">
-        Общая площадь - <span class="panel-body__period--area">
+        Общая площадь: <span class="panel-body__period--area">
           ${formatArea(areaStat.area)}
         </span>
       </div>
