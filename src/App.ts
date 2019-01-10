@@ -6,7 +6,7 @@ import QmsKit from '@nextgis/qms-kit';
 import UrlParams from '@nextgis/url-runtime-params';
 
 import { SliderControl } from './components/SliderControl';
-import { Popup, Marker, Map } from 'mapbox-gl';
+import { Popup, Marker, Map, MapMouseEvent, EventData } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
 import { getPoints, getPointGeojson } from './services/GetPointsService';
 
@@ -31,6 +31,8 @@ import {
 
 import { Controls } from './Controls';
 
+type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
+
 export class App {
 
   options: AppOptions = {
@@ -39,7 +41,7 @@ export class App {
   currentYear: number;
   slider: SliderControl;
 
-  webMap: WebMap;
+  webMap: WebMap<Map, string[]>;
 
   currentLayerId: string;
   currentPointId: string;
@@ -63,6 +65,12 @@ export class App {
 
   private _pointsConfig: PointMeta[] = [];
   private _markers: AppMarkerMem[] = [];
+
+  private _onLayerClickMem: {
+    [layerId: string]: {
+      [ev in UsedMapEvents]?: (ev: MapMouseEvent & EventData) => void;
+    }
+  } = {};
 
   constructor(options: AppOptions) {
     this.options = { ...this.options, ...options };
@@ -438,6 +446,7 @@ export class App {
 
     element.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       this._setMarkerActive(markerMem, properties);
     });
   }
@@ -673,42 +682,50 @@ export class App {
   }
   // endregion
 
+  private _onLayerClick(e: MapMouseEvent & EventData, layerId: string) {
+    const map = this.webMap.mapAdapter.map;
+    const point = e.point;
+    const width = 5;
+    const height = 5;
+    // Find all features within a bounding box around a point
+
+    const features = map.queryRenderedFeatures([
+      [point.x - width / 2, point.y - height / 2],
+      [point.x + width / 2, point.y + height / 2],
+    ], { layers: [layerId] });
+    const feature = features[0];
+    const prop = feature.properties as HistoryLayerProperties;
+    if (prop.status && prop.status < 6) {
+      const html = this._createPopupContent(prop);
+      const str = html.innerHTML;
+      if (str) {
+        this._removePopup();
+        this._popup = new Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(str)
+          .addTo(map);
+      }
+    }
+
+  }
+
   private _addLayerListeners(layerId: string) {
     const map = this.webMap.mapAdapter.map;
+    const layerClickBind = (ev: MapMouseEvent & EventData) => this._onLayerClick(ev, layerId);
+    const layerMouseEnterBind = () => map.getCanvas().style.cursor = 'pointer';
+    const layerMouseLeaveBind = () => map.getCanvas().style.cursor = '';
 
-    map.on('click', layerId, (e) => {
-      const point = e.point;
-      const width = 5;
-      const height = 5;
-      // Find all features within a bounding box around a point
-
-      const features = map.queryRenderedFeatures([
-        [point.x - width / 2, point.y - height / 2],
-        [point.x + width / 2, point.y + height / 2],
-      ], { layers: [layerId] });
-      const feature = features[0];
-      if (feature.properties.status && feature.properties.status < 6) {
-        const html = this._createPopupContent(feature.properties);
-        const str = html.innerHTML;
-        if (str) {
-          this._popup = new Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(str)
-            .addTo(map);
-        }
-      }
-    });
-
+    map.on('click', layerId, layerClickBind);
     // Change the cursor to a pointer when the mouse is over the places layer.
-    map.on('mouseenter', layerId, (e) => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-
+    map.on('mouseenter', layerId, layerMouseEnterBind);
     // Change it back to a pointer when it leaves.
-    map.on('mouseleave', layerId, () => {
-      map.getCanvas().style.cursor = '';
-      // this._removePopup();
-    });
+    map.on('mouseleave', layerId, layerMouseLeaveBind);
+
+    this._onLayerClickMem[layerId] = this._onLayerClickMem[layerId] || {};
+
+    this._onLayerClickMem[layerId].click = layerClickBind;
+    this._onLayerClickMem[layerId].mouseenter = layerClickBind;
+    this._onLayerClickMem[layerId].mouseleave = layerClickBind;
   }
 
   private _removePopup() {
@@ -722,13 +739,16 @@ export class App {
     const map = this.webMap.mapAdapter.map;
     // map.off('click', layerId);
 
-    // Change the cursor to a pointer when the mouse is over the places layer.
-    map.off('mouseenter', layerId);
+    const memEvents = this._onLayerClickMem[layerId];
+    if (memEvents) {
+      for (const ev in memEvents) {
+        if (memEvents.hasOwnProperty(ev)) {
+          const memEvent = memEvents[ev];
+          map.off(ev, memEvent);
+        }
+      }
+    }
 
-    // Change it back to a pointer when it leaves.
-    map.off('mouseleave', layerId);
-
-    map.getCanvas().style.cursor = '';
     this._removePopup();
   }
 
