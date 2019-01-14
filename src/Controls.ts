@@ -5,6 +5,7 @@ import { ControlPositions } from '@nextgis/webmap';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
 import { YearsStatPanelControl } from './components/Panels/YearsStatPanelControl';
+import { IControl } from 'mapbox-gl';
 
 interface ScreenSize {
   height: number;
@@ -22,6 +23,7 @@ export class Controls {
   private _socialLinksPanel: Panel;
   private _switchersPanel: Panel;
   private _homeBtnPanel: any | Promise<any>;
+  private _zoomControl: IControl;
 
   private _installedControls: any[] = [];
 
@@ -88,6 +90,7 @@ export class Controls {
     this._socialLinksPanel = getSocialLinksPanel();
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
+    this._zoomControl = this.app.webMap.getControl('ZOOM', { zoomInTitle: 'Приблизить', zoomOutTitle: 'Отдалить' });
 
     this._mobileTogglePanels = [
       this.periodsPanelControl,
@@ -116,7 +119,7 @@ export class Controls {
 
     await this._addControl(this._socialLinksPanel, 'bottom-left');
     await this._addControl(this._homeBtnPanel, 'bottom-left');
-    await this._addControl('ZOOM', 'bottom-left');
+    await this._addControl(this._zoomControl, 'bottom-left');
 
   }
 
@@ -128,7 +131,7 @@ export class Controls {
     await this._addControl(this.yearsStatPanelControl, 'bottom-right');
     await this._addControl(this.periodsPanelControl, 'bottom-right');
 
-    await this._addControl('ZOOM', 'top-left');
+    await this._addControl(this._zoomControl, 'top-left');
     await this._addControl(this._homeBtnPanel, 'top-left');
     await this._addControl(this._socialLinksPanel, 'bottom-left');
   }

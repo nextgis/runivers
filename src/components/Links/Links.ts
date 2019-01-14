@@ -419,8 +419,7 @@ const aboutShort = `
 геоинформатики</a> Института
 всеобщей истории РАН совместно с
 <a href="http://nextgis.ru/" target="_blank">NextGIS</a>.
-Описание технической реализации проекта доступно по
-<a href="http://nextgis.ru/blog/runivers/" target="_blank">ссылке</a>.
+Описание <a href="http://nextgis.ru/blog/runivers/" target="_blank">технической реализации</a> проекта.
 </SPAN></P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
 <SPAN LANG="ru-RU">Прикладное
