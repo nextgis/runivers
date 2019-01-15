@@ -108,6 +108,7 @@ export class App {
       });
 
       webMap.mapAdapter.emitter.on('data-loaded', (data) => this._onData(data));
+      webMap.mapAdapter.emitter.on('data-error', (data) => this._onData(data));
 
     });
 

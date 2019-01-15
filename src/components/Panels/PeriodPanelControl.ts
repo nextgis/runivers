@@ -26,7 +26,8 @@ const OPTIONS = {
 
 export class PeriodPanelControl extends Panel {
 
-  period: Period;
+  private period: Period;
+  private areaStat: AreaStat;
 
   constructor(options?) {
     super(Object.assign({}, OPTIONS, options));
@@ -48,12 +49,16 @@ export class PeriodPanelControl extends Panel {
   }
 
   updatePeriod(period: Period, areaStat: AreaStat) {
-    const exist = this.period;
+
     this.closeDialog();
     if (period) {
-      if (exist !== period) {
+      const exist = this.period;
+      const currentArea = this.areaStat && this.areaStat.area;
+      const newArea = areaStat && areaStat.area;
+      if (exist !== period || currentArea !== newArea) {
         this.updateBody(this._createPeriodBody(period, areaStat));
         this.period = period;
+        this.areaStat = areaStat;
       }
     } else {
       this.updateBody('<div class="panel-body__period empty">В этом году изменений территории не было</div>');
@@ -73,10 +78,6 @@ export class PeriodPanelControl extends Panel {
       imageHtml = `<div
         class="panel-body__period--image" style="background-image: url('${period.img_link}');">
       </div>`;
-      // imageHtml = `<div
-      // class="panel-body__period--image"
-      // style="background-image: url('https://www.runivers.ru/upload/resize_cache/iblock/aa9/200_0_1/72_2.jpg');">
-      // </div>`;
     }
 
     periodElement.innerHTML = `
@@ -96,9 +97,6 @@ export class PeriodPanelControl extends Panel {
 
     if (detailLink) {
       element.appendChild(detailLink);
-
-      // element.appendChild(this.createRefButton(
-      //   `https://www.google.ru/search?q=${period.name.split(' ').join('+')}`));
     }
 
     return element;
