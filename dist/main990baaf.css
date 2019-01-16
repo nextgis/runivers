@@ -124,6 +124,12 @@
   right: 0;
 }
 
+@media screen and (max-width: 450px) {
+	.app-header {
+    font-size: 1.4rem;
+  }
+}
+
 .slider-control {
   position: absolute;
   bottom: 40px;
@@ -352,7 +358,7 @@
     opacity: 1; }
 
 .switcher-panel-control {
-  margin: 10px 0; }
+  margin: 15px 0; }
 
 .switcher-panel-control .panel__toggler {
   margin-right: 20px; }
@@ -508,7 +514,7 @@
 .panel-body__period {
   text-align: center;
   line-height: 1.5rem;
-  padding: 10px;
+  padding: 20px;
 }
 
 .panel-body__period--name {
@@ -556,10 +562,11 @@
 .panel-body__period--area_wrap {
   color: #b9b9b9;
   font-size: 13px;
-}.panel-body__yearstat {
-  padding: 10px 0;
+}
+.panel-body__yearstat {
+  padding: 20px;
   text-align: left;
-  width: 90%;
+  /* width: 90%; */
   margin: 0 auto;
 }
 
@@ -642,7 +649,7 @@
 }
 
 .panel-body__period--slider {
-  padding-bottom: 10px;
+  padding: 10px 0;
   margin: 0 auto 15px auto;
   text-align: center;
   border-bottom: 1px solid #ffffff63;
@@ -950,6 +957,16 @@ body {
 }
 
 /* MAPBOX GL */
+
+.mapboxgl-ctrl-top-left,
+.mapboxgl-ctrl-bottom-left {
+  margin-left: 10px;
+}
+
+.mapboxgl-ctrl-top-right,
+.mapboxgl-ctrl-bottom-right {
+  margin-right: 10px;
+}
 
 .mapboxgl-ctrl-top-left {
   top: 64px;

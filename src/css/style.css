@@ -251,6 +251,16 @@ body {
 
 /* MAPBOX GL */
 
+.mapboxgl-ctrl-top-left,
+.mapboxgl-ctrl-bottom-left {
+  margin-left: 10px;
+}
+
+.mapboxgl-ctrl-top-right,
+.mapboxgl-ctrl-bottom-right {
+  margin-right: 10px;
+}
+
 .mapboxgl-ctrl-top-left {
   top: 64px;
 }

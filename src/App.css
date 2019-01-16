@@ -124,3 +124,9 @@
   right: 0;
 }
 
+@media screen and (max-width: 450px) {
+	.app-header {
+    font-size: 1.4rem;
+  }
+}
+

@@ -84,10 +84,6 @@ export class YearsStatPanelControl extends Panel {
     const element = document.createElement('div');
     element.className = 'panel-body__yearstat';
 
-    if (this.yearStats.length > 1) {
-      element.appendChild(this._createStateSwitcher());
-    }
-
     const yearBlock = document.createElement('div');
     yearBlock.className = 'panel-body__period--year';
     yearBlock.innerHTML = `${yearStat.year} г.`;
@@ -107,6 +103,10 @@ export class YearsStatPanelControl extends Panel {
         container.classList.add('gain');
       }
 
+    }
+
+    if (this.yearStats.length > 1) {
+      element.appendChild(this._createStateSwitcher());
     }
 
     const descrBlock = this._createDescriptionBlock(yearStat);

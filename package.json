@@ -1,6 +1,6 @@
 {
   "name": "russia-history",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "",
   "main": "src/app.js",
   "scripts": {
@@ -15,12 +15,12 @@
   "license": "ISC",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "@nextgis/dialog": "^0.11.3",
-    "@nextgis/mapboxgl-map-adapter": "^0.11.3",
-    "@nextgis/ngw-connector": "^0.11.3",
-    "@nextgis/qms-kit": "^0.11.3",
-    "@nextgis/webmap": "^0.11.3",
-    "@nextgis/url-runtime-params": "^0.11.3",
+    "@nextgis/dialog": "^0.11.4",
+    "@nextgis/mapboxgl-map-adapter": "^0.11.4",
+    "@nextgis/ngw-connector": "^0.11.4",
+    "@nextgis/qms-kit": "^0.11.4",
+    "@nextgis/webmap": "^0.11.4",
+    "@nextgis/url-runtime-params": "^0.11.4",
     "@types/node": "^10.12.18",
     "color": "^3.1.0",
     "dialog-polyfill": "^0.4.10",
@@ -31,7 +31,7 @@
     "wnumb": "^1.1.0"
   },
   "devDependencies": {
-    "@types/geojson": "^7946.0.4",
+    "@types/geojson": "^7946.0.5",
     "@types/mapbox-gl": "^0.51.3",
     "autoprefixer": "^9.4.5",
     "babel-loader": "^8.0.5",
