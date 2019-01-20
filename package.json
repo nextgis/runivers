@@ -1,6 +1,6 @@
 {
   "name": "russia-history",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "description": "",
   "main": "src/app.js",
   "scripts": {
