@@ -127,7 +127,7 @@ export function getTimelineButton() {
 }
 
 function getBaseLayerToggler(controls: Controls) {
-  const baseLayer = 'qms-487';
+  const baseLayer = 'baselayer';
   const baseLayerToggler = new Toggler({
     className: 'baselayer__toggler',
     title: 'Скрыть подложку',

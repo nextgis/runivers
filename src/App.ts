@@ -99,13 +99,18 @@ export class App {
 
     webMap.create(options).then(() => {
 
-      // webMap.addBaseLayer('osm', 'OSM');
-      webMap.addBaseLayer('QMS', {
+      webMap.addBaseLayer('TILE', {
         id: 'baselayer',
-        qmsid: 487
+        url: (location.protocol === 'https:' ? 'https' : 'http') + '://tilessputnik.ru/{z}/{x}/{y}.png'
       }).then((layer) => {
         webMap.showLayer(layer.name);
       });
+      // webMap.addBaseLayer('QMS', {
+      //   id: 'baselayer',
+      //   qmsid: 487
+      // }).then((layer) => {
+      //   webMap.showLayer(layer.name);
+      // });
 
       webMap.mapAdapter.emitter.on('data-loaded', (data) => this._onData(data));
       webMap.mapAdapter.emitter.on('data-error', (data) => this._onData(data));

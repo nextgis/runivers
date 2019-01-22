@@ -1,6 +1,6 @@
 {
   "name": "russia-history",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "description": "",
   "main": "src/app.js",
   "scripts": {
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/geojson": "^7946.0.5",
     "@types/mapbox-gl": "^0.51.3",
-    "autoprefixer": "^9.4.5",
+    "autoprefixer": "^9.4.6",
     "babel-loader": "^8.0.5",
     "compression-webpack-plugin": "^2.0.0",
     "css-loader": "^2.1.0",
@@ -57,7 +57,7 @@
     "tslint-loader": "^3.6.0",
     "typescript": "^3.2.4",
     "url-loader": "^1.1.2",
-    "webpack": "^4.28.4",
+    "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14"
   }
