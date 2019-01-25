@@ -16,6 +16,10 @@
   line-height: 1.2rem;
 }
 
+.popup__property--value.dates .show-date {
+  cursor: pointer;
+}
+
 .popup__property--center {
   text-align: center;
 }

@@ -11,7 +11,7 @@ import './css/style.css';
 // mapbox style and fonts from index.html <link>
 
 const app = new App({
-  baseUrl: (location.protocol) + '//' + config.baseUrl,
+  baseUrl: config.baseUrl,
   target: 'map',
   fromYear: 1462,
   currentYear: 1300,

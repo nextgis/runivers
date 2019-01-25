@@ -99,18 +99,18 @@ export class App {
 
     webMap.create(options).then(() => {
 
-      webMap.addBaseLayer('TILE', {
-        id: 'baselayer',
-        url: (location.protocol === 'https:' ? 'https' : 'http') + '://tilessputnik.ru/{z}/{x}/{y}.png'
-      }).then((layer) => {
-        webMap.showLayer(layer.name);
-      });
-      // webMap.addBaseLayer('QMS', {
+      // webMap.addBaseLayer('TILE', {
       //   id: 'baselayer',
-      //   qmsid: 487
+      //   url: (location.protocol === 'https:' ? 'https' : 'http') + '://tilessputnik.ru/{z}/{x}/{y}.png'
       // }).then((layer) => {
       //   webMap.showLayer(layer.name);
       // });
+      webMap.addBaseLayer('QMS', {
+        id: 'baselayer',
+        qmsid: 2550
+      }).then((layer) => {
+        webMap.showLayer(layer.name);
+      });
 
       webMap.mapAdapter.emitter.on('data-loaded', (data) => this._onData(data));
       webMap.mapAdapter.emitter.on('data-error', (data) => this._onData(data));
@@ -169,7 +169,6 @@ export class App {
           this.webMap.mapAdapter.map.setPaintProperty(l, 'fill-color', this._getFillColor());
         }
       }
-
     }
   }
 
@@ -663,13 +662,17 @@ export class App {
             `;
           }
           if (props.status > 0 && props.status < 6) {
+            const lwdate = this._formatDateStr(props.lwdate);
+            const updtrl = this._formatDateStr(props.updtrl);
             propBlock.innerHTML += `
               <div class="popup__property--value dates">
                 <span>
-                  ${this._formatDateStr(props.lwdate)} - ${this._formatDateStr(props.updtrl)}
+                  <span class="show-date">${lwdate}</span> -
+                  <span class="show-date">${updtrl}</span>
                 </span>
               </div>
             `;
+
           }
           if (props.Area) {
             propBlock.innerHTML += `
@@ -680,6 +683,17 @@ export class App {
               </div>
             `;
           }
+        }
+        const yearsLinks = propBlock.querySelectorAll('.show-date');
+        for (let fry = 0; fry < yearsLinks.length; fry++) {
+          const link = yearsLinks[fry];
+          link.addEventListener('click', () => {
+            const year = this._findYearInDateStr(link.innerHTML);
+            if (year) {
+              this.updateByYear(year);
+              this.slider._slider.set(year);
+            }
+          });
         }
         block.appendChild(propBlock);
       }
@@ -703,16 +717,12 @@ export class App {
     const prop = feature.properties as HistoryLayerProperties;
     if (prop.status && prop.status < 6) {
       const html = this._createPopupContent(prop);
-      const str = html.innerHTML;
-      if (str) {
-        this._removePopup();
-        this._popup = new Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(str)
-          .addTo(map);
-      }
+      this._removePopup();
+      this._popup = new Popup()
+        .setLngLat(e.lngLat)
+        .setDOMContent(html)
+        .addTo(map);
     }
-
   }
 
   private _addLayerListeners(layerId: string) {
@@ -754,7 +764,6 @@ export class App {
         }
       }
     }
-
     this._removePopup();
   }
 
