@@ -32,7 +32,7 @@ export class Controls {
   private _eventBindings: { [name: string]: (...args: any[]) => void } = { onMapClick: null };
 
   private _mobSizeConst: ScreenSize = {
-    height: 800,
+    height: 700,
     width: 650
   };
 
