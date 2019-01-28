@@ -183,7 +183,7 @@ export class App {
       this._headerElement = this._createHeader();
       this._affiliatedElement = this._createAffiliatedLogos();
       this.controls = new Controls(this);
-      this.controls.addControls();
+      this.controls.updateControls();
 
       this.webMap.mapAdapter.onMapLoad(() => {
         this.updateByYear(this.currentYear);

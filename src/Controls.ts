@@ -48,7 +48,7 @@ export class Controls {
     this._addEventsListeners();
   }
 
-  addControls() {
+  updateControls() {
     this.removeControls();
 
     const mapContainer = this.app.webMap.getContainer();
@@ -150,7 +150,7 @@ export class Controls {
   }
 
   private _updateTimeSlider() {
-    // remove intermediat pips from slider on mobile
+    // remove intermediate pips from slider on mobile
     const pipsNodes = document.querySelectorAll('.noUi-marker.noUi-marker-horizontal.noUi-marker-normal');
     let hideElements = Array.from(pipsNodes);
 
@@ -201,15 +201,16 @@ export class Controls {
   }
 
   private _onMapClick() {
-    this._hideAllPanels();
+    if (this.isMobile) {
+      this._hideAllPanels();
+    }
   }
-
 
   private _onWindowResize(e) {
     const isMobile = this.isMobile;
     this.checkMobile();
     if (isMobile !== this.isMobile) {
-      this.addControls();
+      this.updateControls();
     }
     this._updateTimeSlider();
     this._updateMapEvents();
