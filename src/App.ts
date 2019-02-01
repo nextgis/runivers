@@ -228,7 +228,7 @@ export class App {
     const headerText = document.createElement('span');
     headerText.innerHTML = `Границы России ${this._minYear}-${this._maxYear} гг.`;
     header.appendChild(headerText);
-    header.appendChild(getAboutProjectLink());
+    header.appendChild(getAboutProjectLink(this));
 
     const mapContainer = this.webMap.mapAdapter.getContainer();
 

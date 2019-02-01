@@ -53,13 +53,22 @@ export function getSocialLinksPanel() {
   return panel;
 }
 
-export function getAboutProjectLink() {
+export function getAboutProjectLink(app: App) {
   const block = document.createElement('a');
+  let template = aboutShort;
   block.className = 'about_icon';
   block.setAttribute('href', '#');
   block.innerHTML = `i`;
   block.onclick = () => {
-    openDialog({ template: aboutShort });
+    const attrs = app.webMap.getAttributions({ onlyVisible: false, onlyBasemap: true });
+    if (attrs.length) {
+      let str = 'Использована картографическая подложка: ';
+      attrs.forEach((x) => {
+        str += x;
+      });
+      template += getAboutBlock(str);
+    }
+    openDialog({ template });
   };
 
   return block;
@@ -108,8 +117,6 @@ export function getAffiliatedPanel(controls: Controls) {
 }
 
 export function getHomeBtnControl(control: Controls) {
-  const block = document.createElement('div');
-
   const _control = control.app.webMap.createButtonControl({
     addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
     onClick: () => control.app.webMap.fit(control.app.options.bounds)
@@ -278,6 +285,13 @@ export function openSettingsDialog(app: App) {
   template.appendChild(readMore);
 
   openDialog({ template });
+}
+
+function getAboutBlock(block: string) {
+  return `
+    <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
+      <SPAN LANG="ru-RU">${block}</SPAN>
+    </P>`;
 }
 
 const aboutShort = `
@@ -449,10 +463,6 @@ const aboutShort = `
   target="_blank"
 >
   ПОДРОБНЕЕ
-</a>.</SPAN></P>
-
-<P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
-<SPAN LANG="ru-RU">Использована картографическая подложка Спутник ©Ростелеком ©Openstreetmap
 </a>.</SPAN></P>
 `;
 
