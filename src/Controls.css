@@ -1,0 +1,9 @@
+.mapboxgl-map > .mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+  position: absolute;
+  bottom: 0;
+}
+
+.mapboxgl-map  > .mapboxgl-ctrl-attrib.mapboxgl-compact {
+  left: 0;
+  display: none;
+}

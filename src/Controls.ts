@@ -7,6 +7,8 @@ import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
 import { YearsStatPanelControl } from './components/Panels/YearsStatPanelControl';
 import { IControl } from 'mapbox-gl';
 
+import './Controls.css';
+
 interface ScreenSize {
   height: number;
   width: number;
@@ -24,6 +26,8 @@ export class Controls {
   private _switchersPanel: Panel;
   private _homeBtnPanel: any | Promise<any>;
   private _zoomControl: IControl;
+
+  private _attributions: IControl;
 
   private _installedControls: any[] = [];
 
@@ -91,6 +95,7 @@ export class Controls {
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
     this._zoomControl = this.app.webMap.getControl('ZOOM', { zoomInTitle: 'Приблизить', zoomOutTitle: 'Отдалить' });
+    this._attributions = this.app.webMap.getControl('ATTRIBUTION');
 
     this._mobileTogglePanels = [
       this.periodsPanelControl,
@@ -117,10 +122,12 @@ export class Controls {
     await this._addControl(this.periodsPanelControl, 'top-right');
     await this._addControl(this.yearsStatPanelControl, 'top-right');
 
+    await this._addControl(this._attributions, 'bottom-left');
     await this._addControl(this._socialLinksPanel, 'bottom-left');
     await this._addControl(this._homeBtnPanel, 'bottom-left');
     await this._addControl(this._zoomControl, 'bottom-left');
 
+    this._manualControlMove();
   }
 
   private async _addMobileControls() {
@@ -133,7 +140,22 @@ export class Controls {
 
     await this._addControl(this._zoomControl, 'top-left');
     await this._addControl(this._homeBtnPanel, 'top-left');
+
+    await this._addControl(this._attributions, 'bottom-left');
     await this._addControl(this._socialLinksPanel, 'bottom-left');
+
+    this._manualControlMove();
+  }
+
+  private _manualControlMove() {
+    const container = this.app.webMap.getContainer();
+    if (container) {
+      const attrContainer = container.querySelector('.mapboxgl-ctrl.mapboxgl-ctrl-attrib');
+      if (attrContainer) {
+        attrContainer.parentNode.removeChild(attrContainer);
+        container.appendChild(attrContainer);
+      }
+    }
   }
 
   private checkMobile() {

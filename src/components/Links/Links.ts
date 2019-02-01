@@ -3,6 +3,7 @@ import { Panel } from '../Panels/PanelControl';
 import { Toggler } from './Toggler';
 import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 import { Controls } from '../../Controls';
+import pkg from '../../../package.json';
 
 
 
@@ -272,6 +273,7 @@ export function openSettingsDialog(app: App) {
   readMore.innerHTML = `
     Описание технической реализации проекта доступно по
     <a href="http://nextgis.ru/blog/runivers/" target="_blank">ссылке</a>.
+    <div>v.${pkg.version}</div>
   `;
   template.appendChild(readMore);
 
@@ -447,6 +449,10 @@ const aboutShort = `
   target="_blank"
 >
   ПОДРОБНЕЕ
+</a>.</SPAN></P>
+
+<P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
+<SPAN LANG="ru-RU">Использована картографическая подложка Спутник ©Ростелеком ©Openstreetmap
 </a>.</SPAN></P>
 `;
 
