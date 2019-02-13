@@ -103,13 +103,13 @@ export class App {
       //   id: 'baselayer',
       //   url: (location.protocol === 'https:' ? 'https' : 'http') + '://tilessputnik.ru/{z}/{x}/{y}.png'
       // }).then((layer) => {
-      //   webMap.showLayer(layer.name);
+      //   webMap.showLayer(layer);
       // });
       webMap.addBaseLayer('QMS', {
         id: 'baselayer',
-        qmsid: 2550
+        qmsId: 2550
       }).then((layer) => {
-        webMap.showLayer(layer.name);
+        webMap.showLayer(layer);
       });
 
       webMap.mapAdapter.emitter.on('data-loaded', (data) => this._onData(data));
@@ -511,7 +511,7 @@ export class App {
     return meta.concat(colors);
   }
 
-  private _addLayer(url: string, id: string): Promise<any> {
+  private async _addLayer(url: string, id: string): Promise<any> {
     const paint = {
       'fill-opacity': 0.8,
       'fill-opacity-transition': {
@@ -528,16 +528,15 @@ export class App {
       'line-width': 1,
       'line-color': this._getFillColor({ darken: 0.5 }),
     };
-    return Promise.all([
-      this.webMap.addLayer('MVT', { url, id, paint }),
-      this.webMap.addLayer('MVT', {
-        url,
-        'id': (id + '-bound'),
-        'paint': paintLine,
-        'type': 'line',
-        'source-layer': id
-      }),
-    ]);
+    const fillLayer = await this.webMap.addLayer('MVT', { url, id, paint });
+    const boundLayer = await this.webMap.addLayer('MVT', {
+      url,
+      'id': (id + '-bound'),
+      'paint': paintLine,
+      'type': 'line',
+      'source-layer': fillLayer.layer[0]
+    });
+    return [fillLayer, boundLayer];
   }
 
   private _toggleLayer(id, status) {
