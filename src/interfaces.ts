@@ -1,6 +1,6 @@
 import { Period } from './components/Panels/PeriodPanelControl';
 import { YearStat } from './components/Panels/YearsStatPanelControl';
-import { LayerExtent } from '@nextgis/webmap';
+import { LngLatBoundsArray } from '@nextgis/webmap';
 import { Marker } from 'mapbox-gl';
 
 export interface AreaStat {
@@ -17,7 +17,7 @@ export interface AppOptions {
   currentYear?: number;
   animationStep?: number;
   animationDelay?: number;
-  bounds?: LayerExtent;
+  bounds?: LngLatBoundsArray;
   periods?: Period[];
   yearsStat?: YearStat[];
   areaStat?: AreaStat[];

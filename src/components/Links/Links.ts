@@ -119,7 +119,7 @@ export function getAffiliatedPanel(controls: Controls) {
 export function getHomeBtnControl(control: Controls) {
   const _control = control.app.webMap.createButtonControl({
     addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
-    onClick: () => control.app.webMap.fit(control.app.options.bounds)
+    onClick: () => control.app.webMap.fitBounds(control.app.options.bounds)
   });
 
   return _control;
@@ -263,7 +263,8 @@ export function openSettingsDialog(app: App) {
     `;
     const input = inputBlock.getElementsByClassName(id)[0] as HTMLInputElement;
     input.addEventListener('input', () => {
-      s.options[x.name] = x.type === 'number' ? parseInt(input.value, 10) : input.value;
+      const value = x.type === 'number' ? parseInt(input.value, 10) : input.value;
+      Object.defineProperty(s.options, x.name, {value, enumerable: true});
     });
 
     template.appendChild(inputBlock);

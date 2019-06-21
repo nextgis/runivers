@@ -185,7 +185,7 @@ export class App {
       this.controls = new Controls(this);
       this.controls.updateControls();
 
-      this.webMap.mapAdapter.onMapLoad(() => {
+      this.webMap.onMapLoad(() => {
         this.updateByYear(this.currentYear);
       });
       this.emitter.emit('build');
@@ -368,7 +368,7 @@ export class App {
     layers.forEach((l) => {
       if (!this.webMap.isBaseLayer(l)) {
         const isSkipLayer = l === this.currentLayerId || l === this.currentLayerId + '-bound';
-        if (!isSkipLayer && this.webMap.isLayerOnTheMap(l)) {
+        if (!isSkipLayer && this.webMap.isLayerVisible(l)) {
           this._hideLayer(l);
         }
       }
@@ -518,6 +518,7 @@ export class App {
         duration: 0
       },
       // 'fill-outline-color': '#8b0000', // darkred
+      // 'fill-outline-color': '#8b0000', // darkred
       'fill-color': this._getFillColor()
     };
     const paintLine = {
@@ -528,15 +529,15 @@ export class App {
       'line-width': 1,
       'line-color': this._getFillColor({ darken: 0.5 }),
     };
-    const fillLayer = await this.webMap.addLayer('MVT', { url, id, paint });
-    const boundLayer = await this.webMap.addLayer('MVT', {
-      url,
-      'id': (id + '-bound'),
-      'paint': paintLine,
-      'type': 'line',
-      'source-layer': fillLayer.layer[0]
-    });
-    return [fillLayer, boundLayer];
+    const fillLayer = await this.webMap.addLayer('MVT', { url, id, paint, strongOptions: true });
+    // const boundLayer = await this.webMap.addLayer('MVT', {
+    //   url,
+    //   'id': (id + '-bound'),
+    //   'paint': paintLine,
+    //   'type': 'line',
+    //   'source-layer': fillLayer.layer[0]
+    // });
+    // return [fillLayer, boundLayer];
   }
 
   private _toggleLayer(id, status) {
