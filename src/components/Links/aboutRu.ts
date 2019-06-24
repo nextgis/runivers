@@ -10,7 +10,9 @@ export const aboutShortRu = `
 <div style="margin-top: 20px;"></div>
 
 <div class="switch-about-language">
-<a class="switch-about-language-btn" name="en" href="#">English version</a>
+<a class="switch-about-language-btn" name="en" href="#" style="font-size: 1.2rem; font-weight: bold;">
+English version
+</a>
 </div>
 
 <div style="margin-top: 20px;"></div>
