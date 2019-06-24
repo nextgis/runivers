@@ -57,24 +57,40 @@ export function getSocialLinksPanel() {
 
 export function getAboutProjectLink(app: App) {
   const block = document.createElement('a');
-  // let template = aboutShortRu;
-  let template = aboutShortEn;
   block.className = 'about_icon';
   block.setAttribute('href', '#');
   block.innerHTML = `i`;
   block.onclick = () => {
-    const attrs = app.webMap.getAttributions({ onlyVisible: false, onlyBasemap: true });
-    if (attrs.length) {
-      let str = 'Использована картографическая подложка: ';
-      attrs.forEach((x) => {
-        str += x;
-      });
-      template += getAboutBlock(str);
-    }
-    openDialog({ template });
+    openAboutDialog(app, 'ru');
   };
 
   return block;
+}
+
+export function openAboutDialog(app: App, language: string = 'ru') {
+  const attrs = app.webMap.getAttributions({ onlyVisible: false, onlyBasemap: true });
+  const templates = {
+    ru: aboutShortRu,
+    en: aboutShortEn
+  };
+  let template = templates[language];
+  if (attrs.length) {
+    let str = language === 'ru' ? 'Использована картографическая подложка: ' : 'The basemap used: ';
+    attrs.forEach((x) => {
+      str += x;
+    });
+    template += getAboutBlock(str);
+  }
+  const html = document.createElement('div');
+  html.innerHTML = template;
+  const languageSwitcher = html.getElementsByClassName('switch-about-language-btn')[0] as HTMLAnchorElement;
+  if (languageSwitcher) {
+    languageSwitcher.onclick = () => {
+      Dialog.clean();
+      openAboutDialog(app, languageSwitcher.name);
+    };
+  }
+  openDialog({ template: html });
 }
 
 export function getAffiliatedLinks(app: App): HTMLElement {
@@ -228,7 +244,7 @@ function openDialog(options: DialogAdapterOptions) {
     dialog.updateContent(options.template);
   }
   dialog.show();
-  return Dialog;
+  return dialog;
 }
 
 interface SliderSettings {

@@ -4,7 +4,7 @@ export const aboutShortEn = `
 <a href="https://www.runivers.ru" target="_blank"><img src="images/Runivers-Logo-color.svg" /></a>
 <a href="https://www.transneft.ru" target="_blank"><img src="images/Transneft_logo1.png" /></a>
 <a href="https://histgeo.ru/laboratory.html" target="_blank"><img src="images/geolab.png" /></a>
-<a href="https://nextgis.ru" target="_blank"><img src="images/nextgis.png" /></a>
+<a href="https://nextgis.com" target="_blank"><img src="images/nextgis.png" /></a>
 </div>
 <div style="margin-top: 40px;"></div>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
@@ -18,7 +18,7 @@ a project designed in collaboration with the
 <a href="https://histgeo.ru/laboratory.html" target="_blank">
 Laboratory of Historical Geomatics</a> at the Institute of World History
 of the Russian Academy of Sciences (RAS) and
-<a href="http://nextgis.ru/" target="_blank">NextGIS Ltd.</a>
+<a href="http://nextgis.com" target="_blank">NextGIS Ltd.</a>
 </SPAN></P>
 
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
@@ -45,10 +45,10 @@ of today’s Russia and its predecessors.
 </SPAN></P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0in">
 <SPAN LANG="en-EN">
-2) ТA territory under protectorate, vassal allegiance or in the sphere of influence.
+2) A territory under protectorate, vassal allegiance or in the sphere of influence.
 </SPAN></P>
 <P LANG="en-EN" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0in">
-3) АA leased territory.
+3) A leased territory.
 </P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0in">
 <SPAN LANG="en-EN">
@@ -109,7 +109,7 @@ Russian Federation from 1462 through 2018’ web GIS rests on the concept of a d
 As regards the technical implementation, this concept embodies an original solution developed at the
 <a href="https://histgeo.ru/laboratory.html" target="_blank">Laboratory of Historical Geomatics</a>
 of the RAS Institute of World History in cooperation with
-<a href="http://nextgis.ru/" target="_blank">NextGIS Ltd.</a>
+<a href="http://nextgis.com" target="_blank">NextGIS Ltd.</a>
 </SPAN></P>
 
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">

@@ -6,7 +6,14 @@ export const aboutShortRu = `
 <a href="https://histgeo.ru/laboratory.html" target="_blank"><img src="images/geolab.png" /></a>
 <a href="https://nextgis.ru" target="_blank"><img src="images/nextgis.png" /></a>
 </div>
-<div style="margin-top: 40px;"></div>
+
+<div style="margin-top: 20px;"></div>
+
+<div class="switch-about-language">
+<a class="switch-about-language-btn" name="en" href="#">English version</a>
+</div>
+
+<div style="margin-top: 20px;"></div>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
 <h2>О проекте Границы России 1462-2018 гг.</h2></P>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
