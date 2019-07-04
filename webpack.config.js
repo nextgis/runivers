@@ -23,7 +23,6 @@ module.exports = (env, argv) => {
 
     entry: {
       'main': [
-        '@babel/polyfill',
         './src/main.js'
       ],
     },

@@ -1,4 +1,9 @@
 // import 'reset-css';
+
+// polyfills
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
 import { App } from './App';
 import config from '../config.json';
 import { version } from '../package.json';
