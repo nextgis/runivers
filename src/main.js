@@ -18,7 +18,7 @@ import './css/style.css';
 const app = new App({
   baseUrl: config.baseUrl,
   target: 'map',
-  fromYear: 1462,
+  // fromYear: 1462,
   currentYear: 1300,
   animationDelay: 100,
   animationStep: 1,

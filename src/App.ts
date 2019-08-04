@@ -602,7 +602,7 @@ export class App {
     const layers: LayerMeta[] = [];
     layersMeta.forEach(({ resource }) => {
       const name = resource.display_name;
-      const [from, to] = name.match('from_(\\d{4})_to_(\\d{4}).*$').slice(1).map((x) => Number(x));
+      const [from, to] = name.match('from_(\\d{3,4})_to_(\\d{3,4}).*$').slice(1).map((x) => Number(x));
       const allowedYear = (this.options.fromYear && from < this.options.fromYear) ? false : true;
       if (allowedYear) {
         this._minYear = (this._minYear > from ? from : this._minYear) || from;
