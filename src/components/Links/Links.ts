@@ -5,13 +5,106 @@ import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 import { Controls } from '../../Controls';
 import pkg from '../../../package.json';
 
-
-
 import './img/nextgis.png';
 import { App } from 'src/App';
 import { SliderOptions } from '../SliderControl';
 import { aboutShortRu } from './aboutRu';
 import { aboutShortEn } from './aboutEn';
+
+function getBaseLayerToggler(controls: Controls) {
+  const baseLayer = 'baselayer';
+  const baseLayerToggler = new Toggler({
+    className: 'baselayer__toggler',
+    title: 'Скрыть подложку',
+    titleOff: 'Показать подложку',
+    toggleAction: status => {
+      if (status) {
+        controls.app.webMap.showLayer(baseLayer);
+      } else {
+        controls.app.webMap.hideLayer(baseLayer);
+      }
+    }
+  });
+  return baseLayerToggler;
+}
+
+function openDialog(options: DialogAdapterOptions) {
+  const dialog = new Dialog(options);
+
+  const isSame = options && options.template && dialog.options.template === options.template;
+  if (!isSame) {
+    dialog.updateContent(options.template);
+  }
+  dialog.show();
+  return dialog;
+}
+
+interface SliderSettings {
+  name: keyof SliderOptions;
+  label: string;
+  type: 'number';
+}
+
+function getYearsToggler(controls: Controls) {
+  const yearsToggler = new Toggler({
+    className: 'years__toggler',
+    title: 'Скрыть панель изменения в территориальном составе',
+    titleOff: 'Показать панель изменения в территориальном составе',
+    toggleAction: status => {
+      if (status) {
+        controls.yearsStatPanelControl._blocked = false;
+        controls.yearsStatPanelControl.show();
+      } else {
+        controls.yearsStatPanelControl.hide();
+        controls.yearsStatPanelControl._blocked = true;
+      }
+    }
+  });
+  controls.yearsStatPanelControl.emitter.on('toggle', status => {
+    yearsToggler.toggle(status);
+  });
+  return yearsToggler;
+}
+
+function getPeriodToggler(controls: Controls) {
+  const periodToggler = new Toggler({
+    className: 'period__toggler',
+    title: 'Скрыть панель правителей',
+    titleOff: 'Показать панель правителей',
+    toggleAction: status => {
+      if (status) {
+        controls.periodsPanelControl.show();
+      } else {
+        controls.periodsPanelControl.hide();
+      }
+    }
+  });
+
+  controls.periodsPanelControl.emitter.on('toggle', status => {
+    periodToggler.toggle(status);
+  });
+  return periodToggler;
+}
+
+function getLegendToggler(controls: Controls) {
+  const legendToggler = new Toggler({
+    className: 'legend__toggler',
+    title: 'Скрыть легенду',
+    titleOff: 'Показать легенду',
+    toggleAction: status => {
+      if (status) {
+        controls.legendPanel.show();
+      } else {
+        controls.legendPanel.hide();
+      }
+    }
+  });
+
+  controls.legendPanel.emitter.on('toggle', status => {
+    legendToggler.toggle(status);
+  });
+  return legendToggler;
+}
 
 export function getSwitcherPanelControl(controls: Controls) {
   const block = document.createElement('div');
@@ -55,16 +148,11 @@ export function getSocialLinksPanel() {
   return panel;
 }
 
-export function getAboutProjectLink(app: App) {
-  const block = document.createElement('a');
-  block.className = 'about_icon';
-  block.setAttribute('href', '#');
-  block.innerHTML = `i`;
-  block.onclick = () => {
-    openAboutDialog(app, 'ru');
-  };
-
-  return block;
+function getAboutBlock(block: string) {
+  return `
+    <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
+      <SPAN LANG="ru-RU">${block}</SPAN>
+    </P>`;
 }
 
 export function openAboutDialog(app: App, language: string = 'ru') {
@@ -76,7 +164,7 @@ export function openAboutDialog(app: App, language: string = 'ru') {
   let template = templates[language];
   if (attrs.length) {
     let str = language === 'ru' ? 'Использована картографическая подложка: ' : 'The basemap used: ';
-    attrs.forEach((x) => {
+    attrs.forEach(x => {
       str += x;
     });
     template += getAboutBlock(str);
@@ -91,6 +179,71 @@ export function openAboutDialog(app: App, language: string = 'ru') {
     };
   }
   openDialog({ template: html });
+}
+
+export function getAboutProjectLink(app: App) {
+  const block = document.createElement('a');
+  block.className = 'about_icon';
+  block.setAttribute('href', '#');
+  block.innerHTML = `i`;
+  block.onclick = () => {
+    openAboutDialog(app, 'ru');
+  };
+
+  return block;
+}
+
+export function openSettingsDialog(app: App) {
+  const template = document.createElement('div');
+
+  // link to blog
+  const header = document.createElement('div');
+  header.className = 'settings-dialog__header';
+  header.innerHTML = `
+    <h2>Настройки</h2>
+  `;
+  template.appendChild(header);
+
+  // settings input
+  const s = app.slider;
+  const settings: SliderSettings[] = [
+    { name: 'animationDelay', label: 'Задержка анимации, мс', type: 'number' },
+    { name: 'step', label: 'Шаг изменения года', type: 'number' },
+    { name: 'animationStep', label: 'Шаг изменения года (анимация)', type: 'number' }
+  ];
+
+  settings.forEach(x => {
+    const id = x.name + '-' + Math.round(Math.random() * 10000);
+    const inputBlock = document.createElement('label');
+    inputBlock.className = 'settings-dialog__input-block';
+    inputBlock.innerHTML = `<div class="settings-dialog__input-block--label">${x.label}: </div>
+      <input class="${id}" class=type=${x.type} value=${s.options[x.name]}>
+      </input>
+    `;
+    const input = inputBlock.getElementsByClassName(id)[0] as HTMLInputElement;
+    input.addEventListener('input', () => {
+      const value = x.type === 'number' ? parseInt(input.value, 10) : input.value;
+      Object.defineProperty(s.options, x.name, { value, enumerable: true });
+    });
+
+    template.appendChild(inputBlock);
+  });
+
+  // editable legend
+  const legend = app.controls.legendPanel.createLegendBlock(true);
+  template.appendChild(legend);
+
+  // link to blog
+  const readMore = document.createElement('div');
+  readMore.className = 'settings-dialog__read-more';
+  readMore.innerHTML = `
+    Описание технической реализации проекта доступно по
+    <a href="http://nextgis.ru/blog/runivers/" target="_blank">ссылке</a>.
+    <div>v.${pkg.version}</div>
+  `;
+  template.appendChild(readMore);
+
+  openDialog({ template });
 }
 
 export function getAffiliatedLinks(app: App): HTMLElement {
@@ -117,7 +270,7 @@ export function getAffiliatedLinks(app: App): HTMLElement {
 
   const settings = block.getElementsByClassName('settings__logo__min')[0] as HTMLElement;
   if (settings) {
-    settings.onclick = (e) => {
+    settings.onclick = e => {
       e.preventDefault();
       openSettingsDialog(app);
     };
@@ -152,168 +305,3 @@ export function getTimelineButton() {
   link.setAttribute('target', '_blank');
   return link;
 }
-
-function getBaseLayerToggler(controls: Controls) {
-  const baseLayer = 'baselayer';
-  const baseLayerToggler = new Toggler({
-    className: 'baselayer__toggler',
-    title: 'Скрыть подложку',
-    titleOff: 'Показать подложку',
-    toggleAction: (status) => {
-      if (status) {
-        controls.app.webMap.showLayer(baseLayer);
-      } else {
-        controls.app.webMap.hideLayer(baseLayer);
-      }
-    }
-  });
-  return baseLayerToggler;
-}
-
-function getLegendToggler(controls: Controls) {
-  const legendToggler = new Toggler({
-    className: 'legend__toggler',
-    title: 'Скрыть легенду',
-    titleOff: 'Показать легенду',
-    toggleAction: (status) => {
-      if (status) {
-        controls.legendPanel.show();
-      } else {
-        controls.legendPanel.hide();
-      }
-    }
-  });
-
-  controls.legendPanel.emitter.on('toggle', (status) => {
-    legendToggler.toggle(status);
-  });
-  return legendToggler;
-}
-
-function getPeriodToggler(controls: Controls) {
-
-  const periodToggler = new Toggler({
-    className: 'period__toggler',
-    title: 'Скрыть панель правителей',
-    titleOff: 'Показать панель правителей',
-    toggleAction: (status) => {
-      if (status) {
-        controls.periodsPanelControl.show();
-      } else {
-        controls.periodsPanelControl.hide();
-      }
-    }
-  });
-
-  controls.periodsPanelControl.emitter.on('toggle', (status) => {
-    periodToggler.toggle(status);
-  });
-  return periodToggler;
-}
-
-function getYearsToggler(controls: Controls) {
-
-
-  const yearsToggler = new Toggler({
-    className: 'years__toggler',
-    title: 'Скрыть панель изменения в территориальном составе',
-    titleOff: 'Показать панель изменения в территориальном составе',
-    toggleAction: (status) => {
-      if (status) {
-        controls.yearsStatPanelControl._blocked = false;
-        controls.yearsStatPanelControl.show();
-      } else {
-        controls.yearsStatPanelControl.hide();
-        controls.yearsStatPanelControl._blocked = true;
-      }
-    }
-  });
-  controls.yearsStatPanelControl.emitter.on('toggle', (status) => {
-    yearsToggler.toggle(status);
-  });
-  return yearsToggler;
-}
-
-function openDialog(options: DialogAdapterOptions) {
-
-  const dialog = new Dialog(options);
-
-  const isSame = options && options.template &&
-    dialog.options.template === options.template;
-  if (!isSame) {
-    dialog.updateContent(options.template);
-  }
-  dialog.show();
-  return dialog;
-}
-
-interface SliderSettings {
-  name: keyof SliderOptions;
-  label: string;
-  type: 'number';
-}
-
-export function openSettingsDialog(app: App) {
-  const template = document.createElement('div');
-
-  // link to blog
-  const header = document.createElement('div');
-  header.className = 'settings-dialog__header';
-  header.innerHTML = `
-    <h2>Настройки</h2>
-  `;
-  template.appendChild(header);
-
-  // settings input
-  const s = app.slider;
-  const settings: SliderSettings[] = [
-    { name: 'animationDelay', label: 'Задержка анимации, мс', type: 'number' },
-    { name: 'step', label: 'Шаг изменения года', type: 'number' },
-    { name: 'animationStep', label: 'Шаг изменения года (анимация)', type: 'number' },
-  ];
-
-  settings.forEach((x) => {
-    const id = x.name + '-' + Math.round(Math.random() * 10000);
-    const inputBlock = document.createElement('label');
-    inputBlock.className = 'settings-dialog__input-block';
-    inputBlock.innerHTML = `<div class="settings-dialog__input-block--label">${x.label}: </div>
-      <input class="${id}" class=type=${x.type} value=${s.options[x.name]}>
-      </input>
-    `;
-    const input = inputBlock.getElementsByClassName(id)[0] as HTMLInputElement;
-    input.addEventListener('input', () => {
-      const value = x.type === 'number' ? parseInt(input.value, 10) : input.value;
-      Object.defineProperty(s.options, x.name, {value, enumerable: true});
-    });
-
-    template.appendChild(inputBlock);
-
-  });
-
-  // editable legend
-  const legend = app.controls.legendPanel.createLegendBlock(true);
-  template.appendChild(legend);
-
-  // link to blog
-  const readMore = document.createElement('div');
-  readMore.className = 'settings-dialog__read-more';
-  readMore.innerHTML = `
-    Описание технической реализации проекта доступно по
-    <a href="http://nextgis.ru/blog/runivers/" target="_blank">ссылке</a>.
-    <div>v.${pkg.version}</div>
-  `;
-  template.appendChild(readMore);
-
-  openDialog({ template });
-}
-
-function getAboutBlock(block: string) {
-  return `
-    <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
-      <SPAN LANG="ru-RU">${block}</SPAN>
-    </P>`;
-}
-
-
-
-

@@ -19,13 +19,11 @@ export interface Period {
 }
 
 const OPTIONS = {
-    headerText: 'Правители',
-    addClass: 'period-panel'
-  };
-
+  headerText: 'Правители',
+  addClass: 'period-panel'
+};
 
 export class PeriodPanelControl extends Panel {
-
   private period: Period;
   private areaStat: AreaStat;
 
@@ -49,7 +47,6 @@ export class PeriodPanelControl extends Panel {
   }
 
   updatePeriod(period: Period, areaStat: AreaStat) {
-
     this.closeDialog();
     if (period) {
       const exist = this.period;
@@ -93,7 +90,7 @@ export class PeriodPanelControl extends Panel {
     `;
     element.appendChild(periodElement);
 
-    const detailLink  = period.detail_link && this.createRefButton(period.detail_link);
+    const detailLink = period.detail_link && this.createRefButton(period.detail_link);
 
     if (detailLink) {
       element.appendChild(detailLink);
@@ -101,5 +98,4 @@ export class PeriodPanelControl extends Panel {
 
     return element;
   }
-
 }

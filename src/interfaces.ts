@@ -22,7 +22,7 @@ export interface AppOptions {
   yearsStat?: YearStat[];
   areaStat?: AreaStat[];
   version?: string;
-  lineColor?: Array<[number, string]>;
+  lineColor?: Array<[number | string, string]>;
   /** self id, color, label, array of link to lineColor id */
   lineColorLegend?: Array<[number, string, string, number[]]>;
   statusAliases?: { [name: string]: string };

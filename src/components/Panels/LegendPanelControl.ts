@@ -10,7 +10,6 @@ const OPTIONS: LegendPanelOptions = {
 };
 
 export class LegendPanelControl extends Panel {
-
   constructor(public options: LegendPanelOptions) {
     super({ ...OPTIONS, ...options });
     this._createLegendBody();
@@ -22,7 +21,7 @@ export class LegendPanelControl extends Panel {
     const element = document.createElement('div');
     element.className = 'panel-body__legend';
 
-    this.options.colors.forEach((c) => {
+    this.options.colors.forEach(c => {
       element.appendChild(this._createLegendItem(c, interactive));
     });
 
@@ -55,19 +54,19 @@ export class LegendPanelControl extends Panel {
       colorInput.className = 'editable-legend__color-input';
       colorInput.value = color;
       block.appendChild(colorInput);
-      colorInput.onchange = () => {
-        const changedColor = this.options.colors.find((x) => x[0] === name);
-        changedColor[1] = colorInput.value;
-        nameBlock.innerHTML = getName(colorInput.value);
-
-        this.emitter.emit('change', this.options.colors);
-      };
       const getName = (value: string) => {
         return ` - ${text} (${value})`;
       };
+
       const nameBlock = document.createElement('span');
       nameBlock.className = 'panel-body__legend--name';
       nameBlock.innerHTML = getName(color);
+      colorInput.onchange = () => {
+        const changedColor = this.options.colors.find(x => x[0] === name);
+        changedColor[1] = colorInput.value;
+        nameBlock.innerHTML = getName(colorInput.value);
+        this.emitter.emit('change', this.options.colors);
+      };
 
       block.appendChild(nameBlock);
     } else {
@@ -94,5 +93,4 @@ export class LegendPanelControl extends Panel {
       this._createLegendBody();
     });
   }
-
 }

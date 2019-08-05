@@ -15,7 +15,6 @@ interface ScreenSize {
 }
 
 export class Controls {
-
   periodsPanelControl: PeriodPanelControl;
   yearsStatPanelControl: YearsStatPanelControl;
   legendPanel: LegendPanelControl;
@@ -63,7 +62,7 @@ export class Controls {
       this._addMobileControls();
       this._addPanelToggleListeners();
     } else {
-      this._mobileTogglePanels.forEach((x) => {
+      this._mobileTogglePanels.forEach(x => {
         if (this._openPanels.indexOf(x) !== -1) {
           x.show();
         }
@@ -75,35 +74,30 @@ export class Controls {
   }
 
   removeControls() {
-    this._installedControls.forEach((x) => {
+    this._installedControls.forEach(x => {
       this.app.webMap.removeControl(x);
     });
     this._installedControls = [];
   }
 
   private async initControls() {
-
     this.periodsPanelControl = new PeriodPanelControl({ webMap: this.app.webMap });
     this.yearsStatPanelControl = new YearsStatPanelControl({ webMap: this.app.webMap });
 
     this.legendPanel = new LegendPanelControl({
       // colors: this.options.lineColor,
-      colors: this.app.options.lineColorLegend,
+      colors: this.app.options.lineColorLegend
     });
-    this.legendPanel.emitter.on('change', (colors) => this.app.updateLayersColor());
+    this.legendPanel.emitter.on('change', colors => this.app.updateLayersColor());
     this._socialLinksPanel = getSocialLinksPanel();
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
     this._zoomControl = this.app.webMap.getControl('ZOOM', { zoomInTitle: 'Приблизить', zoomOutTitle: 'Отдалить' });
     this._attributions = this.app.webMap.getControl('ATTRIBUTION');
 
-    this._mobileTogglePanels = [
-      this.periodsPanelControl,
-      this.yearsStatPanelControl,
-      this.legendPanel
-    ];
+    this._mobileTogglePanels = [this.periodsPanelControl, this.yearsStatPanelControl, this.legendPanel];
 
-    this._mobileTogglePanels.forEach((x) => x.show());
+    this._mobileTogglePanels.forEach(x => x.show());
   }
 
   private async _addControl(control: any, position: ControlPositions, options?) {
@@ -114,7 +108,6 @@ export class Controls {
   }
 
   private async _addFullSizeControls() {
-
     await this._addControl(this.legendPanel, 'top-left');
 
     await this._addControl(this._switchersPanel, 'top-right');
@@ -131,7 +124,6 @@ export class Controls {
   }
 
   private async _addMobileControls() {
-
     await this._addControl(this._switchersPanel, 'top-left');
 
     await this._addControl(this.legendPanel, 'bottom-right');
@@ -185,7 +177,6 @@ export class Controls {
       hideElements.forEach((x: HTMLElement) => {
         x.style.visibility = 'hidden';
       });
-
     } else {
       hideElements.forEach((x: HTMLElement) => {
         x.style.visibility = '';
@@ -206,7 +197,7 @@ export class Controls {
   private _addPanelToggleListeners() {
     this._removePanelToggleListener();
     this._togglerEvents = [];
-    this._mobileTogglePanels.forEach((x) => {
+    this._mobileTogglePanels.forEach(x => {
       const toggler = () => this._onPanelToggle(x);
       this._togglerEvents.push([x, toggler]);
       x.emitter.on('toggle', toggler);
@@ -214,8 +205,8 @@ export class Controls {
   }
 
   private _removePanelToggleListener() {
-    this._mobileTogglePanels.forEach((x) => {
-      const mem = this._togglerEvents.find((y) => y[0] === x);
+    this._mobileTogglePanels.forEach(x => {
+      const mem = this._togglerEvents.find(y => y[0] === x);
       if (mem) {
         x.emitter.removeListener('toggle', mem[1]);
       }
@@ -239,12 +230,12 @@ export class Controls {
   }
 
   private _addEventsListeners() {
-    window.addEventListener('resize', (e) => this._onWindowResize(e), false);
+    window.addEventListener('resize', e => this._onWindowResize(e), false);
   }
 
   private _hideAllPanels() {
     this._openPanels = [];
-    this._mobileTogglePanels.forEach((x) => {
+    this._mobileTogglePanels.forEach(x => {
       if (!x.isHide) {
         this._openPanels.push(x);
       }

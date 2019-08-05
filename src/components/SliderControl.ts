@@ -31,16 +31,14 @@ const OPTIONS: SliderOptions = {
   value: 50,
   animationDelay: 100,
   filterPips: (value, piptype) => {
-    return piptype === 1 ? 1 : value % 100 ? value % 10 ? -1 : 0 : 1;
-  },
+    return piptype === 1 ? 1 : value % 100 ? (value % 10 ? -1 : 0) : 1;
+  }
 };
 
 export class SliderControl {
-
   options: SliderOptions;
   emitter = new EventEmitter();
   map: WebMap;
-
 
   _animationStepInput: HTMLInputElement;
   _sliderContainer: HTMLElement;
@@ -104,8 +102,7 @@ export class SliderControl {
 
     input.onchange = () => {
       let val = Number(input.value);
-      val = val <= 0 ? opt.animationStep :
-        val > opt.max ? opt.max : val;
+      val = val <= 0 ? opt.animationStep : val > opt.max ? opt.max : val;
       input.value = String(val);
       opt.animationStep = val;
     };
@@ -114,7 +111,6 @@ export class SliderControl {
   }
 
   _createAnimationDelayInput() {
-
     const inputObj = this._createLabeledInput({
       type: 'number',
       label: 'amimation delay',
@@ -164,9 +160,13 @@ export class SliderControl {
       this._onSliderClick(parseInt(values[0], 10));
     });
     const sliderElement = slider.target as HTMLElement;
-    sliderElement.addEventListener('click', () => {
-      this.stopAnimation();
-    }, true);
+    sliderElement.addEventListener(
+      'click',
+      () => {
+        this.stopAnimation();
+      },
+      true
+    );
 
     this._sliderContainer = span;
     this._slider = slider;
@@ -213,11 +213,15 @@ export class SliderControl {
         playerSteps.appendChild(this._createPlayerButton());
       }
       btn.onclick = () => {
-        this._stepReady((step) => {
-          if (typeof step !== 'boolean') {
-            this._nextStep(step);
-          }
-        }, previous, this.options.step);
+        this._stepReady(
+          step => {
+            if (typeof step !== 'boolean') {
+              this._nextStep(step);
+            }
+          },
+          previous,
+          this.options.step
+        );
       };
       return btn;
     };
@@ -273,7 +277,6 @@ export class SliderControl {
   }
 
   _onChange(value: number) {
-
     this._slider.set(value);
     if (this._input) {
       this._input.value = String(value);
@@ -329,8 +332,7 @@ export class SliderControl {
 
   _stepReady(callback, previous?: boolean, stepLength?: number) {
     const nextValue = this._getNextValue(previous, stepLength);
-    const inRange = (this.options.value <= this.options.max) &&
-      (this.options.value >= this.options.min);
+    const inRange = this.options.value <= this.options.max && this.options.value >= this.options.min;
     if (nextValue && inRange) {
       this.options.value = nextValue;
       if (this.options.stepReady) {
@@ -355,36 +357,11 @@ export class SliderControl {
   _getNextValue(previous?: boolean, stepLength?: number) {
     const current = parseInt(this._slider.get(), 10);
     const step = stepLength ? stepLength : this.options.animationStep;
-    const next = previous ?
-      current - step :
-      current + step;
+    const next = previous ? current - step : current + step;
     return this._getAllowedValue(next);
   }
 
   _stopAnimation() {
     // clearTimeout(this._nextStepTimeoutId);
   }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -31,7 +31,6 @@ const OPTIONS = {
 };
 
 export class YearsStatPanelControl extends Panel {
-
   yearStat: YearStat;
 
   yearStats: YearStat[];
@@ -102,7 +101,6 @@ export class YearsStatPanelControl extends Panel {
       } else {
         container.classList.add('gain');
       }
-
     }
 
     if (this.yearStats.length > 1) {
@@ -115,7 +113,6 @@ export class YearsStatPanelControl extends Panel {
     }
     const descrLong = yearStat.description_long;
     if (descrLong) {
-
       const template = document.createElement('div');
       template.className = 'panel-body__period--description';
       template.innerHTML = `${descrLong}`;
@@ -146,11 +143,9 @@ export class YearsStatPanelControl extends Panel {
       // flow.className = '' +
       //   (previous ? 'back' : 'forward') +
       //   (isActive ? '' : ' hiden');
-      flow.className = (previous ?
-        `panel_slider prev` :
-        `panel_slider next`) + (isActive ? '' : ' hidden');
+      flow.className = (previous ? `panel_slider prev` : `panel_slider next`) + (isActive ? '' : ' hidden');
       if (isActive) {
-        flow.onclick = (e) => {
+        flow.onclick = e => {
           e.preventDefault();
           const directStat = this.yearStats[previous ? index - 1 : index + 1];
           this.updateYearStat(directStat);
@@ -185,5 +180,4 @@ export class YearsStatPanelControl extends Panel {
     element.innerHTML = (isLost ? '-' : '+') + formatArea(count);
     return element;
   }
-
 }

@@ -23,7 +23,7 @@ module.exports = (env, argv) => {
 
     entry: {
       'main': [
-        './src/main.js'
+        './src/main.ts'
       ],
     },
 
@@ -43,7 +43,7 @@ module.exports = (env, argv) => {
           enforce: 'pre',
           use: [
             {
-              loader: 'tslint-loader',
+              loader: 'eslint-loader',
               options: { fix: true }
             }
           ]

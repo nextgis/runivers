@@ -1,0 +1,5 @@
+{
+  "extends": [
+    "@nextgis/eslint-config"
+  ]
+}

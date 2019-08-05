@@ -1,15 +1,16 @@
 export class Toggler {
-
   private _container: HTMLElement;
   private _status: boolean = true;
 
-  constructor(public options: {
-    status?: boolean,
-    title?: string,
-    titleOff?: string,
-    className?: string,
-    toggleAction?: (status: boolean) => void
-  }) {
+  constructor(
+    public options: {
+      status?: boolean;
+      title?: string;
+      titleOff?: string;
+      className?: string;
+      toggleAction?: (status: boolean) => void;
+    }
+  ) {
     this._status = this.options.status !== undefined ? this.options.status : this._status;
     this._container = this._createContainer();
     this._updateContainer();
@@ -28,7 +29,7 @@ export class Toggler {
     const block = document.createElement('div');
     block.className = 'panel__toggler';
     if (this.options.className) {
-      this.options.className.split(' ').forEach((x) => block.classList.add(x));
+      this.options.className.split(' ').forEach(x => block.classList.add(x));
     }
     if (this.options.toggleAction) {
       block.addEventListener('click', () => {
@@ -47,5 +48,4 @@ export class Toggler {
       this._container.classList.remove('active');
     }
   }
-
 }

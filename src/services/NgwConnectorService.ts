@@ -8,4 +8,4 @@ const connector = new NgwConnector({
   baseUrl: ngwUrl
 });
 
-export {connector};
+export { connector };

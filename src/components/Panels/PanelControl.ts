@@ -10,7 +10,6 @@ export interface PanelOptions {
 }
 
 export class Panel {
-
   options: PanelOptions;
 
   webMap: WebMap;
@@ -71,7 +70,6 @@ export class Panel {
       this._container.classList.remove('panel-hide');
       this.emitter.emit('toggle', true);
     }
-
   }
 
   block() {
@@ -98,8 +96,7 @@ export class Panel {
     if (!this._dialog) {
       this._dialog = new Dialog(options);
     }
-    const isSame = options && options.template &&
-      this._dialog.options.template === options.template;
+    const isSame = options && options.template && this._dialog.options.template === options.template;
     if (!isSame) {
       this._dialog.updateContent(options.template);
     }
@@ -120,7 +117,7 @@ export class Panel {
     const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl panel';
     if (this.options.addClass) {
-      this.options.addClass.split(' ').forEach((x) => element.classList.add(x));
+      this.options.addClass.split(' ').forEach(x => element.classList.add(x));
     }
     if (this.options.headerText) {
       // element.appendChild(this._createHeader());
