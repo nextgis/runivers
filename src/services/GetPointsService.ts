@@ -15,7 +15,7 @@ export function getPoints() {
   // }
 }
 
-export function getPointGeojson(id) {
+export function getPointGeojson(id: string) {
   return connector.makeQuery(
     '/api/resource/{id}/geojson',
     {

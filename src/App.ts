@@ -26,7 +26,8 @@ import {
   PointMeta,
   AreaStat,
   HistoryLayerProperties,
-  AppMarkerMem
+  AppMarkerMem,
+  HistoryLayerResource
 } from './interfaces';
 
 import { Controls } from './Controls';
@@ -40,26 +41,21 @@ interface GetFillColorOpt {
 export class App {
   options: AppOptions = {
     target: '#app'
-  };
-  currentYear: number;
-  slider: SliderControl;
-
-  webMap: WebMap<Map, string[]>;
-  currentPointId: string;
+  } as AppOptions;
+  currentYear!: number;
+  controls!: Controls;
+  slider!: SliderControl;
+  webMap!: WebMap<Map, string[]>;
+  currentPointId?: string;
 
   urlParams = new UrlParams();
 
   emitter = new EventEmitter();
 
-  controls: Controls;
+  timeMap!: TimeMap;
 
-  private timeMap: TimeMap;
-
-  private _headerElement: HTMLElement;
-  private _affiliatedElement: HTMLElement;
-
-  private _minYear: number;
-  private _maxYear: number;
+  private _minYear = 0;
+  private _maxYear = 9999;
 
   private _layersConfig: LayerMeta[] = [];
 
@@ -79,7 +75,9 @@ export class App {
     if (fromYear && currentYear && currentYear < fromYear) {
       this.options.currentYear = fromYear;
     }
-    this.currentYear = this.options.currentYear;
+    if (this.options.currentYear) {
+      this.currentYear = this.options.currentYear;
+    }
     this.createWebMap();
     this._buildApp();
   }
@@ -120,17 +118,24 @@ export class App {
 
   updateByYear(year: number, previous?: boolean) {
     const layerId = this._getLayerIdByYear(year, previous);
-    this.updateLayer(layerId);
+    if (layerId) {
+      this.updateLayer(layerId);
+    }
 
     this.updateDataByYear(year);
   }
 
   updateDataByYear(year: number) {
     const pointId = this._getPointIdByYear(year);
-    this.updatePoint(pointId);
+    if (pointId) {
+      this.updatePoint(pointId);
+    }
+
     const areaStat = this._findAreaStatByYear(year);
-    this._updatePeriodBlockByYear(year, areaStat);
-    this._updateYearStatBlockByYear(year, areaStat);
+    if (areaStat) {
+      this._updatePeriodBlockByYear(year, areaStat);
+      this._updateYearStatBlockByYear(year, areaStat);
+    }
     this.urlParams.set('year', String(year));
   }
 
@@ -161,12 +166,15 @@ export class App {
   private _buildApp() {
     getLayers(data => {
       this._layersConfig = this._processLayersMeta(data);
+      if (!this.currentYear && this._minYear) {
+        this.currentYear = this._minYear;
+      }
       this._layersConfig.sort((a, b) => (a.from < b.from ? -1 : 1));
 
       this.slider = this._createSlider();
 
-      this._headerElement = this._createHeader();
-      this._affiliatedElement = this._createAffiliatedLogos();
+      const headerElement = this._createHeader();
+      const affiliatedElement = this._createAffiliatedLogos();
       this.controls = new Controls(this);
       this.controls.updateControls();
 
@@ -179,7 +187,9 @@ export class App {
     getPoints().then(points => {
       this._pointsConfig = this._processPointsMeta(points);
       const pointId = this._getPointIdByYear(this.currentYear);
-      this.updatePoint(pointId);
+      if (pointId) {
+        this.updatePoint(pointId);
+      }
     });
   }
 
@@ -191,7 +201,9 @@ export class App {
       animationStep: this.options.animationStep,
       value: this.currentYear,
       animationDelay: this.options.animationDelay,
-      stepReady: (year, callback, previous) => this._stepReady(year, callback, previous)
+      stepReady: (year: number, callback: () => void, previous: boolean) => {
+        this._stepReady(year, callback, previous);
+      }
     });
     slider.emitter.on('change', year => {
       // may be updated in _stepReady method
@@ -202,7 +214,9 @@ export class App {
     });
 
     const container = this.webMap.mapAdapter.getContainer();
-    container.appendChild(slider.onAdd(this.webMap));
+    if (container) {
+      container.appendChild(slider.onAdd(this.webMap));
+    }
 
     return slider;
   }
@@ -216,8 +230,9 @@ export class App {
     header.appendChild(getAboutProjectLink(this));
 
     const mapContainer = this.webMap.mapAdapter.getContainer();
-
-    mapContainer.appendChild(header);
+    if (mapContainer) {
+      mapContainer.appendChild(header);
+    }
 
     return header;
   }
@@ -229,20 +244,29 @@ export class App {
     logos.appendChild(getAffiliatedLinks(this));
 
     const mapContainer = this.webMap.mapAdapter.getContainer();
-
-    mapContainer.appendChild(logos);
+    if (mapContainer) {
+      mapContainer.appendChild(logos);
+    }
 
     return logos;
   }
 
   private _updatePeriodBlockByYear(year: number, areaStat: AreaStat) {
     const period = this._findPeriodByYear(year);
-    this.controls.periodsPanelControl.updatePeriod(period, areaStat);
+    if (period) {
+      this.controls.periodsPanelControl.updatePeriod(period, areaStat);
+    }
   }
 
   private _findPeriodByYear(year: number) {
     const periods = this.options.periods || [];
-    const period = periods.find(x => year >= x.years_from && year <= x.years_to);
+    const period = periods.find(x => {
+      let finded = year >= x.years_from;
+      if (finded && x.years_to) {
+        finded = year <= x.years_to;
+      }
+      return finded;
+    });
     return period;
   }
 
@@ -251,14 +275,18 @@ export class App {
     this.controls.yearsStatPanelControl.updateYearStats(yearStat, areaStat);
   }
 
-  private _findYearInDateStr(dateStr: string): number {
+  private _findYearInDateStr(dateStr: string): number | undefined {
     const datePattern = /(\d{4})/;
     const date = datePattern.exec(dateStr);
-    return Number(date[0]);
+    if (date) {
+      return Number(date[0]);
+    }
   }
 
-  private _findAreaStatByYear(year: number): AreaStat {
-    return this.options.areaStat.find(x => x.year === year);
+  private _findAreaStatByYear(year: number): AreaStat | undefined {
+    if (this.options.areaStat) {
+      return this.options.areaStat.find(x => x.year === year);
+    }
   }
 
   private _findYearStatsByYear(year: number) {
@@ -303,7 +331,9 @@ export class App {
       }
       this.updateDataByYear(y);
     } else {
-      callback(previous ? this._minYear : this._maxYear);
+      if (this._minYear && this._maxYear) {
+        callback(previous ? this._minYear : this._maxYear);
+      }
     }
   }
 
@@ -311,7 +341,7 @@ export class App {
   private _addPoint(id: string) {
     getPointGeojson(id).then((data: FeatureCollection<MultiPoint, PointProperties>) => {
       const _many = data.features.length > 1 && data.features.map(x => x.properties.numb).filter(onlyUnique);
-      const many = _many.length > 1;
+      const many = _many && _many.length > 1;
       data.features.forEach((marker: Feature<Point | MultiPoint, PointProperties>, i) => {
         const type = marker && marker.geometry && marker.geometry.type;
         if (type === 'MultiPoint') {
@@ -328,34 +358,36 @@ export class App {
 
   // TODO: Mapboxgl specific method
   private _addMarkerToMap(coordinates: [number, number], properties: PointProperties, many: boolean) {
-    const map: Map = this.webMap.mapAdapter.map;
-    // create a DOM element for the marker
-    const element = document.createElement('div');
-    const yearStat = this.controls.yearsStatPanelControl.yearStat;
-    const isActive = yearStat && yearStat.year === properties.year && yearStat.numb === properties.numb;
+    const map: Map | undefined = this.webMap.mapAdapter.map;
+    if (map) {
+      // create a DOM element for the marker
+      const element = document.createElement('div');
+      const yearStat = this.controls.yearsStatPanelControl.yearStat;
+      const isActive = yearStat && yearStat.year === properties.year && yearStat.numb === properties.numb;
 
-    element.className = 'map-marker' + (isActive ? ' active' : ''); // use class `aсtive` for selected
+      element.className = 'map-marker' + (isActive ? ' active' : ''); // use class `aсtive` for selected
 
-    const elInner = document.createElement('div');
-    elInner.className = 'map-marker--inner';
-    elInner.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
+      const elInner = document.createElement('div');
+      elInner.className = 'map-marker--inner';
+      elInner.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
 
-    element.appendChild(elInner);
+      element.appendChild(elInner);
 
-    const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);
-    // add marker to map
-    const marker = new Marker(element);
-    const markerMem = { marker, element, properties };
-    this._markers.push(markerMem);
-    marker.setLngLat(coordEPSG4326);
+      const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);
+      // add marker to map
+      const marker = new Marker(element);
+      const markerMem = { marker, element, properties };
+      this._markers.push(markerMem);
+      marker.setLngLat(coordEPSG4326);
 
-    marker.addTo(map);
+      marker.addTo(map);
 
-    element.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      this._setMarkerActive(markerMem, properties);
-    });
+      element.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        this._setMarkerActive(markerMem, properties);
+      });
+    }
   }
 
   private _setMarkerActive(markerMem: AppMarkerMem, properties: PointProperties) {
@@ -381,53 +413,62 @@ export class App {
   }
 
   private _getFillColor(opt: GetFillColorOpt = {}) {
-    const meta = ['match', ['get', 'status']];
-    // update lineColor by legend colors
-    this.options.lineColorLegend.forEach(x => {
-      const linksToLineColors = x[3];
-      linksToLineColors.forEach(y => {
-        const lineColor = this.options.lineColor.find(z => z[0] === y);
-        lineColor[1] = x[1];
+    const { lineColorLegend, lineColor } = this.options;
+    if (lineColor && lineColorLegend) {
+      const meta: any = ['match', ['get', 'status']];
+      // update lineColor by legend colors
+      lineColorLegend.forEach(x => {
+        const linksToLineColors = x[3];
+        linksToLineColors.forEach(y => {
+          const _lineColor = lineColor.find(z => z[0] === y);
+          if (_lineColor) {
+            _lineColor[1] = x[1];
+          }
+        });
       });
-    });
 
-    const colors = this.options.lineColor.reduce((a, b) => {
-      const [param, color] = b;
-      const c = Color(color);
-      if (param) {
-        a.push(param);
-      }
-      if (opt.darken) {
-        c.darken(opt.darken);
-      }
-      a.push(c.hex());
-      return a;
-    }, []);
-    return meta.concat(colors);
+      const colors = lineColor.reduce<(string | number)[]>((a, b) => {
+        const [param, color] = b;
+        const c = Color(color);
+        if (param) {
+          a.push(param);
+        }
+        if (opt.darken) {
+          c.darken(opt.darken);
+        }
+        a.push(c.hex());
+        return a;
+      }, []);
+      return meta.concat(colors);
+    }
   }
 
-  private _getLayerByYear(year: number, previous?: boolean): LayerMeta | false {
+  private _getLayerByYear(year: number, previous?: boolean): LayerMeta | undefined {
     const layers = this._layersConfig.filter(d => year >= d.from && year <= d.to);
     // return previous ? layers[0] : layers[layers.length - 1];
     return layers[layers.length - 1];
   }
 
-  private _getLayerIdByYear(year: number, previous?: boolean): string {
+  private _getLayerIdByYear(year: number, previous?: boolean): string | undefined {
     const filteredLayer = this._getLayerByYear(year, previous);
-    return filteredLayer && String(filteredLayer.id);
+    if (filteredLayer) {
+      return filteredLayer && String(filteredLayer.id);
+    }
   }
 
-  private _getPointByYear(year: number): PointMeta {
+  private _getPointByYear(year: number): PointMeta | undefined {
     return this._pointsConfig.find(x => x.year === year);
   }
 
-  private _getPointIdByYear(year: number): string {
+  private _getPointIdByYear(year: number): string | undefined {
     const point = this._getPointByYear(year);
-    return point && point.id;
+    if (point) {
+      return point && String(point.id);
+    }
   }
 
   // get next or previous territory changed layer
-  private _getNextLayer(year: number, previous?: boolean): LayerMeta | false {
+  private _getNextLayer(year: number, previous?: boolean): LayerMeta | undefined {
     const filteredLayer = this._getLayerByYear(year);
     if (filteredLayer) {
       if (String(filteredLayer.id) === this.timeMap.currentLayerId) {
@@ -450,42 +491,41 @@ export class App {
         return this._layersConfig.find(d => d.from >= year);
       }
     }
-    return false;
   }
 
-  private _processLayersMeta(layersMeta) {
+  private _processLayersMeta(layersMeta: HistoryLayerResource[]) {
     const layers: LayerMeta[] = [];
     layersMeta.forEach(({ resource }) => {
       const name = resource.display_name;
-      const [from, to] = name
-        .match('from_(\\d{3,4})_to_(\\d{3,4}).*$')
-        .slice(1)
-        .map(x => Number(x));
-      const allowedYear = this.options.fromYear && from < this.options.fromYear ? false : true;
-      if (allowedYear) {
-        this._minYear = (this._minYear > from ? from : this._minYear) || from;
-        this._maxYear = (this._maxYear < to ? to : this._maxYear) || to;
-        layers.push({ name, from, to, id: resource.id });
+      const _match = name.match('from_(\\d{3,4})_to_(\\d{3,4}).*$');
+      if (_match) {
+        const [from, to] = _match
+          .slice(1)
+          .map(x => Number(x));
+        const allowedYear = this.options.fromYear && from < this.options.fromYear ? false : true;
+        if (allowedYear) {
+          this._minYear = (this._minYear > from ? from : this._minYear) || from;
+          this._maxYear = (this._maxYear < to ? to : this._maxYear) || to;
+          layers.push({ name, from, to, id: resource.id });
+        }
       }
     });
     return layers;
   }
 
-  private _processPointsMeta(pointsMeta): PointMeta[] {
+  private _processPointsMeta(pointsMeta: HistoryLayerResource[]): PointMeta[] {
     return pointsMeta.map(({ resource }) => {
       const name = resource.display_name;
       // const [year, month, day] = name.match('(\\d{4})-(\\d{2})-(\\d{2})*$').slice(1).map((x) => Number(x));
       // return { name, year, month, day, id: resource.id };
-      const [year] = name
-        .match('(\\d{4})*$')
-        .slice(1)
-        .map(x => Number(x));
-      return { name, year, id: resource.id };
+      const _match = name.match('(\\d{4})*$') as string[];
+      const [year] = _match.slice(1).map(x => Number(x));
+      return { name, year: year as number, id: resource.id };
     });
   }
 
   private _createPopupContent(props: HistoryLayerProperties): HTMLElement {
-    const fields = [
+    const fields: Array<{ name?: string; field: keyof HistoryLayerProperties }> = [
       // { name: 'Fid', field: 'fid' },
       { field: 'name' }
       // { name: 'Наименование территории', field: 'name' },
@@ -504,7 +544,8 @@ export class App {
     return formated;
   }
 
-  private _createPropBlock(fields: Array<{ name?: string; field: string }>, props: HistoryLayerProperties) {
+  private _createPropBlock(
+    fields: Array<{ name?: string; field: keyof HistoryLayerProperties }>, props: HistoryLayerProperties) {
     const block = document.createElement('div');
 
     fields.forEach(x => {
@@ -520,7 +561,7 @@ export class App {
           <div class="popup__property--value prop header"><h2>${prop}</h2></div>
         `;
         if (props.status) {
-          const alias = this.options.statusAliases[props.status];
+          const alias = this.options.statusAliases && this.options.statusAliases[props.status];
           if (alias) {
             propBlock.innerHTML += `
               <div class="popup__property--value status"><p>${alias}</p></div>

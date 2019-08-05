@@ -11,7 +11,7 @@ export interface AreaStat {
 }
 
 export interface AppOptions {
-  baseUrl?: string;
+  baseUrl: string;
   target: string;
   fromYear?: number;
   currentYear?: number;
@@ -29,6 +29,7 @@ export interface AppOptions {
 }
 
 export interface HistoryLayerProperties {
+  name: string;
   cat: number;
   fid: number;
   id: number;
@@ -52,9 +53,9 @@ export interface LayerMeta {
 export interface PointMeta {
   name: string;
   year: number;
-  month: number;
-  day: number;
-  id: string;
+  month?: number;
+  day?: number;
+  id: number;
 }
 
 export interface PointProperties {
@@ -86,4 +87,11 @@ export interface AppMarkerMem {
   marker: Marker;
   element: HTMLElement;
   properties: PointProperties;
+}
+
+export interface HistoryLayerResource {
+  resource: {
+    display_name: string;
+    id: number;
+  }
 }

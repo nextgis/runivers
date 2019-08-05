@@ -8,13 +8,13 @@ type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 export interface TimeMapOptions {
   baseUrl: string;
   getFillColor: (...args: any[]) => any;
-  createPopupContent: (props: Record<string, any>) => HTMLElement;
+  createPopupContent: (props: any) => HTMLElement;
 }
 
 export class TimeMap {
-  currentLayerId: string;
+  currentLayerId!: string;
   private _opacity = 0.8;
-  private _popup: Popup;
+  private _popup?: Popup;
   private _timeLayers: { [layerId: string]: TimeLayer[] } = {};
   private _layersLoaded: { [layerId: string]: boolean } = {};
   private _onDataLoadEvents: Array<() => void> = [];
@@ -36,11 +36,14 @@ export class TimeMap {
   }
 
   updateLayersColor() {
-    for (const l in this._layersLoaded) {
-      if (l.indexOf('-bound') !== -1) {
-        this.webMap.mapAdapter.map.setPaintProperty(l, 'line-color', this.options.getFillColor({ darken: 0.5 }));
-      } else {
-        this.webMap.mapAdapter.map.setPaintProperty(l, 'fill-color', this.options.getFillColor());
+    const map = this.webMap.mapAdapter.map;
+    if (map) {
+      for (const l in this._layersLoaded) {
+        if (l.indexOf('-bound') !== -1) {
+          map.setPaintProperty(l, 'line-color', this.options.getFillColor({ darken: 0.5 }));
+        } else {
+          map.setPaintProperty(l, 'fill-color', this.options.getFillColor());
+        }
       }
     }
   }
@@ -71,14 +74,14 @@ export class TimeMap {
   private _removePopup() {
     if (this._popup) {
       this._popup.remove();
-      this._popup = null;
+      this._popup = undefined;
     }
   }
 
   private _isCurrentDataLayer(layerId: string) {
     const currentLayers = this._timeLayers[this.currentLayerId];
     return currentLayers.some(x => {
-      return x.layer.some(y => y === layerId);
+      return x.layer && x.layer.some(y => y === layerId);
     });
   }
 
@@ -98,20 +101,21 @@ export class TimeMap {
     const width = 5;
     const height = 5;
     // Find all features within a bounding box around a point
-
-    const features = map.queryRenderedFeatures(
-      [[point.x - width / 2, point.y - height / 2], [point.x + width / 2, point.y + height / 2]],
-      { layers: [layerId] }
-    );
-    const feature = features[0];
-    const prop = feature.properties;
-    if (prop.status && prop.status < 6) {
-      const html = this.options.createPopupContent(prop);
-      this._removePopup();
-      this._popup = new Popup()
-        .setLngLat(e.lngLat)
-        .setDOMContent(html)
-        .addTo(map);
+    if (map) {
+      const features = map.queryRenderedFeatures(
+        [[point.x - width / 2, point.y - height / 2], [point.x + width / 2, point.y + height / 2]],
+        { layers: [layerId] }
+      );
+      const feature = features[0];
+      const prop = feature.properties;
+      if (prop && prop.status && prop.status < 6) {
+        const html = this.options.createPopupContent(prop);
+        this._removePopup();
+        this._popup = new Popup()
+          .setLngLat(e.lngLat)
+          .setDOMContent(html)
+          .addTo(map);
+      }
     }
   }
 
@@ -120,8 +124,9 @@ export class TimeMap {
     // map.off('click', layerId);
 
     const memEvents = this._onLayerClickMem[layerId];
-    if (memEvents) {
+    if (memEvents && map) {
       for (const ev in memEvents) {
+        // @ts-ignore
         const memEvent = memEvents[ev];
         map.off(ev, memEvent);
       }
@@ -131,31 +136,33 @@ export class TimeMap {
 
   private _addLayerListeners(layerId: string) {
     const map = this.webMap.mapAdapter.map;
-    const layerClickBind = (ev: MapMouseEvent & EventData) => this._onLayerClick(ev, layerId);
-    const layerMouseEnterBind = () => (map.getCanvas().style.cursor = 'pointer');
-    const layerMouseLeaveBind = () => (map.getCanvas().style.cursor = '');
+    if (map) {
+      const layerClickBind = (ev: MapMouseEvent & EventData) => this._onLayerClick(ev, layerId);
+      const layerMouseEnterBind = () => (map.getCanvas().style.cursor = 'pointer');
+      const layerMouseLeaveBind = () => (map.getCanvas().style.cursor = '');
 
-    map.on('click', layerId, layerClickBind);
-    // Change the cursor to a pointer when the mouse is over the places layer.
-    map.on('mouseenter', layerId, layerMouseEnterBind);
-    // Change it back to a pointer when it leaves.
-    map.on('mouseleave', layerId, layerMouseLeaveBind);
+      map.on('click', layerId, layerClickBind);
+      // Change the cursor to a pointer when the mouse is over the places layer.
+      map.on('mouseenter', layerId, layerMouseEnterBind);
+      // Change it back to a pointer when it leaves.
+      map.on('mouseleave', layerId, layerMouseLeaveBind);
 
-    this._onLayerClickMem[layerId] = this._onLayerClickMem[layerId] || {};
+      this._onLayerClickMem[layerId] = this._onLayerClickMem[layerId] || {};
 
-    this._onLayerClickMem[layerId].click = layerClickBind;
-    this._onLayerClickMem[layerId].mouseenter = layerClickBind;
-    this._onLayerClickMem[layerId].mouseleave = layerClickBind;
+      this._onLayerClickMem[layerId].click = layerClickBind;
+      this._onLayerClickMem[layerId].mouseenter = layerClickBind;
+      this._onLayerClickMem[layerId].mouseleave = layerClickBind;
+    }
   }
 
-  private _isHistoryLayer(layerId) {
+  private _isHistoryLayer(layerId: string) {
     return !this.webMap.isBaseLayer(layerId);
   }
 
   private _isAllDataLayerLoaded(layer: string) {
     const timeLayer = this._timeLayers[layer];
     if (timeLayer) {
-      return timeLayer.every(x => x.layer.some(y => this._layersLoaded[y]));
+      return timeLayer.every(x => x.layer && x.layer.some(y => this._layersLoaded[y]));
     }
   }
 
@@ -167,7 +174,7 @@ export class TimeMap {
   }
 
   private _forEachDataLayer(layerId: string, fun: (dataLayerId: string) => void) {
-    this._forEachTimeLayer(layerId, timeLayer => timeLayer.layer.forEach(y => fun(y)));
+    this._forEachTimeLayer(layerId, timeLayer => timeLayer.layer && timeLayer.layer.forEach(y => fun(y)));
   }
 
   private _onSourceIsLoaded() {
