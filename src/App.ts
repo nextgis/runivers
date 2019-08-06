@@ -666,7 +666,7 @@ export class App {
     const prince02 = this._findPrincipalities02ByYear(this.currentYear);
     if (prince02) {
       addProp(prince02.ruler, { field: 'ruler' });
-      addProp(prince02.name, { field: 'name' });
+      // addProp(prince02.name, { field: 'name' });
     }
     const prince01 = this._findPrincipalities01ByYear(this.currentYear);
     if (prince01) {
@@ -674,7 +674,7 @@ export class App {
         return this._createPropElement(`<a href="${props.desc_link}" target="_blank">${prop}</a>`, '');
       };
       props.desc_link = prince01.desc_link;
-      addProp(prince01.eventstart, { field: 'eventstart', getHtml });
+      addProp(prince01.name, { field: 'name_prince', getHtml });
     }
   }
 
