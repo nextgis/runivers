@@ -651,7 +651,7 @@ export class App {
       const upperdat = this._findYearInDateStr(x.upperdat);
       const lwdate = this._findYearInDateStr(x.lwdate);
       if (upperdat && lwdate) {
-        return x.fid === fid && year >= upperdat && lwdate <= year;
+        return x.fid === fid && year <= upperdat && year >= lwdate;
       }
       return false;
     });
@@ -666,7 +666,7 @@ export class App {
       const upperdat = this._findYearInDateStr(x.years_to);
       const lwdate = this._findYearInDateStr(x.years_from);
       if (upperdat && lwdate) {
-        return fid === x.fid && year >= upperdat && lwdate <= year;
+        return fid === x.fid && year <= upperdat && year >= lwdate;
       }
       return false;
     });
