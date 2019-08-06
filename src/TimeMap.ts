@@ -1,5 +1,7 @@
 import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
-import { Map, Popup, MapMouseEvent, EventData } from 'mapbox-gl';
+import { Map, Popup, MapMouseEvent, EventData, MapboxGeoJSONFeature, LngLatBounds } from 'mapbox-gl';
+import { urlParams } from './App';
+import { filter } from 'minimatch';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
 type TLayer = string[];
@@ -7,6 +9,7 @@ export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 
 export interface TimeMapOptions {
   baseUrl: string;
+  filterIdField?: string;
   getFillColor: (...args: any[]) => any;
   createPopupContent: (props: any) => HTMLElement;
   addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
@@ -53,7 +56,18 @@ export class TimeMap {
     this._onDataLoadEvents.push(event);
   }
 
+  fitToFilter(filter: any[], sourceLayer: string, sourceId: string) {
+    const map = this.webMap.mapAdapter.map;
+    if (map) {
+      const features = map.querySourceFeatures(sourceId, { filter, sourceLayer });
+      this._fitToFeatures(features);
+    }
+  }
+
   async switchLayer(fromId: string, toId: string) {
+    if (fromId) {
+      urlParams.remove('id');
+    }
     this._removePopup();
     if (toId && fromId !== toId) {
       await this._showLayer(toId);
@@ -96,7 +110,7 @@ export class TimeMap {
     }
   }
 
-  private _onLayerClick(e: MapMouseEvent & EventData, layerId: string) {
+  private _onLayerClick(e: MapMouseEvent & EventData, layerId: string, adapterId: string) {
     const map = this.webMap.mapAdapter.map;
     const point = e.point;
     const width = 5;
@@ -116,6 +130,14 @@ export class TimeMap {
           .setLngLat(e.lngLat)
           .setDOMContent(html)
           .addTo(map);
+      }
+      if (prop && this.options.filterIdField) {
+        const fid = prop[this.options.filterIdField];
+        const adapter = this.webMap.getLayer(adapterId) as VectorLayerAdapter;
+        if (adapter.select) {
+          adapter.select([[this.options.filterIdField, 'eq', Number(fid)]]);
+          // urlParams.set('id', String(fid));
+        }
       }
     }
   }
@@ -139,7 +161,7 @@ export class TimeMap {
     const map = this.webMap.mapAdapter.map;
     if (map) {
       this._forEachDataLayer(id, layerId => {
-        const layerClickBind = (ev: MapMouseEvent & EventData) => this._onLayerClick(ev, layerId);
+        const layerClickBind = (ev: MapMouseEvent & EventData) => this._onLayerClick(ev, layerId, id);
         const layerMouseEnterBind = () => (map.getCanvas().style.cursor = 'pointer');
         const layerMouseLeaveBind = () => (map.getCanvas().style.cursor = '');
 
@@ -210,9 +232,25 @@ export class TimeMap {
   private async _addLayer(url: string, id: string): Promise<TimeLayer[]> {
     const layers = this.options.addLayers(url, id);
     this._timeLayers[id] = [];
+    let fillLayer: TimeLayer | undefined;
     for (const l of layers) {
       const layer = await l;
+      if (!fillLayer) {
+        fillLayer = layer;
+      }
       this._timeLayers[id].push(layer);
+    }
+    const idsParam = urlParams.get('id') as string;
+    const ids = idsParam && idsParam.split(',').map(x => Number(x));
+    const firstFillLayer = fillLayer && fillLayer.layer && fillLayer.layer[0];
+    const filterIdField = this.options.filterIdField;
+    if (ids && firstFillLayer && filterIdField) {
+      this._onDataLoadEvents.push(() => {
+        if (fillLayer && fillLayer.select) {
+          fillLayer.select([[filterIdField, 'in', ids]]);
+        }
+        this.fitToFilter(['in', filterIdField, ...ids], id, firstFillLayer);
+      });
     }
     return this._timeLayers[id];
   }
@@ -245,6 +283,31 @@ export class TimeMap {
       });
     } else {
       return Promise.resolve(toggle());
+    }
+  }
+
+  private _fitToFeatures(features: MapboxGeoJSONFeature[]) {
+    const bounds = new LngLatBounds();
+
+    const extendCoords = (coords: any[]) => {
+      if (coords.length === 2) {
+        // @ts-ignore
+        bounds.extend(coords);
+      } else {
+        coords.forEach(c => {
+          extendCoords(c);
+        });
+      }
+    };
+
+    features.forEach(feature => {
+      // @ts-ignore
+      extendCoords(feature.geometry.coordinates);
+    });
+    if (this.webMap.mapAdapter.map) {
+      this.webMap.mapAdapter.map.fitBounds(bounds, {
+        padding: 20
+      });
     }
   }
 }

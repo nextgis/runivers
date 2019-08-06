@@ -11,3 +11,21 @@ export function formatArea(area: number) {
 export function onlyUnique<T = any>(value: T, index: number, self: T[]): boolean {
   return self.indexOf(value) === index;
 }
+
+export function copyText(text: string) {
+  const copyTextarea = document.createElement('textarea');
+  copyTextarea.innerHTML = text;
+  document.body.appendChild(copyTextarea);
+  copyTextarea.focus();
+  copyTextarea.select();
+
+  try {
+    const successful = document.execCommand('copy');
+    const msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Copying text command was ' + msg);
+  } catch (err) {
+    console.log('Oops, unable to copy');
+  } finally {
+    document.body.removeChild(copyTextarea);
+  }
+}

@@ -16,7 +16,7 @@ import Color from 'color';
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
 
-import { formatArea, onlyUnique } from './utils/utils';
+import { formatArea, onlyUnique, copyText } from './utils/utils';
 import { getAboutProjectLink, getAffiliatedLinks } from './components/Links/Links';
 
 import {
@@ -33,6 +33,8 @@ import {
 import { Controls } from './Controls';
 import { TimeMap, TimeLayer } from './TimeMap';
 import { Principalities01 } from './data/Principalities01';
+
+export const urlParams = new UrlParams();
 
 interface GetFillColorOpt {
   lighten?: number;
@@ -55,7 +57,7 @@ export class App {
   webMap!: WebMap<Map, string[]>;
   currentPointId?: string;
 
-  urlParams = new UrlParams();
+  urlParams = urlParams;
 
   emitter = new EventEmitter();
 
@@ -99,6 +101,7 @@ export class App {
     webMap.create(options).then(() => {
       this.timeMap = new TimeMap(this.webMap, {
         baseUrl: this.options.baseUrl,
+        filterIdField: 'fid',
         getFillColor: (opt: GetFillColorOpt) => this._getFillColor(opt),
         createPopupContent: (props: HistoryLayerProperties) => this._createPopupContent(props),
         addLayers: (url, id) => this._createTimeLayers(url, id)
@@ -344,6 +347,7 @@ export class App {
       // 'fill-outline-color': '#8b0000', // darkred
       'fill-color': this._getFillColor()
     };
+    const selectedPaint = { ...paint, 'fill-color': this._getFillColor({ darken: 0.5 }) };
     const paintLine = {
       'line-opacity': this.timeMap.opacity,
       'line-opacity-transition': {
@@ -357,6 +361,8 @@ export class App {
       url,
       id,
       paint,
+      selectedPaint,
+      selectable: true,
       type: 'fill',
       nativePaint: true,
       labelField: 'name',
@@ -470,12 +476,12 @@ export class App {
 
       const colors = lineColor.reduce<Array<string | number>>((a, b) => {
         const [param, color] = b;
-        const c = Color(color);
+        let c = Color(color);
         if (param) {
           a.push(param);
         }
         if (opt.darken) {
-          c.darken(opt.darken);
+          c = c.darken(opt.darken);
         }
         a.push(c.hex());
         return a;
@@ -565,7 +571,7 @@ export class App {
 
   private _createPopupContent(props: HistoryLayerProperties): HTMLElement {
     const fields: Array<{ name?: string; field: keyof HistoryLayerProperties }> = [
-      // { name: 'Fid', field: 'fid' },
+      // { name: 'Fid', field: 'fid' }
       // { field: 'name' }
       // { name: 'Наименование территории', field: 'name' },
       // { name: 'Дата возникновения', field: 'lwdate' },
@@ -604,7 +610,9 @@ export class App {
     }
 
     if (_props[headerField]) {
-      block.appendChild(this._createPropElement(`<h2>${_props[headerField]}</h2>`, 'prop header'));
+      block.appendChild(
+        this._createPropElement(`<h2>${_props[headerField]} <a class="feature-link">&#x1f517;</a></h2>`, 'prop header')
+      );
     }
 
     _fields.forEach(x => {
@@ -623,18 +631,27 @@ export class App {
     if (props.status) {
       block.innerHTML += this._createPropStatusHtml(props);
     }
+    const featureLink = block.getElementsByClassName('feature-link')[0] as HTMLElement;
+    if (featureLink) {
+      featureLink.addEventListener('click', () => {
+        let url = document.location.origin + document.location.pathname;
+        url += `?year=${this.currentYear}&id=${props.fid}`;
+        this.urlParams.set('id', String(props.fid));
+        copyText(url);
+      });
+    }
     this._addPropShowDateClickEvent(block);
     return block;
   }
 
-  private _findPrincipalities01ByYear(year: number) {
+  private _findPrincipalities01(fid: number, year: number) {
     const princes = this.options.principalities01 || [];
 
     const prince = princes.find(x => {
       const upperdat = this._findYearInDateStr(x.upperdat);
       const lwdate = this._findYearInDateStr(x.lwdate);
       if (upperdat && lwdate) {
-        return year >= upperdat && lwdate <= year;
+        return x.fid === fid && year >= upperdat && lwdate <= year;
       }
       return false;
     });
@@ -642,14 +659,14 @@ export class App {
     return prince;
   }
 
-  private _findPrincipalities02ByYear(year: number) {
+  private _findPrincipalities02(fid: number, year: number) {
     const princes = this.options.principalities02 || [];
 
     const prince = princes.find(x => {
       const upperdat = this._findYearInDateStr(x.years_to);
       const lwdate = this._findYearInDateStr(x.years_from);
       if (upperdat && lwdate) {
-        return year >= upperdat && lwdate <= year;
+        return fid === x.fid && year >= upperdat && lwdate <= year;
       }
       return false;
     });
@@ -662,19 +679,21 @@ export class App {
       fields.push({ name: opt.field, ...opt });
       props[opt.field] = value;
     };
-
-    const prince02 = this._findPrincipalities02ByYear(this.currentYear);
-    if (prince02) {
-      addProp(prince02.ruler, { field: 'ruler' });
-      // addProp(prince02.name, { field: 'name' });
-    }
-    const prince01 = this._findPrincipalities01ByYear(this.currentYear);
-    if (prince01) {
-      const getHtml = (prop: keyof Principalities01, props: Principalities01) => {
-        return this._createPropElement(`<a href="${props.desc_link}" target="_blank">${prop}</a>`, '');
-      };
-      props.desc_link = prince01.desc_link;
-      addProp(prince01.name, { field: 'name_prince', getHtml });
+    const fid = props.fid;
+    if (fid) {
+      const prince02 = this._findPrincipalities02(fid, this.currentYear);
+      if (prince02) {
+        addProp(prince02.ruler, { field: 'ruler' });
+        // addProp(prince02.name, { field: 'name' });
+      }
+      const prince01 = this._findPrincipalities01(fid, this.currentYear);
+      if (prince01) {
+        const getHtml = (prop: keyof Principalities01, props: Principalities01) => {
+          return this._createPropElement(`<a href="${props.desc_link}" target="_blank">${prop}</a>`, '');
+        };
+        props.desc_link = prince01.desc_link;
+        addProp(prince01.name, { field: 'name_prince', getHtml });
+      }
     }
   }
 
