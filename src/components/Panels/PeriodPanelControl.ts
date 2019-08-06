@@ -51,7 +51,7 @@ export class PeriodPanelControl extends Panel {
     }
   }
 
-  updatePeriod(period: Period, areaStat: AreaStat) {
+  updatePeriod(period: Period, areaStat?: AreaStat) {
     this.closeDialog();
     if (period) {
       const exist = this.period;
@@ -68,7 +68,7 @@ export class PeriodPanelControl extends Panel {
     }
   }
 
-  private _createPeriodBody(period: Period, areaStat: AreaStat) {
+  private _createPeriodBody(period: Period, areaStat?: AreaStat) {
     const element = document.createElement('div');
     element.className = 'panel-body__period';
 
@@ -87,11 +87,17 @@ export class PeriodPanelControl extends Panel {
       <div class="panel-body__period--name">${period.name}</div>
       <div class="panel-body__period--period">${period.years_from} – ${period.years_to} гг.</div>
       <div class="panel-body__period--description">${period.description}</div>
+      ${
+        areaStat
+          ? `
       <div class="panel-body__period--description panel-body__period--area_wrap">
         Общая площадь: <span class="panel-body__period--area">
           ${formatArea(areaStat.area)}
         </span>
       </div>
+      `
+          : ''
+      }
     `;
     element.appendChild(periodElement);
 

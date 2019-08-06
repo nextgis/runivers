@@ -2,12 +2,19 @@ import { Period } from './components/Panels/PeriodPanelControl';
 import { YearStat } from './components/Panels/YearsStatPanelControl';
 import { LngLatBoundsArray } from '@nextgis/webmap';
 import { Marker } from 'mapbox-gl';
+import { Principalities01 } from './data/Principalities01';
+import { Principalities02 } from './data/Principalities02';
 
 export interface AreaStat {
   year: number;
   area: number;
   plus?: number;
   minus?: number;
+}
+
+export interface TimeStop {
+  toYear: number;
+  name: string;
 }
 
 export interface AppOptions {
@@ -21,6 +28,9 @@ export interface AppOptions {
   periods?: Period[];
   yearsStat?: YearStat[];
   areaStat?: AreaStat[];
+  principalities01?: Principalities01[];
+  principalities02?: Principalities02[];
+  timeStops: TimeStop[];
   version?: string;
   lineColor?: Array<[number | string, string]>;
   /** self id, color, label, array of link to lineColor id */
@@ -59,7 +69,6 @@ export interface PointMeta {
 }
 
 export interface PointProperties {
-
   areasum: number;
   count: number;
   ident: number;
@@ -93,5 +102,5 @@ export interface HistoryLayerResource {
   resource: {
     display_name: string;
     id: number;
-  }
+  };
 }

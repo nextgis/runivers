@@ -3,17 +3,18 @@ import { Map, Popup, MapMouseEvent, EventData } from 'mapbox-gl';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
 type TLayer = string[];
-type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
+export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 
 export interface TimeMapOptions {
   baseUrl: string;
   getFillColor: (...args: any[]) => any;
   createPopupContent: (props: any) => HTMLElement;
+  addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
 }
 
 export class TimeMap {
   currentLayerId!: string;
-  private _opacity = 0.8;
+  opacity = 0.8;
   private _popup?: Popup;
   private _timeLayers: { [layerId: string]: TimeLayer[] } = {};
   private _layersLoaded: { [layerId: string]: boolean } = {};
@@ -181,7 +182,7 @@ export class TimeMap {
 
   private _onSourceIsLoaded() {
     if (this._isAllDataLayerLoaded(this.currentLayerId)) {
-      this._setLayerOpacity(this.currentLayerId, this._opacity);
+      this._setLayerOpacity(this.currentLayerId, this.opacity);
       this._hideNotCurrentLayers();
       for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
         const event = this._onDataLoadEvents[fry];
@@ -206,42 +207,14 @@ export class TimeMap {
     });
   }
 
-  private async _addLayer(url: string, id: string): Promise<any> {
-    const paint = {
-      'fill-opacity': this._opacity,
-      'fill-opacity-transition': {
-        duration: 0
-      },
-      // 'fill-outline-color': '#8b0000', // darkred
-      // 'fill-outline-color': '#8b0000', // darkred
-      'fill-color': this.options.getFillColor()
-    };
-    const paintLine = {
-      'line-opacity': this._opacity,
-      'line-opacity-transition': {
-        duration: 0
-      },
-      'line-width': 1,
-      'line-color': this.options.getFillColor({ darken: 0.5 })
-    };
-    const sourceLayer = id;
-    const fillLayer = (await this.webMap.addLayer('MVT', {
-      url,
-      id,
-      paint,
-      nativePaint: true,
-      sourceLayer
-    })) as TimeLayer;
-    const boundLayer = (await this.webMap.addLayer('MVT', {
-      url,
-      id: id + '-bound',
-      paint: paintLine,
-      type: 'line',
-      sourceLayer,
-      nativePaint: true
-    })) as TimeLayer;
-    this._timeLayers[id] = [fillLayer, boundLayer];
-    return [fillLayer, boundLayer];
+  private async _addLayer(url: string, id: string): Promise<TimeLayer[]> {
+    const layers = this.options.addLayers(url, id);
+    this._timeLayers[id] = [];
+    for (const l of layers) {
+      const layer = await l;
+      this._timeLayers[id].push(layer);
+    }
+    return this._timeLayers[id];
   }
 
   private _toggleLayer(id: string, status: boolean) {

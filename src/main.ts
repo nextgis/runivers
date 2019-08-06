@@ -13,6 +13,10 @@ import periods from './data/periods.csv';
 import yearsStat from './data/years_stat.csv';
 // @ts-ignore
 import areaStat from './data/area_stat.csv';
+// @ts-ignore
+import principalities01 from './data/principalities_01.csv';
+// @ts-ignore
+import principalities02 from './data/principalities_02.csv';
 
 import './css/style.css';
 
@@ -20,13 +24,16 @@ const app = new App({
   baseUrl: config.baseUrl,
   target: 'map',
   // fromYear: 1462,
+  timeStops: [{ toYear: 1462, name: 'principalities' }],
   currentYear: 1462,
   animationDelay: 100,
   animationStep: 1,
   bounds: [2, 27, 203, 82],
-  periods: periods,
-  yearsStat: yearsStat,
-  areaStat: areaStat,
+  periods,
+  yearsStat,
+  areaStat,
+  principalities01,
+  principalities02,
   version: version,
   // @ts-ignore
   lineColor: config.lineColor,
