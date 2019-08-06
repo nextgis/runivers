@@ -32,10 +32,17 @@ import {
 
 import { Controls } from './Controls';
 import { TimeMap, TimeLayer } from './TimeMap';
+import { Principalities01 } from './data/Principalities01';
 
 interface GetFillColorOpt {
   lighten?: number;
   darken?: number;
+}
+
+interface PopupContentField<T = any> {
+  name?: string;
+  field: T;
+  getHtml?: (prop: any, props: any) => HTMLElement;
 }
 
 export class App {
@@ -584,12 +591,12 @@ export class App {
   }
 
   private _createPropBlock(
-    fields: Array<{ name?: string; field: keyof HistoryLayerProperties }>,
+    fields: Array<PopupContentField<keyof HistoryLayerProperties>>,
     props: HistoryLayerProperties,
     headerField = 'name'
   ) {
     const block = document.createElement('div');
-    const _fields: Array<{ name?: string; field: string }> = [...fields];
+    const _fields: PopupContentField[] = [...fields];
     const _props: Record<string, any> = { ...props };
     const timeStop = this._getTimeStop(this.currentYear);
     if (timeStop === 'principalities') {
@@ -607,7 +614,8 @@ export class App {
         propBlock.className = 'popup__propertyblock';
         propBlock.innerHTML = '';
         if (prop) {
-          block.appendChild(this._createPropElement(prop, ''));
+          const content = x.getHtml ? x.getHtml(prop, _props) : this._createPropElement(prop, '');
+          block.appendChild(content);
         }
       }
     });
@@ -649,19 +657,24 @@ export class App {
     return prince;
   }
 
-  private _addPrincipalitiesFields(fields: Array<{ name?: string; field: string }>, props: Record<string, any>) {
-    const addProp = (key: string, value: any, name?: string) => {
-      fields.push({ name: name || key, field: key });
-      props[key] = value;
+  private _addPrincipalitiesFields(fields: PopupContentField[], props: Record<string, any>) {
+    const addProp = (value: any, opt: PopupContentField) => {
+      fields.push({ name: opt.field, ...opt });
+      props[opt.field] = value;
     };
-    const prince01 = this._findPrincipalities01ByYear(this.currentYear);
-    if (prince01) {
-      //
-    }
+
     const prince02 = this._findPrincipalities02ByYear(this.currentYear);
     if (prince02) {
-      addProp('ruler', prince02.ruler);
-      addProp('name', prince02.name);
+      addProp(prince02.ruler, { field: 'ruler' });
+      addProp(prince02.name, { field: 'name' });
+    }
+    const prince01 = this._findPrincipalities01ByYear(this.currentYear);
+    if (prince01) {
+      const getHtml = (prop: keyof Principalities01, props: Principalities01) => {
+        return this._createPropElement(`<a href="${props.desc_link}" target="_blank">${prop}</a>`, '');
+      };
+      props.desc_link = prince01.desc_link;
+      addProp(prince01.eventstart, { field: 'eventstart', getHtml });
     }
   }
 
