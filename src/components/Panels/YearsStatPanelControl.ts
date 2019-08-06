@@ -1,4 +1,4 @@
-import { Panel } from './PanelControl';
+import { Panel, PanelOptions } from './PanelControl';
 import './YearsStatPanelControl.css';
 import { formatArea } from '../../utils/utils';
 import { AreaStat } from '../../interfaces';
@@ -25,32 +25,37 @@ export interface YearStat {
   count?: number;
 }
 
-const OPTIONS = {
+const OPTIONS: PanelOptions = {
   headerText: 'Изменения в территориальном составе',
   addClass: 'stat-panel'
 };
 
 export class YearsStatPanelControl extends Panel {
-  yearStat: YearStat;
+  yearStat?: YearStat;
+  yearStats?: YearStat[];
+  areaStat?: AreaStat;
 
-  yearStats: YearStat[];
-  areaStat: AreaStat;
-
-  constructor(options?) {
+  constructor(options?: PanelOptions) {
     super({ ...OPTIONS, ...options });
   }
 
   hide() {
     super.hide();
-    const container = this.webMap.getContainer();
-    container.classList.remove('years-panel');
+    if (this.webMap) {
+      const container = this.webMap.getContainer();
+      if (container) {
+        container.classList.remove('years-panel');
+      }
+    }
   }
 
   show() {
     super.show();
-    if (!this.isHide) {
+    if (!this.isHide && this.webMap) {
       const container = this.webMap.getContainer();
-      container.classList.add('years-panel');
+      if (container) {
+        container.classList.add('years-panel');
+      }
     }
   }
 
@@ -63,8 +68,10 @@ export class YearsStatPanelControl extends Panel {
   updateYearStat(yearStat: YearStat) {
     const exist = this.yearStat;
     const container = this.getContainer();
-    container.classList.remove('gain');
-    container.classList.remove('lost');
+    if (container) {
+      container.classList.remove('gain');
+      container.classList.remove('lost');
+    }
     if (yearStat) {
       if (exist !== yearStat) {
         // this.show();
@@ -74,7 +81,7 @@ export class YearsStatPanelControl extends Panel {
     } else {
       // this.hide();
       this.updateBody('<div class="panel-body__period empty">В этом году изменений территории не было</div>');
-      this.yearStat = null;
+      this.yearStat = undefined;
     }
     this.emitter.emit('update', { yearStat: this.yearStat });
   }
@@ -97,13 +104,13 @@ export class YearsStatPanelControl extends Panel {
       const container = this.getContainer();
       if (lost) {
         element.appendChild(this._createGainBlock(lost, true));
-        container.classList.add('lost');
-      } else {
-        container.classList.add('gain');
+      }
+      if (container) {
+        container.classList.add(lost ? 'lost' : 'gain');
       }
     }
 
-    if (this.yearStats.length > 1) {
+    if (this.yearStats && this.yearStats.length > 1) {
       element.appendChild(this._createStateSwitcher());
     }
 
@@ -131,42 +138,44 @@ export class YearsStatPanelControl extends Panel {
   private _createStateSwitcher(): Node {
     const sliderBlock = document.createElement('div');
     sliderBlock.className = 'panel-body__period--slider';
+    const yearStats = this.yearStats;
     const yearStat = this.yearStat;
-    const index = this.yearStats.indexOf(yearStat);
-    const isFirst = index === 0;
-    const length = this.yearStats.length;
-    const isLast = index === length - 1;
+    if (yearStat && yearStats) {
+      const index = yearStats.indexOf(yearStat);
+      const isFirst = index === 0;
+      const length = yearStats.length;
+      const isLast = index === length - 1;
 
-    const createDirectionFlow = (previous?: boolean, isActive?: boolean) => {
-      const flow = document.createElement('a');
-      flow.setAttribute('href', '#');
-      // flow.className = '' +
-      //   (previous ? 'back' : 'forward') +
-      //   (isActive ? '' : ' hiden');
-      flow.className = (previous ? `panel_slider prev` : `panel_slider next`) + (isActive ? '' : ' hidden');
-      if (isActive) {
-        flow.onclick = e => {
-          e.preventDefault();
-          const directStat = this.yearStats[previous ? index - 1 : index + 1];
-          this.updateYearStat(directStat);
-        };
-      }
-      return flow;
-    };
+      const createDirectionFlow = (previous?: boolean, isActive?: boolean) => {
+        const flow = document.createElement('a');
+        flow.setAttribute('href', '#');
+        // flow.className = '' +
+        //   (previous ? 'back' : 'forward') +
+        //   (isActive ? '' : ' hiden');
+        flow.className = (previous ? `panel_slider prev` : `panel_slider next`) + (isActive ? '' : ' hidden');
+        if (isActive) {
+          flow.onclick = e => {
+            e.preventDefault();
+            const directStat = yearStats[previous ? index - 1 : index + 1];
+            this.updateYearStat(directStat);
+          };
+        }
+        return flow;
+      };
 
-    sliderBlock.appendChild(createDirectionFlow(true, !isFirst));
+      sliderBlock.appendChild(createDirectionFlow(true, !isFirst));
 
-    const flowCounter = document.createElement('div');
-    flowCounter.className = 'panel_slider-counter';
-    flowCounter.innerHTML = `${yearStat.numb} из ${yearStat.count}`;
-    sliderBlock.appendChild(flowCounter);
+      const flowCounter = document.createElement('div');
+      flowCounter.className = 'panel_slider-counter';
+      flowCounter.innerHTML = `${yearStat.numb} из ${yearStat.count}`;
+      sliderBlock.appendChild(flowCounter);
 
-    sliderBlock.appendChild(createDirectionFlow(false, !isLast));
-
+      sliderBlock.appendChild(createDirectionFlow(false, !isLast));
+    }
     return sliderBlock;
   }
 
-  private _createDescriptionBlock(yearStat: YearStat): HTMLElement {
+  private _createDescriptionBlock(yearStat: YearStat): HTMLElement | undefined {
     const element = document.createElement('div');
     if (yearStat.description_short) {
       element.innerHTML = `<div class="panel-body__period--description">${yearStat.description_short}</div>`;
@@ -174,7 +183,7 @@ export class YearsStatPanelControl extends Panel {
     }
   }
 
-  private _createGainBlock(count, isLost?: boolean) {
+  private _createGainBlock(count: number, isLost?: boolean) {
     const element = document.createElement('div');
     element.className = 'panel-body__yearstat--gain ' + (isLost ? 'lost' : 'gained');
     element.innerHTML = (isLost ? '-' : '+') + formatArea(count);

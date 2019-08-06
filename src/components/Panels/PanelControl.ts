@@ -10,26 +10,19 @@ export interface PanelOptions {
 }
 
 export class Panel {
-  options: PanelOptions;
-
-  webMap: WebMap;
-
   emitter = new EventEmitter();
 
-  isHide: boolean;
-  _header: HTMLElement;
+  isHide: boolean = false;
   _blocked: boolean = false;
 
-  private _container: HTMLElement;
-  private _body: HTMLElement;
-  private _dialog: Dialog;
+  protected webMap?: WebMap;
+  protected _header?: HTMLElement;
+  private _container?: HTMLElement;
+  private _body?: HTMLElement;
+  private _dialog!: Dialog;
 
-  constructor(options?: PanelOptions) {
-    this.options = { ...this.options, ...options };
+  constructor(protected options: PanelOptions = {}) {
     this.webMap = this.options.webMap;
-    this._container = null;
-    this._header = null;
-    this._body = null;
     this._container = this._createContainer();
   }
 
@@ -43,31 +36,39 @@ export class Panel {
   }
 
   onRemove() {
-    const parentNode = this._container && this._container.parentNode;
-    if (parentNode) {
-      parentNode.removeChild(this._container);
+    if (this._container) {
+      const parentNode = this._container.parentNode;
+      if (parentNode) {
+        parentNode.removeChild(this._container);
+      }
     }
   }
 
-  updateBody(content) {
+  updateBody(content: HTMLElement | string) {
     this._cleanBody();
-    if (typeof content === 'string') {
-      this._body.innerHTML = content;
-    } else if (content instanceof HTMLElement) {
-      this._body.appendChild(content);
+    if (this._body) {
+      if (typeof content === 'string') {
+        this._body.innerHTML = content;
+      } else if (content instanceof HTMLElement) {
+        this._body.appendChild(content);
+      }
     }
   }
 
   hide() {
     this.isHide = true;
-    this._container.classList.add('panel-hide');
+    if (this._container) {
+      this._container.classList.add('panel-hide');
+    }
     this.emitter.emit('toggle', false);
   }
 
   show() {
     if (!this._blocked) {
       this.isHide = false;
-      this._container.classList.remove('panel-hide');
+      if (this._container) {
+        this._container.classList.remove('panel-hide');
+      }
       this.emitter.emit('toggle', true);
     }
   }
@@ -80,7 +81,7 @@ export class Panel {
     this._blocked = false;
   }
 
-  createControlButton(onclick, text = 'Подробнее') {
+  createControlButton(onclick: () => void, text = 'Подробнее') {
     const element = document.createElement('button');
     element.className = 'btn panel-button';
     element.innerHTML = text;
@@ -88,7 +89,7 @@ export class Panel {
     return element;
   }
 
-  createRefButton(url, text?) {
+  createRefButton(url: string, text?: string) {
     return this.createControlButton(() => window.open(url, '_blank'), text);
   }
 
@@ -96,9 +97,12 @@ export class Panel {
     if (!this._dialog) {
       this._dialog = new Dialog(options);
     }
-    const isSame = options && options.template && this._dialog.options.template === options.template;
-    if (!isSame) {
-      this._dialog.updateContent(options.template);
+    const template = options && options.template;
+    if (template) {
+      const isSame = this._dialog.options.template === template;
+      if (!isSame) {
+        this._dialog.updateContent(template);
+      }
     }
     this._dialog.show();
   }
@@ -109,11 +113,13 @@ export class Panel {
     }
   }
 
-  _cleanBody() {
-    this._body.innerHTML = '';
+  private _cleanBody() {
+    if (this._body) {
+      this._body.innerHTML = '';
+    }
   }
 
-  _createContainer() {
+  private _createContainer() {
     const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl panel';
     if (this.options.addClass) {
@@ -127,17 +133,18 @@ export class Panel {
     return element;
   }
 
-  _createHeader() {
+  private _createHeader() {
     const element = document.createElement('div');
     element.className = 'panel-header';
-
-    element.innerHTML = this.options.headerText;
+    if (this.options.headerText) {
+      element.innerHTML = this.options.headerText;
+    }
 
     this._header = element;
     return element;
   }
 
-  _createBody() {
+  private _createBody() {
     const element = document.createElement('div');
     element.className = 'panel-body';
 

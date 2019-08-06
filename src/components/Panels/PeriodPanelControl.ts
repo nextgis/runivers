@@ -1,4 +1,4 @@
-import { Panel } from './PanelControl';
+import { Panel, PanelOptions } from './PanelControl';
 import './PeriodPanelControl.css';
 import { formatArea } from '../../utils/utils';
 import { AreaStat } from '../../interfaces';
@@ -18,31 +18,36 @@ export interface Period {
   img_link?: string;
 }
 
-const OPTIONS = {
+const OPTIONS: PanelOptions = {
   headerText: 'Правители',
   addClass: 'period-panel'
 };
 
 export class PeriodPanelControl extends Panel {
-  private period: Period;
-  private areaStat: AreaStat;
+  private period?: Period;
+  private areaStat?: AreaStat;
 
-  constructor(options?) {
+  constructor(options?: PanelOptions) {
     super(Object.assign({}, OPTIONS, options));
-    this.period = null;
   }
 
   hide() {
     super.hide();
-    const container = this.webMap.getContainer();
-    container.classList.remove('period-panel');
+    if (this.webMap) {
+      const container = this.webMap.getContainer();
+      if (container) {
+        container.classList.remove('period-panel');
+      }
+    }
   }
 
   show() {
     super.show();
-    if (!this.isHide) {
+    if (!this.isHide && this.webMap) {
       const container = this.webMap.getContainer();
-      container.classList.add('period-panel');
+      if (container) {
+        container.classList.add('period-panel');
+      }
     }
   }
 
@@ -59,7 +64,7 @@ export class PeriodPanelControl extends Panel {
       }
     } else {
       this.updateBody('<div class="panel-body__period empty">В этом году изменений территории не было</div>');
-      this.period = null;
+      this.period = undefined;
     }
   }
 
@@ -70,7 +75,7 @@ export class PeriodPanelControl extends Panel {
     // Gov name
     const periodElement = document.createElement('div');
 
-    let imageHtml: string;
+    let imageHtml = '';
     if (period.img_link) {
       imageHtml = `<div
         class="panel-body__period--image" style="background-image: url('${period.img_link}');">

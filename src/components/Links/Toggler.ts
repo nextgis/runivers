@@ -31,21 +31,25 @@ export class Toggler {
     if (this.options.className) {
       this.options.className.split(' ').forEach(x => block.classList.add(x));
     }
-    if (this.options.toggleAction) {
+    const toggleAction = this.options.toggleAction;
+    if (toggleAction) {
       block.addEventListener('click', () => {
         this.toggle();
-        this.options.toggleAction(this._status);
+        toggleAction(this._status);
       });
     }
     return block;
   }
 
   private _updateContainer() {
-    this._container.title = this._status ? this.options.title : this.options.titleOff;
-    if (this._status) {
-      this._container.classList.add('active');
-    } else {
-      this._container.classList.remove('active');
+    const title = this._status ? this.options.title : this.options.titleOff;
+    if (title) {
+      this._container.title = title;
+      if (this._status) {
+        this._container.classList.add('active');
+      } else {
+        this._container.classList.remove('active');
+      }
     }
   }
 }

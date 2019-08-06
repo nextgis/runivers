@@ -1,6 +1,6 @@
 {
   "name": "russia-history",
-  "version": "2.4.4",
+  "version": "3.0.0",
   "description": "",
   "main": "src/app.js",
   "scripts": {
@@ -37,6 +37,7 @@
     "@nextgis/eslint-config": "^0.17.0",
     "@types/geojson": "^7946.0.7",
     "@types/mapbox-gl": "^0.54.1",
+    "@types/nouislider": "^9.0.5",
     "autoprefixer": "^9.6.1",
     "babel-loader": "^8.0.6",
     "compression-webpack-plugin": "^3.0.0",

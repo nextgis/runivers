@@ -134,24 +134,26 @@ export class TimeMap {
     this._removePopup();
   }
 
-  private _addLayerListeners(layerId: string) {
+  private _addLayerListeners(id: string) {
     const map = this.webMap.mapAdapter.map;
     if (map) {
-      const layerClickBind = (ev: MapMouseEvent & EventData) => this._onLayerClick(ev, layerId);
-      const layerMouseEnterBind = () => (map.getCanvas().style.cursor = 'pointer');
-      const layerMouseLeaveBind = () => (map.getCanvas().style.cursor = '');
+      this._forEachDataLayer(id, layerId => {
+        const layerClickBind = (ev: MapMouseEvent & EventData) => this._onLayerClick(ev, layerId);
+        const layerMouseEnterBind = () => (map.getCanvas().style.cursor = 'pointer');
+        const layerMouseLeaveBind = () => (map.getCanvas().style.cursor = '');
 
-      map.on('click', layerId, layerClickBind);
-      // Change the cursor to a pointer when the mouse is over the places layer.
-      map.on('mouseenter', layerId, layerMouseEnterBind);
-      // Change it back to a pointer when it leaves.
-      map.on('mouseleave', layerId, layerMouseLeaveBind);
+        map.on('click', layerId, layerClickBind);
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', layerId, layerMouseEnterBind);
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', layerId, layerMouseLeaveBind);
 
-      this._onLayerClickMem[layerId] = this._onLayerClickMem[layerId] || {};
+        this._onLayerClickMem[layerId] = this._onLayerClickMem[layerId] || {};
 
-      this._onLayerClickMem[layerId].click = layerClickBind;
-      this._onLayerClickMem[layerId].mouseenter = layerClickBind;
-      this._onLayerClickMem[layerId].mouseleave = layerClickBind;
+        this._onLayerClickMem[layerId].click = layerClickBind;
+        this._onLayerClickMem[layerId].mouseenter = layerClickBind;
+        this._onLayerClickMem[layerId].mouseleave = layerClickBind;
+      });
     }
   }
 

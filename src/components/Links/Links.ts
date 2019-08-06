@@ -46,82 +46,87 @@ interface SliderSettings {
 }
 
 function getYearsToggler(controls: Controls) {
-  const yearsToggler = new Toggler({
-    className: 'years__toggler',
-    title: 'Скрыть панель изменения в территориальном составе',
-    titleOff: 'Показать панель изменения в территориальном составе',
-    toggleAction: status => {
-      if (status) {
-        controls.yearsStatPanelControl._blocked = false;
-        controls.yearsStatPanelControl.show();
-      } else {
-        controls.yearsStatPanelControl.hide();
-        controls.yearsStatPanelControl._blocked = true;
+  const yearsStatPanelControl = controls.yearsStatPanelControl;
+  if (yearsStatPanelControl) {
+    const yearsToggler = new Toggler({
+      className: 'years__toggler',
+      title: 'Скрыть панель изменения в территориальном составе',
+      titleOff: 'Показать панель изменения в территориальном составе',
+      toggleAction: status => {
+        if (status) {
+          yearsStatPanelControl._blocked = false;
+          yearsStatPanelControl.show();
+        } else {
+          yearsStatPanelControl.hide();
+          yearsStatPanelControl._blocked = true;
+        }
       }
-    }
-  });
-  controls.yearsStatPanelControl.emitter.on('toggle', status => {
-    yearsToggler.toggle(status);
-  });
-  return yearsToggler;
+    });
+    yearsStatPanelControl.emitter.on('toggle', status => {
+      yearsToggler.toggle(status);
+    });
+    return yearsToggler;
+  }
 }
 
 function getPeriodToggler(controls: Controls) {
-  const periodToggler = new Toggler({
-    className: 'period__toggler',
-    title: 'Скрыть панель правителей',
-    titleOff: 'Показать панель правителей',
-    toggleAction: status => {
-      if (status) {
-        controls.periodsPanelControl.show();
-      } else {
-        controls.periodsPanelControl.hide();
+  const periodsPanelControl = controls.periodsPanelControl;
+  if (periodsPanelControl) {
+    const periodToggler = new Toggler({
+      className: 'period__toggler',
+      title: 'Скрыть панель правителей',
+      titleOff: 'Показать панель правителей',
+      toggleAction: status => {
+        if (status) {
+          periodsPanelControl.show();
+        } else {
+          periodsPanelControl.hide();
+        }
       }
-    }
-  });
+    });
 
-  controls.periodsPanelControl.emitter.on('toggle', status => {
-    periodToggler.toggle(status);
-  });
-  return periodToggler;
+    periodsPanelControl.emitter.on('toggle', status => {
+      periodToggler.toggle(status);
+    });
+    return periodToggler;
+  }
 }
 
 function getLegendToggler(controls: Controls) {
-  const legendToggler = new Toggler({
-    className: 'legend__toggler',
-    title: 'Скрыть легенду',
-    titleOff: 'Показать легенду',
-    toggleAction: status => {
-      if (status) {
-        controls.legendPanel.show();
-      } else {
-        controls.legendPanel.hide();
+  const legendPanel = controls.legendPanel;
+  if (legendPanel) {
+    const legendToggler = new Toggler({
+      className: 'legend__toggler',
+      title: 'Скрыть легенду',
+      titleOff: 'Показать легенду',
+      toggleAction: status => {
+        if (status) {
+          legendPanel.show();
+        } else {
+          legendPanel.hide();
+        }
       }
-    }
-  });
+    });
 
-  controls.legendPanel.emitter.on('toggle', status => {
-    legendToggler.toggle(status);
-  });
-  return legendToggler;
+    legendPanel.emitter.on('toggle', status => {
+      legendToggler.toggle(status);
+    });
+    return legendToggler;
+  }
 }
 
 export function getSwitcherPanelControl(controls: Controls) {
   const block = document.createElement('div');
   block.className = 'switcher-panel-control';
 
-  const legendToggle = getLegendToggler(controls);
-  block.appendChild(legendToggle.getContainer());
+  const toggles: Array<Toggler | undefined> = [
+    getLegendToggler(controls),
+    getPeriodToggler(controls),
+    getYearsToggler(controls),
+    getBaseLayerToggler(controls)
+  ];
 
-  const periodToggler = getPeriodToggler(controls);
-  block.appendChild(periodToggler.getContainer());
-  // block.appendChild(getTimelineButton());
-
-  const yearsToggler = getYearsToggler(controls);
-  block.appendChild(yearsToggler.getContainer());
-
-  const baseLayerToggler = getBaseLayerToggler(controls);
-  block.appendChild(baseLayerToggler.getContainer());
+  toggles.forEach(t => t && block.appendChild(t.getContainer()));
 
   const panel = new Panel({
     addClass: 'panel-links'
@@ -157,7 +162,7 @@ function getAboutBlock(block: string) {
 
 export function openAboutDialog(app: App, language: string = 'ru') {
   const attrs = app.webMap.getAttributions({ onlyVisible: false, onlyBasemap: true });
-  const templates = {
+  const templates: Record<string, string> = {
     ru: aboutShortRu,
     en: aboutShortEn
   };
@@ -230,8 +235,10 @@ export function openSettingsDialog(app: App) {
   });
 
   // editable legend
-  const legend = app.controls.legendPanel.createLegendBlock(true);
-  template.appendChild(legend);
+  const legend = app.controls.legendPanel && app.controls.legendPanel.createLegendBlock(true);
+  if (legend) {
+    template.appendChild(legend);
+  }
 
   // link to blog
   const readMore = document.createElement('div');
@@ -291,7 +298,7 @@ export function getAffiliatedPanel(controls: Controls) {
 export function getHomeBtnControl(control: Controls) {
   const _control = control.app.webMap.createButtonControl({
     addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
-    onClick: () => control.app.webMap.fitBounds(control.app.options.bounds)
+    onClick: () => control.app.options.bounds && control.app.webMap.fitBounds(control.app.options.bounds)
   });
 
   return _control;

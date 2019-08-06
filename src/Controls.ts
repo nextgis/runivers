@@ -15,24 +15,24 @@ interface ScreenSize {
 }
 
 export class Controls {
-  periodsPanelControl: PeriodPanelControl;
-  yearsStatPanelControl: YearsStatPanelControl;
-  legendPanel: LegendPanelControl;
+  periodsPanelControl?: PeriodPanelControl;
+  yearsStatPanelControl?: YearsStatPanelControl;
+  legendPanel?: LegendPanelControl;
 
   private isMobile = false;
 
-  private _socialLinksPanel: Panel;
-  private _switchersPanel: Panel;
+  private _socialLinksPanel?: Panel;
+  private _switchersPanel?: Panel;
   private _homeBtnPanel: any | Promise<any>;
-  private _zoomControl: IControl;
+  private _zoomControl?: IControl;
 
-  private _attributions: IControl;
+  private _attributions?: IControl;
 
   private _installedControls: any[] = [];
 
   private _mobileTogglePanels: Panel[] = [];
   private _openPanels: Panel[] = [];
-  private _eventBindings: { [name: string]: (...args: any[]) => void } = { onMapClick: null };
+  private _eventBindings: { [name: string]: (...args: any[]) => void } = { onMapClick: () => null };
 
   private _mobSizeConst: ScreenSize = {
     height: 700,
@@ -55,21 +55,22 @@ export class Controls {
     this.removeControls();
 
     const mapContainer = this.app.webMap.getContainer();
-
-    if (this.isMobile) {
-      this._hideAllPanels();
-      mapContainer.classList.add('mobile');
-      this._addMobileControls();
-      this._addPanelToggleListeners();
-    } else {
-      this._mobileTogglePanels.forEach(x => {
-        if (this._openPanels.indexOf(x) !== -1) {
-          x.show();
-        }
-      });
-      this._removePanelToggleListener();
-      mapContainer.classList.remove('mobile');
-      this._addFullSizeControls();
+    if (mapContainer) {
+      if (this.isMobile) {
+        this._hideAllPanels();
+        mapContainer.classList.add('mobile');
+        this._addMobileControls();
+        this._addPanelToggleListeners();
+      } else {
+        this._mobileTogglePanels.forEach(x => {
+          if (this._openPanels.indexOf(x) !== -1) {
+            x.show();
+          }
+        });
+        this._removePanelToggleListener();
+        mapContainer.classList.remove('mobile');
+        this._addFullSizeControls();
+      }
     }
   }
 
@@ -100,7 +101,7 @@ export class Controls {
     this._mobileTogglePanels.forEach(x => x.show());
   }
 
-  private async _addControl(control: any, position: ControlPositions, options?) {
+  private async _addControl(control: any, position: ControlPositions, options?: any) {
     const addedControl = await this.app.webMap.addControl(control, position, options);
     if (addedControl) {
       this._installedControls.push(addedControl);
@@ -143,7 +144,7 @@ export class Controls {
     const container = this.app.webMap.getContainer();
     if (container) {
       const attrContainer = container.querySelector('.mapboxgl-ctrl.mapboxgl-ctrl-attrib');
-      if (attrContainer) {
+      if (attrContainer && attrContainer.parentNode) {
         attrContainer.parentNode.removeChild(attrContainer);
         container.appendChild(attrContainer);
       }
@@ -165,20 +166,20 @@ export class Controls {
 
   private _updateTimeSlider() {
     // remove intermediate pips from slider on mobile
-    const pipsNodes = document.querySelectorAll('.noUi-marker.noUi-marker-horizontal.noUi-marker-normal');
-    let hideElements = Array.from(pipsNodes);
+    const pipsNodes = document.querySelectorAll<HTMLElement>('.noUi-marker.noUi-marker-horizontal.noUi-marker-normal');
+    let hideElements: HTMLElement[] = Array.from(pipsNodes);
 
-    const labelNodes = document.querySelectorAll('.noUi-value.noUi-value-horizontal.noUi-value-large');
+    const labelNodes = document.querySelectorAll<HTMLElement>('.noUi-value.noUi-value-horizontal.noUi-value-large');
     // leave labels for minimum and maximum
     // no check for second and second last signature, admit that they are always
     hideElements = hideElements.concat([labelNodes[0 + 1], labelNodes[labelNodes.length - 2]]);
 
     if (window.innerWidth <= this._mobSizeConst.width) {
-      hideElements.forEach((x: HTMLElement) => {
+      hideElements.forEach(x => {
         x.style.visibility = 'hidden';
       });
     } else {
-      hideElements.forEach((x: HTMLElement) => {
+      hideElements.forEach(x => {
         x.style.visibility = '';
       });
     }
@@ -219,7 +220,7 @@ export class Controls {
     }
   }
 
-  private _onWindowResize(e) {
+  private _onWindowResize() {
     const isMobile = this.isMobile;
     this.checkMobile();
     if (isMobile !== this.isMobile) {
@@ -230,7 +231,7 @@ export class Controls {
   }
 
   private _addEventsListeners() {
-    window.addEventListener('resize', e => this._onWindowResize(e), false);
+    window.addEventListener('resize', () => this._onWindowResize(), false);
   }
 
   private _hideAllPanels() {

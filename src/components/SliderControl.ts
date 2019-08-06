@@ -3,11 +3,14 @@ import './SliderControl.css';
 import WebMap from '@nextgis/webmap';
 
 import noUiSlider from 'nouislider';
+// @ts-ignore
 import wNumb from 'wnumb';
 import 'nouislider/distribute/nouislider.css';
 
 import './Links/img/rewind_next.svg';
 import './Links/img/rewind_previous.svg';
+
+type SliderValue = number | Array<number | null>;
 
 export interface SliderOptions {
   type: string;
@@ -19,7 +22,7 @@ export interface SliderOptions {
   animationDelay: number;
 
   stepReady?(nextValue: number, callback: (value: number) => void, previous?: boolean): void;
-  filterPips?(value, type): -1 | 0 | 1 | 2; // -1 (no pip at all) 0 (no value) 1 (large value) 2 (small value)
+  filterPips?(value: any, type: number): -1 | 0 | 1 | 2; // -1 (no pip at all) 0 (no value) 1 (large value) 2 (small value)
 }
 
 const OPTIONS: SliderOptions = {
@@ -36,25 +39,24 @@ const OPTIONS: SliderOptions = {
 };
 
 export class SliderControl {
-  options: SliderOptions;
   emitter = new EventEmitter();
-  map: WebMap;
+  map?: WebMap;
 
-  _animationStepInput: HTMLInputElement;
-  _sliderContainer: HTMLElement;
-  _slider: noUiSlider;
-  private _container: HTMLElement;
-  private _input: HTMLInputElement;
-  private _animationStatus: boolean;
-  private _playerControl: HTMLElement;
+  _animationStepInput?: HTMLInputElement;
+  _sliderContainer?: HTMLElement;
+  _slider?: noUiSlider.noUiSlider;
+  private _container?: HTMLElement;
+  private _input?: HTMLInputElement;
+  private _animationStatus?: boolean;
+  private _playerControl?: HTMLElement;
   // private _nextStepTimeoutId: number;
 
-  constructor(options) {
+  constructor(public options: SliderOptions) {
     this.options = Object.assign({}, OPTIONS, options);
     this.options.animationStep = this.options.animationStep || this.options.step;
   }
 
-  onAdd(map) {
+  onAdd(map: any) {
     this.map = map;
     this._container = this._createContainer();
     return this._container;
@@ -77,15 +79,14 @@ export class SliderControl {
   }
 
   _createValueInput() {
-    const self = this;
     const inputObj = this._createLabeledInput({
       type: 'number',
       // label: 'value',
       value: this.options.value
     });
     const input = inputObj.input;
-    input.onchange = function() {
-      self._onChange(self._getAllowedValue(input.value));
+    input.onchange = () => {
+      this._onChange(this._getAllowedValue(Number(input.value)));
     };
     this._input = input;
     return inputObj.label;
@@ -159,6 +160,7 @@ export class SliderControl {
     slider.on('change', (values, handle) => {
       this._onSliderClick(parseInt(values[0], 10));
     });
+    // @ts-ignore
     const sliderElement = slider.target as HTMLElement;
     sliderElement.addEventListener(
       'click',
@@ -232,7 +234,7 @@ export class SliderControl {
     return playerSteps;
   }
 
-  _createLabeledInput(opt) {
+  _createLabeledInput(opt: { type: string; value: any; label?: string }) {
     opt = opt || {};
 
     const input = document.createElement('input');
@@ -267,7 +269,7 @@ export class SliderControl {
 
   _onSliderClick(value: number) {
     const isAnimation = this._animationStatus;
-    if (this._animationStatus) {
+    if (isAnimation) {
       this.stopAnimation();
     }
     this._onChange(value);
@@ -276,8 +278,10 @@ export class SliderControl {
     // }
   }
 
-  _onChange(value: number) {
-    this._slider.set(value);
+  _onChange(value: SliderValue) {
+    if (this._slider) {
+      this._slider.set(value);
+    }
     if (this._input) {
       this._input.value = String(value);
     }
@@ -292,7 +296,9 @@ export class SliderControl {
     status = status !== undefined ? status : !this._animationStatus;
     this._animationStatus = status;
     // this._playerControl.innerHTML = this._getPlayerControlLabel();
-    this._playerControl.classList[this._animationStatus ? 'add' : 'remove']('paused');
+    if (this._playerControl) {
+      this._playerControl.classList[this._animationStatus ? 'add' : 'remove']('paused');
+    }
     if (status) {
       this._startAnimation();
     } else {
@@ -303,7 +309,7 @@ export class SliderControl {
   _startAnimation() {
     if (this._animationStatus) {
       const timerStart = new Date().getTime();
-      this._stepReady((step: number) => {
+      this._stepReady((step: number | boolean) => {
         const isReady = typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
         if (isReady && this._animationStatus) {
           const stepDelay = new Date().getTime() - timerStart;
@@ -312,7 +318,7 @@ export class SliderControl {
           // this._nextStepTimeoutId = setTimeout(() => {
           setTimeout(() => {
             if (this._animationStatus) {
-              this._nextStep(step);
+              this._nextStep(step as number);
               this._startAnimation();
             }
           }, delay);
@@ -325,12 +331,14 @@ export class SliderControl {
     }
   }
 
-  _nextStep(step) {
-    this._slider.set(step);
+  _nextStep(step: SliderValue) {
+    if (this._slider) {
+      this._slider.set(step);
+    }
     this._onChange(step);
   }
 
-  _stepReady(callback, previous?: boolean, stepLength?: number) {
+  _stepReady(callback: (val: number | boolean) => void, previous?: boolean, stepLength?: number) {
     const nextValue = this._getNextValue(previous, stepLength);
     const inRange = this.options.value <= this.options.max && this.options.value >= this.options.min;
     if (nextValue && inRange) {
@@ -345,7 +353,7 @@ export class SliderControl {
     }
   }
 
-  _getAllowedValue(value) {
+  _getAllowedValue(value: number) {
     if (value <= this.options.min) {
       return this.options.min;
     } else if (value > this.options.max) {
@@ -355,10 +363,15 @@ export class SliderControl {
   }
 
   _getNextValue(previous?: boolean, stepLength?: number) {
-    const current = parseInt(this._slider.get(), 10);
-    const step = stepLength ? stepLength : this.options.animationStep;
-    const next = previous ? current - step : current + step;
-    return this._getAllowedValue(next);
+    if (this._slider) {
+      const val = this._slider.get();
+      if (typeof val === 'string') {
+        const current = parseInt(val, 10);
+        const step = stepLength ? stepLength : this.options.animationStep;
+        const next = previous ? current - step : current + step;
+        return this._getAllowedValue(next);
+      }
+    }
   }
 
   _stopAnimation() {

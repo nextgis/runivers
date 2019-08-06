@@ -20,10 +20,12 @@ export class LegendPanelControl extends Panel {
   createLegendBlock(interactive = false) {
     const element = document.createElement('div');
     element.className = 'panel-body__legend';
-
-    this.options.colors.forEach(c => {
-      element.appendChild(this._createLegendItem(c, interactive));
-    });
+    const colors = this.options.colors;
+    if (colors) {
+      colors.forEach(c => {
+        element.appendChild(this._createLegendItem(c, interactive));
+      });
+    }
 
     return element;
   }
@@ -61,11 +63,16 @@ export class LegendPanelControl extends Panel {
       const nameBlock = document.createElement('span');
       nameBlock.className = 'panel-body__legend--name';
       nameBlock.innerHTML = getName(color);
+      const colors = this.options.colors;
       colorInput.onchange = () => {
-        const changedColor = this.options.colors.find(x => x[0] === name);
-        changedColor[1] = colorInput.value;
-        nameBlock.innerHTML = getName(colorInput.value);
-        this.emitter.emit('change', this.options.colors);
+        if (colors) {
+          const changedColor = colors.find(x => x[0] === name);
+          if (changedColor) {
+            changedColor[1] = colorInput.value;
+            nameBlock.innerHTML = getName(colorInput.value);
+            this.emitter.emit('change', this.options.colors);
+          }
+        }
       };
 
       block.appendChild(nameBlock);
@@ -74,7 +81,7 @@ export class LegendPanelControl extends Panel {
 
       const colorSymbol = document.createElement('div');
       colorSymbol.className = 'panel-body__legend--color';
-      colorSymbol.style.backgroundColor = _color.fade(0.3);
+      colorSymbol.style.backgroundColor = String(_color.fade(0.3));
 
       colorSymbol.style.border = '2px solid ' + _color.darken(0.5);
 

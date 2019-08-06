@@ -1,5 +1,5 @@
 // import 'reset-css';
-
+import 'mapbox-gl/dist/mapbox-gl.css';
 // polyfills
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -15,8 +15,6 @@ import yearsStat from './data/years_stat.csv';
 import areaStat from './data/area_stat.csv';
 
 import './css/style.css';
-
-// mapbox style and fonts from index.html <link>
 
 const app = new App({
   baseUrl: config.baseUrl,

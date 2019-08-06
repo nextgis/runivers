@@ -55,7 +55,7 @@ export class App {
   timeMap!: TimeMap;
 
   private _minYear = 0;
-  private _maxYear = 9999;
+  private _maxYear = 0;
 
   private _layersConfig: LayerMeta[] = [];
 
@@ -90,25 +90,16 @@ export class App {
     });
 
     webMap.create(options).then(() => {
-      // webMap.addBaseLayer('TILE', {
-      //   id: 'baselayer',
-      //   url: (location.protocol === 'https:' ? 'https' : 'http') + '://tilessputnik.ru/{z}/{x}/{y}.png'
-      // }).then((layer) => {
-      //   webMap.showLayer(layer);
-      // });
       this.timeMap = new TimeMap(this.webMap, {
         baseUrl: this.options.baseUrl,
         getFillColor: (opt: GetFillColorOpt) => this._getFillColor(opt),
         createPopupContent: (props: HistoryLayerProperties) => this._createPopupContent(props)
       });
-      webMap
-        .addBaseLayer('QMS', {
-          id: 'baselayer',
-          qmsId: 2550
-        })
-        .then(layer => {
-          webMap.showLayer(layer);
-        });
+      webMap.addBaseLayer('QMS', {
+        id: 'baselayer',
+        qmsId: 2550,
+        visibility: true
+      });
     });
 
     this.webMap = webMap;
@@ -173,8 +164,8 @@ export class App {
 
       this.slider = this._createSlider();
 
-      const headerElement = this._createHeader();
-      const affiliatedElement = this._createAffiliatedLogos();
+      this._createHeader();
+      this._createAffiliatedLogos();
       this.controls = new Controls(this);
       this.controls.updateControls();
 
@@ -194,18 +185,20 @@ export class App {
   }
 
   private _createSlider() {
+    const stepReady = (year: number, callback: (value: number) => void, previous: boolean) => {
+      this._stepReady(year, callback, previous);
+    };
     const slider = new SliderControl({
+      type: 'range',
       min: this._minYear,
       max: this._maxYear,
       step: 1,
-      animationStep: this.options.animationStep,
+      animationStep: this.options.animationStep || 1,
       value: this.currentYear,
-      animationDelay: this.options.animationDelay,
-      stepReady: (year: number, callback: () => void, previous: boolean) => {
-        this._stepReady(year, callback, previous);
-      }
+      animationDelay: this.options.animationDelay || 100,
+      stepReady
     });
-    slider.emitter.on('change', year => {
+    slider.emitter.on('change', (year: number) => {
       // may be updated in _stepReady method
       if (year !== this.currentYear) {
         this.currentYear = year;
@@ -253,7 +246,7 @@ export class App {
 
   private _updatePeriodBlockByYear(year: number, areaStat: AreaStat) {
     const period = this._findPeriodByYear(year);
-    if (period) {
+    if (period && this.controls.periodsPanelControl) {
       this.controls.periodsPanelControl.updatePeriod(period, areaStat);
     }
   }
@@ -271,8 +264,10 @@ export class App {
   }
 
   private _updateYearStatBlockByYear(year: number, areaStat: AreaStat) {
-    const yearStat = this._findYearStatsByYear(year);
-    this.controls.yearsStatPanelControl.updateYearStats(yearStat, areaStat);
+    if (this.controls.yearsStatPanelControl) {
+      const yearStat = this._findYearStatsByYear(year);
+      this.controls.yearsStatPanelControl.updateYearStats(yearStat, areaStat);
+    }
   }
 
   private _findYearInDateStr(dateStr: string): number | undefined {
@@ -362,8 +357,11 @@ export class App {
     if (map) {
       // create a DOM element for the marker
       const element = document.createElement('div');
-      const yearStat = this.controls.yearsStatPanelControl.yearStat;
-      const isActive = yearStat && yearStat.year === properties.year && yearStat.numb === properties.numb;
+      let isActive;
+      if (this.controls.yearsStatPanelControl) {
+        const yearStat = this.controls.yearsStatPanelControl.yearStat;
+        isActive = yearStat && yearStat.year === properties.year && yearStat.numb === properties.numb;
+      }
 
       element.className = 'map-marker' + (isActive ? ' active' : ''); // use class `aсtive` for selected
 
@@ -392,13 +390,15 @@ export class App {
 
   private _setMarkerActive(markerMem: AppMarkerMem, properties: PointProperties) {
     const yearControl = this.controls.yearsStatPanelControl;
-    const yearStat = yearControl.yearStats.find(x => {
-      return x.year === properties.year && x.numb === properties.numb;
-    });
-    if (yearStat) {
-      yearControl.updateYearStat(yearStat);
-      yearControl.unBlock();
-      yearControl.show();
+    if (yearControl && yearControl.yearStats) {
+      const yearStat = yearControl.yearStats.find(x => {
+        return x.year === properties.year && x.numb === properties.numb;
+      });
+      if (yearStat) {
+        yearControl.updateYearStat(yearStat);
+        yearControl.unBlock();
+        yearControl.show();
+      }
     }
   }
 
@@ -427,7 +427,7 @@ export class App {
         });
       });
 
-      const colors = lineColor.reduce<(string | number)[]>((a, b) => {
+      const colors = lineColor.reduce<Array<string | number>>((a, b) => {
         const [param, color] = b;
         const c = Color(color);
         if (param) {
@@ -499,9 +499,7 @@ export class App {
       const name = resource.display_name;
       const _match = name.match('from_(\\d{3,4})_to_(\\d{3,4}).*$');
       if (_match) {
-        const [from, to] = _match
-          .slice(1)
-          .map(x => Number(x));
+        const [from, to] = _match.slice(1).map(x => Number(x));
         const allowedYear = this.options.fromYear && from < this.options.fromYear ? false : true;
         if (allowedYear) {
           this._minYear = (this._minYear > from ? from : this._minYear) || from;
@@ -545,7 +543,9 @@ export class App {
   }
 
   private _createPropBlock(
-    fields: Array<{ name?: string; field: keyof HistoryLayerProperties }>, props: HistoryLayerProperties) {
+    fields: Array<{ name?: string; field: keyof HistoryLayerProperties }>,
+    props: HistoryLayerProperties
+  ) {
     const block = document.createElement('div');
 
     fields.forEach(x => {
@@ -596,7 +596,9 @@ export class App {
             const year = this._findYearInDateStr(link.innerHTML);
             if (year) {
               this.updateByYear(year);
-              this.slider._slider.set(year);
+              if (this.slider && this.slider._slider) {
+                this.slider._slider.set(year);
+              }
             }
           });
         }
@@ -607,8 +609,10 @@ export class App {
   }
 
   private _addEventsListeners() {
-    this.controls.yearsStatPanelControl.emitter.on('update', ({ yearStat }) => {
-      this._updateActiveMarker(yearStat);
-    });
+    if (this.controls.yearsStatPanelControl) {
+      this.controls.yearsStatPanelControl.emitter.on('update', ({ yearStat }) => {
+        this._updateActiveMarker(yearStat);
+      });
+    }
   }
 }
