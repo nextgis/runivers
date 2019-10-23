@@ -1,7 +1,13 @@
 import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
-import { Map, Popup, MapMouseEvent, EventData, MapboxGeoJSONFeature, LngLatBounds } from 'mapbox-gl';
+import {
+  Map,
+  Popup,
+  MapMouseEvent,
+  EventData,
+  MapboxGeoJSONFeature,
+  LngLatBounds
+} from 'mapbox-gl';
 import { urlParams } from './App';
-import { filter } from 'minimatch';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
 type TLayer = string[];
@@ -161,7 +167,8 @@ export class TimeMap {
     const map = this.webMap.mapAdapter.map;
     if (map) {
       this._forEachDataLayer(id, layerId => {
-        const layerClickBind = (ev: MapMouseEvent & EventData) => this._onLayerClick(ev, layerId, id);
+        const layerClickBind = (ev: MapMouseEvent & EventData) =>
+          this._onLayerClick(ev, layerId, id);
         const layerMouseEnterBind = () => (map.getCanvas().style.cursor = 'pointer');
         const layerMouseLeaveBind = () => (map.getCanvas().style.cursor = '');
 
@@ -199,7 +206,10 @@ export class TimeMap {
   }
 
   private _forEachDataLayer(layerId: string, fun: (dataLayerId: string) => void) {
-    this._forEachTimeLayer(layerId, timeLayer => timeLayer.layer && timeLayer.layer.forEach(y => fun(y)));
+    this._forEachTimeLayer(
+      layerId,
+      timeLayer => timeLayer.layer && timeLayer.layer.forEach(y => fun(y))
+    );
   }
 
   private _onSourceIsLoaded() {

@@ -1,6 +1,6 @@
 export class Toggler {
   private _container: HTMLElement;
-  private _status: boolean = true;
+  private _status = true;
 
   constructor(
     public options: {
@@ -20,7 +20,7 @@ export class Toggler {
     return this._container;
   }
 
-  toggle(status: boolean = !this._status) {
+  toggle(status = !this._status) {
     this._status = status;
     this._updateContainer();
   }

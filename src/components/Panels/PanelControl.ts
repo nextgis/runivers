@@ -12,8 +12,8 @@ export interface PanelOptions {
 export class Panel {
   emitter = new EventEmitter();
 
-  isHide: boolean = false;
-  _blocked: boolean = false;
+  isHide = false;
+  _blocked = false;
 
   protected webMap?: WebMap;
   protected _header?: HTMLElement;

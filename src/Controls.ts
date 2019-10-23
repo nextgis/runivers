@@ -1,6 +1,10 @@
 import { App } from './App';
 import { Panel } from './components/Panels/PanelControl';
-import { getSocialLinksPanel, getSwitcherPanelControl, getHomeBtnControl } from './components/Links/Links';
+import {
+  getSocialLinksPanel,
+  getSwitcherPanelControl,
+  getHomeBtnControl
+} from './components/Links/Links';
 import { ControlPositions } from '@nextgis/webmap';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
@@ -93,10 +97,17 @@ export class Controls {
     this._socialLinksPanel = getSocialLinksPanel();
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
-    this._zoomControl = this.app.webMap.getControl('ZOOM', { zoomInTitle: 'Приблизить', zoomOutTitle: 'Отдалить' });
+    this._zoomControl = this.app.webMap.getControl('ZOOM', {
+      zoomInTitle: 'Приблизить',
+      zoomOutTitle: 'Отдалить'
+    });
     this._attributions = this.app.webMap.getControl('ATTRIBUTION');
 
-    this._mobileTogglePanels = [this.periodsPanelControl, this.yearsStatPanelControl, this.legendPanel];
+    this._mobileTogglePanels = [
+      this.periodsPanelControl,
+      this.yearsStatPanelControl,
+      this.legendPanel
+    ];
 
     this._mobileTogglePanels.forEach(x => x.show());
   }
@@ -152,7 +163,9 @@ export class Controls {
   }
 
   private checkMobile() {
-    this.isMobile = window.innerWidth <= this._mobSizeConst.width || window.innerHeight <= this._mobSizeConst.height;
+    this.isMobile =
+      window.innerWidth <= this._mobSizeConst.width ||
+      window.innerHeight <= this._mobSizeConst.height;
     return this.isMobile;
   }
 
@@ -166,10 +179,14 @@ export class Controls {
 
   private _updateTimeSlider() {
     // remove intermediate pips from slider on mobile
-    const pipsNodes = document.querySelectorAll<HTMLElement>('.noUi-marker.noUi-marker-horizontal.noUi-marker-normal');
+    const pipsNodes = document.querySelectorAll<HTMLElement>(
+      '.noUi-marker.noUi-marker-horizontal.noUi-marker-normal'
+    );
     let hideElements: HTMLElement[] = Array.from(pipsNodes);
 
-    const labelNodes = document.querySelectorAll<HTMLElement>('.noUi-value.noUi-value-horizontal.noUi-value-large');
+    const labelNodes = document.querySelectorAll<HTMLElement>(
+      '.noUi-value.noUi-value-horizontal.noUi-value-large'
+    );
     // leave labels for minimum and maximum
     // no check for second and second last signature, admit that they are always
     hideElements = hideElements.concat([labelNodes[0 + 1], labelNodes[labelNodes.length - 2]]);

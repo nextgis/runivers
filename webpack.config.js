@@ -1,4 +1,4 @@
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 let FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -59,38 +59,34 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.css$/,
-          use: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            use: [{ loader: 'css-loader', options: { sourceMap: true } }],
-            publicPath: './'
-          })
+          use: [
+            MiniCssExtractPlugin.loader,
+            { loader: 'css-loader', options: { sourceMap: true } }
+          ]
         },
         {
           test: /\.(scss)$/,
-          use: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            publicPath: './',
-            use: [
-              {
-                loader: 'css-loader',
-                options: { sourceMap: true } // translates CSS into CommonJS modules
-              },
-              {
-                loader: 'postcss-loader', // Run post css actions
-                options: {
-                  sourceMap: true,
-                  plugins: function() {
-                    // post css plugins, can be exported to postcss.config.js
-                    return [require('precss'), require('autoprefixer')];
-                  }
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: { sourceMap: true } // translates CSS into CommonJS modules
+            },
+            {
+              loader: 'postcss-loader', // Run post css actions
+              options: {
+                sourceMap: true,
+                plugins: function () {
+                  // post css plugins, can be exported to postcss.config.js
+                  return [require('precss'), require('autoprefixer')];
                 }
-              },
-              {
-                loader: 'sass-loader', // compiles Sass to CSS
-                options: { sourceMap: true }
               }
-            ]
-          })
+            },
+            {
+              loader: 'sass-loader', // compiles Sass to CSS
+              options: { sourceMap: true }
+            }
+          ]
         },
         {
           test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
@@ -119,7 +115,7 @@ module.exports = (env, argv) => {
 
     plugins: [
       new ForkTsCheckerWebpackPlugin({ vue: true }),
-      new ExtractTextPlugin({ filename: '[name][hash:7].css', allChunks: true }),
+      new MiniCssExtractPlugin({ filename: '[name][hash:7].css', allChunks: true }),
       new HtmlWebpackPlugin({ template: 'src/index.html' }),
       new FaviconsWebpackPlugin('./src/img/favicon.png')
     ],

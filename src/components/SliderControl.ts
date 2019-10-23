@@ -310,7 +310,8 @@ export class SliderControl {
     if (this._animationStatus) {
       const timerStart = new Date().getTime();
       this._stepReady((step: number | boolean) => {
-        const isReady = typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
+        const isReady =
+          typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
         if (isReady && this._animationStatus) {
           const stepDelay = new Date().getTime() - timerStart;
           let delay = this.options.animationDelay - stepDelay;
@@ -340,7 +341,8 @@ export class SliderControl {
 
   _stepReady(callback: (val: number | boolean) => void, previous?: boolean, stepLength?: number) {
     const nextValue = this._getNextValue(previous, stepLength);
-    const inRange = this.options.value <= this.options.max && this.options.value >= this.options.min;
+    const inRange =
+      this.options.value <= this.options.max && this.options.value >= this.options.min;
     if (nextValue && inRange) {
       this.options.value = nextValue;
       if (this.options.stepReady) {

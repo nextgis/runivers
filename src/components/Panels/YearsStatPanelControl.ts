@@ -80,7 +80,9 @@ export class YearsStatPanelControl extends Panel {
       }
     } else {
       // this.hide();
-      this.updateBody('<div class="panel-body__period empty">В этом году изменений территории не было</div>');
+      this.updateBody(
+        '<div class="panel-body__period empty">В этом году изменений территории не было</div>'
+      );
       this.yearStat = undefined;
     }
     this.emitter.emit('update', { yearStat: this.yearStat });
@@ -152,7 +154,8 @@ export class YearsStatPanelControl extends Panel {
         // flow.className = '' +
         //   (previous ? 'back' : 'forward') +
         //   (isActive ? '' : ' hiden');
-        flow.className = (previous ? `panel_slider prev` : `panel_slider next`) + (isActive ? '' : ' hidden');
+        flow.className =
+          (previous ? `panel_slider prev` : `panel_slider next`) + (isActive ? '' : ' hidden');
         if (isActive) {
           flow.onclick = e => {
             e.preventDefault();

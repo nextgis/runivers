@@ -160,7 +160,7 @@ function getAboutBlock(block: string) {
     </P>`;
 }
 
-export function openAboutDialog(app: App, language: string = 'ru') {
+export function openAboutDialog(app: App, language = 'ru') {
   const attrs = app.webMap.getAttributions({ onlyVisible: false, onlyBasemap: true });
   const templates: Record<string, string> = {
     ru: aboutShortRu,
@@ -176,7 +176,9 @@ export function openAboutDialog(app: App, language: string = 'ru') {
   }
   const html = document.createElement('div');
   html.innerHTML = template;
-  const languageSwitcher = html.getElementsByClassName('switch-about-language-btn')[0] as HTMLAnchorElement;
+  const languageSwitcher = html.getElementsByClassName(
+    'switch-about-language-btn'
+  )[0] as HTMLAnchorElement;
   if (languageSwitcher) {
     languageSwitcher.onclick = () => {
       Dialog.clean();
@@ -298,7 +300,8 @@ export function getAffiliatedPanel(controls: Controls) {
 export function getHomeBtnControl(control: Controls) {
   const _control = control.app.webMap.createButtonControl({
     addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
-    onClick: () => control.app.options.bounds && control.app.webMap.fitBounds(control.app.options.bounds)
+    onClick: () =>
+      control.app.options.bounds && control.app.webMap.fitBounds(control.app.options.bounds)
   });
 
   return _control;

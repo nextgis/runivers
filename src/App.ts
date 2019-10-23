@@ -382,7 +382,8 @@ export class App {
   // TODO: Mapboxgl specific method
   private _addPoint(id: string) {
     getPointGeojson(id).then((data: FeatureCollection<MultiPoint, PointProperties>) => {
-      const _many = data.features.length > 1 && data.features.map(x => x.properties.numb).filter(onlyUnique);
+      const _many =
+        data.features.length > 1 && data.features.map(x => x.properties.numb).filter(onlyUnique);
       const many = _many && _many.length > 1;
       data.features.forEach((marker: Feature<Point | MultiPoint, PointProperties>, i) => {
         const type = marker && marker.geometry && marker.geometry.type;
@@ -392,14 +393,22 @@ export class App {
             this._addMarkerToMap(x, marker.properties, many);
           });
         } else if (type === 'Point') {
-          this._addMarkerToMap(marker.geometry.coordinates as [number, number], marker.properties, many);
+          this._addMarkerToMap(
+            marker.geometry.coordinates as [number, number],
+            marker.properties,
+            many
+          );
         }
       });
     });
   }
 
   // TODO: Mapboxgl specific method
-  private _addMarkerToMap(coordinates: [number, number], properties: PointProperties, many: boolean) {
+  private _addMarkerToMap(
+    coordinates: [number, number],
+    properties: PointProperties,
+    many: boolean
+  ) {
     const map: Map | undefined = this.webMap.mapAdapter.map;
     if (map) {
       // create a DOM element for the marker
@@ -407,7 +416,8 @@ export class App {
       let isActive;
       if (this.controls.yearsStatPanelControl) {
         const yearStat = this.controls.yearsStatPanelControl.yearStat;
-        isActive = yearStat && yearStat.year === properties.year && yearStat.numb === properties.numb;
+        isActive =
+          yearStat && yearStat.year === properties.year && yearStat.numb === properties.numb;
       }
 
       element.className = 'map-marker' + (isActive ? ' active' : ''); // use class `aсtive` for selected
@@ -592,7 +602,9 @@ export class App {
   private _createPropElement(html: string, addClass: string) {
     const propBlock = document.createElement('div');
     propBlock.className = 'popup__propertyblock';
-    propBlock.innerHTML = `<div class="popup__property--value${addClass ? ' ' + addClass : ''}" >${html}</div >`;
+    propBlock.innerHTML = `<div class="popup__property--value${
+      addClass ? ' ' + addClass : ''
+    }" >${html}</div >`;
     return propBlock;
   }
 
@@ -611,7 +623,10 @@ export class App {
 
     if (_props[headerField]) {
       block.appendChild(
-        this._createPropElement(`<h2>${_props[headerField]} <a class="feature-link">&#x1f517;</a></h2>`, 'prop header')
+        this._createPropElement(
+          `<h2>${_props[headerField]} <a class="feature-link">&#x1f517;</a></h2>`,
+          'prop header'
+        )
       );
     }
 
@@ -689,7 +704,10 @@ export class App {
       const prince01 = this._findPrincipalities01(fid, this.currentYear);
       if (prince01) {
         const getHtml = (prop: keyof Principalities01, props: Principalities01) => {
-          return this._createPropElement(`<a href="${props.desc_link}" target="_blank">${prop}</a>`, '');
+          return this._createPropElement(
+            `<a href="${props.desc_link}" target="_blank">${prop}</a>`,
+            ''
+          );
         };
         props.desc_link = prince01.desc_link;
         addProp(prince01.name, { field: 'name_prince', getHtml });
