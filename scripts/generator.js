@@ -8,44 +8,50 @@ const baseUrl = config.baseUrl;
 
 const file = './src/data/layers.json';
 
-const adapterFor = (function () {
+const adapterFor = (function() {
   const url = require('url'),
     adapters = {
       'http:': require('http'),
-      'https:': require('https'),
+      'https:': require('https')
     };
-  return function (inputUrl) {
+  return function(inputUrl) {
     return adapters[url.parse(inputUrl).protocol];
-  }
-}());
+  };
+})();
 
-NgwConnector.prototype._getJson = function (url, options) {
+NgwConnector.prototype._getJson = function(url, options) {
   return new Promise((resolve, reject) => {
-    adapterFor(url).get(url, (resp) => {
-      let data = '';
-      resp.on('data', (chunk) => {
-        data += chunk;
+    adapterFor(url)
+      .get(url, resp => {
+        let data = '';
+        resp.on('data', chunk => {
+          data += chunk;
+        });
+        resp.on('end', () => {
+          resolve(JSON.parse(data));
+        });
+      })
+      .on('error', err => {
+        reject(err);
       });
-      resp.on('end', () => {
-        resolve(JSON.parse(data));
-      });
-    }).on('error', (err) => {
-      reject(err);
-    });
   });
-}
+};
 
 const connector = new NgwConnector({ baseUrl });
 
-connector.makeQuery('/api/resource/?parent={id}', {
-  id: config.sourceGroupId
-}).then(generateData);
-
 function generateData(data) {
-  const toFile = data.map((x) => {
+  const toFile = data.map(x => {
     const res = x.resource;
-    return { resource: { display_name: res.display_name, id: res.id } }
+    return { resource: { display_name: res.display_name, id: res.id } };
   });
 
-  fs.writeFile(file, JSON.stringify(toFile), () => console.log('Data write in `' + file + '` file'));
+  fs.writeFile(file, JSON.stringify(toFile), () =>
+    console.log('Data write in `' + file + '` file')
+  );
 }
+
+connector
+  .makeQuery('/api/resource/?parent={id}', {
+    id: config.sourceGroupId
+  })
+  .then(generateData);

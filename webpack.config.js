@@ -1,7 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-let FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 let alias = {};
 try {
@@ -59,10 +59,7 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.css$/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            { loader: 'css-loader', options: { sourceMap: true } }
-          ]
+          use: [MiniCssExtractPlugin.loader, { loader: 'css-loader', options: { sourceMap: true } }]
         },
         {
           test: /\.(scss)$/,
@@ -76,7 +73,7 @@ module.exports = (env, argv) => {
               loader: 'postcss-loader', // Run post css actions
               options: {
                 sourceMap: true,
-                plugins: function () {
+                plugins: function() {
                   // post css plugins, can be exported to postcss.config.js
                   return [require('precss'), require('autoprefixer')];
                 }
@@ -90,13 +87,20 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-          use: ['url-loader?limit=10000&mimetype=application/font-woff&name=fonts/[name]-[hash:7].[ext]']
+          use: [
+            'url-loader?limit=10000&mimetype=application/font-woff&name=fonts/[name]-[hash:7].[ext]'
+          ]
         },
         {
           test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-          use: ['url-loader?limit=10000&mimetype=application/octet-stream&name=fonts/[name]-[hash:7].[ext]']
+          use: [
+            'url-loader?limit=10000&mimetype=application/octet-stream&name=fonts/[name]-[hash:7].[ext]'
+          ]
         },
-        { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: ['file-loader?name=fonts/[name]-[hash:7].[ext]'] },
+        {
+          test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+          use: ['file-loader?name=fonts/[name]-[hash:7].[ext]']
+        },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
           use: ['file-loader?name=images/[name].[ext]', 'image-webpack-loader?bypassOnDebug']
