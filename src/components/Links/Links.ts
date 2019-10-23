@@ -6,7 +6,7 @@ import { Controls } from '../../Controls';
 import pkg from '../../../package.json';
 
 import './img/nextgis.png';
-import { App } from 'src/App';
+import { App } from '../../App';
 import { SliderOptions } from '../SliderControl';
 import { aboutShortRu } from './aboutRu';
 import { aboutShortEn } from './aboutEn';

@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import './SliderControl.css';
 import WebMap from '@nextgis/webmap';
 
-import noUiSlider from 'nouislider';
+import noUiSlider, { PipsOptions } from 'nouislider';
 // @ts-ignore
 import wNumb from 'wnumb';
 import 'nouislider/distribute/nouislider.css';
@@ -20,6 +20,8 @@ export interface SliderOptions {
   animationStep: number;
   value: number;
   animationDelay: number;
+  playerControl?: boolean;
+  pips?: PipsOptions;
 
   stepReady?(nextValue: number, callback: (value: number) => void, previous?: boolean): void;
   filterPips?(value: any, type: number): -1 | 0 | 1 | 2; // -1 (no pip at all) 0 (no value) 1 (large value) 2 (small value)
@@ -69,12 +71,14 @@ export class SliderControl {
   _createContainer() {
     const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl slider-control';
-    // element.appendChild(this._createValueInput());
     element.appendChild(this._createSliderContainer());
-    element.appendChild(this._createNavigationContainer());
-    // element.appendChild(this._createPlayerContainer());
-    // element.appendChild(this._createAnimationStepInput());
-    // element.appendChild(this._createAnimationDelayInput());
+
+    const playerControl =
+      this.options.playerControl !== undefined ? this.options.playerControl : true;
+    if (playerControl) {
+      element.appendChild(this._createNavigationContainer());
+    }
+
     return element;
   }
 
@@ -150,11 +154,14 @@ export class SliderControl {
       step,
       tooltips: [wNumb({ decimals: 0 })],
       start: [this.options.value],
-      pips: {
-        mode: 'steps',
-        density: 3,
-        filter: this.options.filterPips
-      }
+      pips:
+        this.options.pips !== undefined
+          ? this.options.pips
+          : {
+              mode: 'steps',
+              density: 3,
+              filter: this.options.filterPips
+            }
     });
 
     slider.on('change', (values, handle) => {
