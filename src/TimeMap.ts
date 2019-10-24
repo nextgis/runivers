@@ -155,9 +155,10 @@ export class TimeMap {
     const memEvents = this._onLayerClickMem[layerId];
     if (memEvents && map) {
       for (const ev in memEvents) {
-        // @ts-ignore
-        const memEvent = memEvents[ev];
-        map.off(ev, memEvent);
+        const memEvent = memEvents[ev as UsedMapEvents];
+        if (memEvent) {
+          map.off(ev, memEvent);
+        }
       }
     }
     this._removePopup();
