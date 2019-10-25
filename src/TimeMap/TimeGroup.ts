@@ -1,4 +1,3 @@
-import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
 import {
   Map,
   Popup,
@@ -7,21 +6,26 @@ import {
   MapboxGeoJSONFeature,
   LngLatBounds
 } from 'mapbox-gl';
-import { urlParams } from './App';
+
+import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
+import { urlParams } from '../services/UrlParams';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
 type TLayer = string[];
 export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 
-export interface TimeMapOptions {
+export interface TimeLayersGroupOptions {
+  name: string;
   baseUrl: string;
   filterIdField?: string;
+  manualOpacity?: boolean;
   getFillColor: (...args: any[]) => any;
   createPopupContent: (props: any) => HTMLElement;
   addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
 }
 
-export class TimeMap {
+export class TimeLayersGroup {
+  name: string;
   currentLayerId!: string;
   opacity = 0.8;
   private _popup?: Popup;
@@ -34,7 +38,8 @@ export class TimeMap {
     };
   } = {};
 
-  constructor(private webMap: WebMap<Map, TLayer>, private options: TimeMapOptions) {
+  constructor(private webMap: WebMap<Map, TLayer>, private options: TimeLayersGroupOptions) {
+    this.name = this.options.name;
     webMap.mapAdapter.emitter.on('data-loaded', data => this._onData(data));
     webMap.mapAdapter.emitter.on('data-error', data => this._onData(data));
   }
@@ -42,7 +47,7 @@ export class TimeMap {
   updateLayer(layerId: string) {
     const fromId = this.currentLayerId;
     this.currentLayerId = layerId;
-    this.switchLayer(fromId, layerId);
+    return this.switchLayer(fromId, layerId);
   }
 
   updateLayersColor() {
@@ -70,6 +75,11 @@ export class TimeMap {
     }
   }
 
+  showOnlyCurrentLayer() {
+    this.makeOpacity();
+    this.hideNotCurrentLayers();
+  }
+
   async switchLayer(fromId: string, toId: string) {
     if (fromId) {
       urlParams.remove('id');
@@ -84,6 +94,33 @@ export class TimeMap {
         this._setLayerOpacity(toId, 0);
       }
     }
+    return new Promise((resolve, reject) => {
+      this.pushDataLoadEvent(resolve);
+    }).then(() => this.currentLayerId);
+  }
+
+  private makeOpacity() {
+    this._setLayerOpacity(this.currentLayerId, this.opacity);
+  }
+
+  private hideNotCurrentLayers() {
+    Object.entries(this._timeLayers).forEach(([id, layers]) => {
+      if (id !== this.currentLayerId) {
+        layers.forEach(x => {
+          if (!this.webMap.isBaseLayer(x) && x.id) {
+            this._hideLayer(x.id);
+          }
+        });
+      }
+    });
+  }
+
+  private _getWebMapLayerId(id?: string) {
+    return String(id);
+  }
+
+  private _getWebMapLayer(id: string): VectorLayerAdapter {
+    return this.webMap.getLayer(this._getWebMapLayerId(id)) as VectorLayerAdapter;
   }
 
   private _setLayerOpacity(id: string, value: number) {
@@ -139,7 +176,7 @@ export class TimeMap {
       }
       if (prop && this.options.filterIdField) {
         const fid = prop[this.options.filterIdField];
-        const adapter = this.webMap.getLayer(adapterId) as VectorLayerAdapter;
+        const adapter = this._getWebMapLayer(adapterId);
         if (adapter.select) {
           adapter.select([[this.options.filterIdField, 'eq', Number(fid)]]);
           // urlParams.set('id', String(fid));
@@ -215,29 +252,15 @@ export class TimeMap {
 
   private _onSourceIsLoaded() {
     if (this._isAllDataLayerLoaded(this.currentLayerId)) {
-      this._setLayerOpacity(this.currentLayerId, this.opacity);
-      this._hideNotCurrentLayers();
+      if (!this.options.manualOpacity) {
+        this.showOnlyCurrentLayer();
+      }
       for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
         const event = this._onDataLoadEvents[fry];
         event();
       }
       this._onDataLoadEvents = [];
     }
-  }
-
-  private _hideNotCurrentLayers() {
-    const layers = this.webMap.getLayers();
-    layers.forEach(l => {
-      if (!this.webMap.isBaseLayer(l)) {
-        if (this.webMap.isLayerVisible(l)) {
-          const currentLayers = this._timeLayers[this.currentLayerId];
-          const isSkipLayer = currentLayers.some(x => x.id === l);
-          if (!isSkipLayer) {
-            this._hideLayer(l);
-          }
-        }
-      }
-    });
   }
 
   private async _addLayer(url: string, id: string): Promise<TimeLayer[]> {
@@ -286,7 +309,7 @@ export class TimeMap {
       this._forEachTimeLayer(id, l => this.webMap.toggleLayer(l, true));
     };
 
-    const exist = this.webMap.getLayer(id);
+    const exist = this._getWebMapLayer(id);
     if (!exist) {
       const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
       return this._addLayer(url, id).then(() => {

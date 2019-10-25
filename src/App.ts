@@ -3,7 +3,6 @@ import './App.css';
 import WebMap from '@nextgis/webmap';
 import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
 import QmsKit from '@nextgis/qms-kit';
-import UrlParams from '@nextgis/url-runtime-params';
 
 import { SliderControl } from './components/SliderControl';
 import { Marker, Map } from 'mapbox-gl';
@@ -31,10 +30,10 @@ import {
 } from './interfaces';
 
 import { Controls } from './Controls';
-import { TimeMap, TimeLayer } from './TimeMap';
+import { TimeMap, TimeLayer } from './TimeMap/TimeMap';
 import { Principalities01 } from './data/Principalities01';
-
-export const urlParams = new UrlParams();
+import { urlParams } from './services/UrlParams';
+import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 
 interface GetFillColorOpt {
   lighten?: number;
@@ -99,13 +98,7 @@ export class App {
     });
 
     webMap.create(options).then(() => {
-      this.timeMap = new TimeMap(this.webMap, {
-        baseUrl: this.options.baseUrl,
-        filterIdField: 'fid',
-        getFillColor: (opt: GetFillColorOpt) => this._getFillColor(opt),
-        createPopupContent: (props: HistoryLayerProperties) => this._createPopupContent(props),
-        addLayers: (url, id) => this._createTimeLayers(url, id)
-      });
+      this.timeMap = new TimeMap(this.webMap, {});
       webMap.addBaseLayer('QMS', {
         id: 'baselayer',
         qmsId: 2550,
@@ -161,12 +154,13 @@ export class App {
   }
 
   updateLayersColor() {
-    this.timeMap.updateLayersColor();
+    // this.timeMap.updateLayersColor();
   }
 
   private _buildApp() {
     getLayers(data => {
       this._layersConfig = this._processLayersMeta(data);
+      this._addTimeLayersGroups(data);
       if (!this.currentYear && this._minYear) {
         this.currentYear = this._minYear;
       }
@@ -191,6 +185,20 @@ export class App {
       if (pointId) {
         this.updatePoint(pointId);
       }
+    });
+  }
+
+  private _addTimeLayersGroups(config: HistoryLayerResource[]) {
+    config.forEach(x => {
+      const options: TimeLayersGroupOptions = {
+        name: '',
+        baseUrl: this.options.baseUrl,
+        filterIdField: 'fid',
+        getFillColor: (opt: GetFillColorOpt) => this._getFillColor(opt),
+        createPopupContent: (props: HistoryLayerProperties) => this._createPopupContent(props),
+        addLayers: (url, id) => this._createTimeLayers(url, id)
+      };
+      this.timeMap.addTimeGroup(options);
     });
   }
 
@@ -323,7 +331,7 @@ export class App {
         this.currentYear = y;
         callback(y);
       };
-      if (this.timeMap.currentLayerId !== String(nextLayer.id)) {
+      if (this.timeMap.getTimeGroup().currentLayerId !== String(nextLayer.id)) {
         this.timeMap.pushDataLoadEvent(next);
         this.updateLayer(String(nextLayer.id));
       } else {
@@ -339,7 +347,7 @@ export class App {
 
   private _createTimeLayers(url: string, id: string): Array<Promise<TimeLayer>> {
     const paint = {
-      'fill-opacity': this.timeMap.opacity,
+      'fill-opacity': this.timeMap.getTimeGroup().opacity,
       'fill-opacity-transition': {
         duration: 0
       },
@@ -349,7 +357,7 @@ export class App {
     };
     const selectedPaint = { ...paint, 'fill-color': this._getFillColor({ darken: 0.5 }) };
     const paintLine = {
-      'line-opacity': this.timeMap.opacity,
+      'line-opacity': this.timeMap.getTimeGroup().opacity,
       'line-opacity-transition': {
         duration: 0
       },
@@ -528,7 +536,7 @@ export class App {
   private _getNextLayer(year: number, previous?: boolean): LayerMeta | undefined {
     const filteredLayer = this._getLayerByYear(year);
     if (filteredLayer) {
-      if (String(filteredLayer.id) === this.timeMap.currentLayerId) {
+      if (String(filteredLayer.id) === this.timeMap.getTimeGroup().currentLayerId) {
         const index = this._layersConfig.indexOf(filteredLayer);
         if (index !== -1) {
           const nextLayer = this._layersConfig[previous ? index - 1 : index + 1];
