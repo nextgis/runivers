@@ -136,11 +136,13 @@ export class TimeLayersGroup {
     }
   }
 
-  private _isCurrentDataLayer(layerId: string) {
+  private _isCurrentDataLayer(layerId: string): boolean {
     const currentLayers = this._timeLayers[this.currentLayerId];
-    return currentLayers.some(x => {
-      return x.layer && x.layer.some(y => y === layerId);
-    });
+    return currentLayers
+      ? currentLayers.some(x => {
+          return x.layer && x.layer.some(y => y === layerId);
+        })
+      : false;
   }
 
   private _onData(data: { target: string }) {
@@ -177,7 +179,7 @@ export class TimeLayersGroup {
       if (prop && this.options.filterIdField) {
         const fid = prop[this.options.filterIdField];
         const adapter = this._getWebMapLayer(adapterId);
-        if (adapter.select) {
+        if (adapter && adapter.select) {
           adapter.select([[this.options.filterIdField, 'eq', Number(fid)]]);
           // urlParams.set('id', String(fid));
         }
