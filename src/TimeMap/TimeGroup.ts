@@ -106,11 +106,7 @@ export class TimeLayersGroup {
   private hideNotCurrentLayers() {
     Object.entries(this._timeLayers).forEach(([id, layers]) => {
       if (id !== this.currentLayerId) {
-        layers.forEach(x => {
-          if (!this.webMap.isBaseLayer(x) && x.id) {
-            this._hideLayer(x.id);
-          }
-        });
+        this._hideLayer(id);
       }
     });
   }
@@ -298,7 +294,9 @@ export class TimeLayersGroup {
     if (status) {
       this._showLayer(id);
     } else {
-      this._forEachTimeLayer(id, l => this.webMap.removeLayer(l));
+      this._forEachTimeLayer(id, l => {
+        this.webMap.removeLayer(l);
+      });
     }
   }
 
