@@ -28,6 +28,8 @@ export class TimeLayersGroup {
   name: string;
   currentLayerId!: string;
   opacity = 0.8;
+
+  private _visible = true;
   private _popup?: Popup;
   private _timeLayers: { [layerId: string]: TimeLayer[] } = {};
   private _layersLoaded: { [layerId: string]: boolean } = {};
@@ -42,6 +44,20 @@ export class TimeLayersGroup {
     this.name = this.options.name;
     webMap.mapAdapter.emitter.on('data-loaded', data => this._onData(data));
     webMap.mapAdapter.emitter.on('data-error', data => this._onData(data));
+  }
+
+  hide() {
+    if (this._visible) {
+      Object.keys(this._timeLayers).forEach(x => this._hideLayer(x));
+      this._visible = false;
+    }
+  }
+
+  show() {
+    if (!this._visible) {
+      this._visible = true;
+      this._showLayer(this.currentLayerId);
+    }
   }
 
   updateLayer(layerId: string) {
@@ -253,12 +269,16 @@ export class TimeLayersGroup {
       if (!this.options.manualOpacity) {
         this.showOnlyCurrentLayer();
       }
-      for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
-        const event = this._onDataLoadEvents[fry];
-        event();
-      }
-      this._onDataLoadEvents = [];
+      this._executeDataLoadEvents();
     }
+  }
+
+  private _executeDataLoadEvents() {
+    for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
+      const event = this._onDataLoadEvents[fry];
+      event();
+    }
+    this._onDataLoadEvents = [];
   }
 
   private async _addLayer(url: string, id: string): Promise<TimeLayer[]> {
@@ -305,19 +325,26 @@ export class TimeLayersGroup {
   }
 
   private _showLayer(id: string): Promise<any> {
-    const toggle = () => {
-      this._forEachTimeLayer(id, l => this.webMap.toggleLayer(l, true));
-    };
+    if (this._visible) {
+      const toggle = () => {
+        this._forEachTimeLayer(id, l => this.webMap.toggleLayer(l, true));
+      };
 
-    const exist = this._getWebMapLayer(id);
-    if (!exist) {
-      const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
-      return this._addLayer(url, id).then(() => {
-        return toggle();
-      });
-    } else {
-      return Promise.resolve(toggle());
+      const exist = this._getWebMapLayer(id);
+      if (!exist) {
+        const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
+        return this._addLayer(url, id).then(() => {
+          return toggle();
+        });
+      } else {
+        return Promise.resolve(toggle());
+      }
     }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(this._executeDataLoadEvents());
+      }, 0);
+    });
   }
 
   private _fitToFeatures(features: MapboxGeoJSONFeature[]) {
