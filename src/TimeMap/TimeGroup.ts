@@ -19,6 +19,7 @@ export interface TimeLayersGroupOptions {
   baseUrl: string;
   filterIdField?: string;
   manualOpacity?: boolean;
+  opacity?: number;
   getFillColor: (...args: any[]) => any;
   createPopupContent: (props: any) => HTMLElement;
   addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
@@ -42,6 +43,9 @@ export class TimeLayersGroup {
 
   constructor(private webMap: WebMap<Map, TLayer>, private options: TimeLayersGroupOptions) {
     this.name = this.options.name;
+    if (options.opacity !== undefined) {
+      this.opacity = options.opacity;
+    }
     webMap.mapAdapter.emitter.on('data-loaded', data => this._onData(data));
     webMap.mapAdapter.emitter.on('data-error', data => this._onData(data));
   }

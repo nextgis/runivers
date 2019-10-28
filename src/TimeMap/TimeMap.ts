@@ -46,7 +46,7 @@ export class TimeMap {
     const promises = this._timeLayersGroups.map(x => {
       return new Promise((resolve, reject) => {
         x.pushDataLoadEvent(resolve);
-      }).then(x => console.log(x));
+      });
     });
     this._onGroupsLoadEvents[id] = event;
     Promise.all(promises).then(() => {
