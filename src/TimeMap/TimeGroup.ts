@@ -100,24 +100,30 @@ export class TimeLayersGroup {
     this.hideNotCurrentLayers();
   }
 
-  async switchLayer(fromId: string, toId: string) {
-    if (fromId) {
-      urlParams.remove('id');
-    }
-    this._removePopup();
-    this._cleanDataLoadEvents();
-    if (toId && fromId !== toId) {
-      await this._showLayer(toId);
-      this._addLayerListeners(toId);
-      // do not hide unloaded layer if it first
-      if (fromId) {
-        this._removeLayerListeners(fromId);
-        this._setLayerOpacity(toId, 0);
+  switchLayer(fromId: string, toId: string) {
+    // if (fromId) {
+    //   urlParams.remove('id');
+    // }
+    const promise = new Promise((resolve, reject) => {
+      this._removePopup();
+      this._cleanDataLoadEvents();
+      if (toId && fromId !== toId) {
+        this.pushDataLoadEvent(resolve);
+        this._showLayer(toId)
+          .then(() => {
+            this._addLayerListeners(toId);
+            // do not hide unloaded layer if it first
+            if (fromId) {
+              this._removeLayerListeners(fromId);
+              this._setLayerOpacity(toId, 0);
+            }
+          })
+          .catch(reject);
+      } else {
+        resolve();
       }
-    }
-    return new Promise((resolve, reject) => {
-      this.pushDataLoadEvent(resolve);
-    }).then(() => this.currentLayerId);
+    });
+    return promise.then(() => toId);
   }
 
   private _cleanDataLoadEvents() {

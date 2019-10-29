@@ -1,19 +1,30 @@
 import { Map } from 'mapbox-gl';
 
+import StrictEventEmitter from 'strict-event-emitter-types';
+import { EventEmitter } from 'events';
+
 import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
 
 import { TimeLayersGroupOptions, TimeLayersGroup } from './TimeGroup';
+import { LayerIdRecord } from '../interfaces';
 
 type TLayer = string[];
 export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 
 let EVENTS_IDS = 0;
 
+interface Events {
+  'loading:start': LayerIdRecord;
+  'loading:finish': LayerIdRecord;
+}
+
 export interface TimeMapOptions {
   timeLayersGroups?: TimeLayersGroupOptions[];
 }
 
 export class TimeMap {
+  emitter: StrictEventEmitter<EventEmitter, Events> = new EventEmitter();
+
   private readonly _timeLayersGroups: TimeLayersGroup[] = [];
   private _onGroupsLoadEvents: Record<number, (...args: any[]) => void> = [];
 
@@ -39,6 +50,25 @@ export class TimeMap {
       return group.updateLayer(layerId).then(() => group);
     }
     return Promise.resolve(undefined);
+  }
+
+  updateLayers(layerIdRecord: LayerIdRecord): Promise<void> {
+    const promises: Promise<any>[] = [];
+    this.emitter.emit('loading:start', layerIdRecord);
+    Object.entries(layerIdRecord).forEach(([key, value]) => {
+      const promise = this.updateLayer(value, key).then(x => {
+        return () => {
+          if (x) {
+            x.showOnlyCurrentLayer();
+          }
+        };
+      });
+      promises.push(promise);
+    });
+    return Promise.all(promises).then(groups => {
+      groups.forEach(x => x());
+      this.emitter.emit('loading:finish', layerIdRecord);
+    });
   }
 
   pushDataLoadEvent(event: (...args: any[]) => void): number {

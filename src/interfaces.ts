@@ -104,3 +104,6 @@ export interface HistoryLayerResource {
     id: number;
   };
 }
+
+export type LayerMetaRecord = { [groupName: string]: LayerMeta };
+export type LayerIdRecord = { [groupName: string]: string };
