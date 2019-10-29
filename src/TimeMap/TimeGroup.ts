@@ -105,6 +105,7 @@ export class TimeLayersGroup {
       urlParams.remove('id');
     }
     this._removePopup();
+    this._cleanDataLoadEvents();
     if (toId && fromId !== toId) {
       await this._showLayer(toId);
       this._addLayerListeners(toId);
@@ -117,6 +118,10 @@ export class TimeLayersGroup {
     return new Promise((resolve, reject) => {
       this.pushDataLoadEvent(resolve);
     }).then(() => this.currentLayerId);
+  }
+
+  private _cleanDataLoadEvents() {
+    this._onDataLoadEvents = [];
   }
 
   private makeOpacity() {
