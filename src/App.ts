@@ -189,17 +189,16 @@ export class App {
   }
 
   private _addTimeLayersGroups(config: HistoryLayerResource[]) {
-    config.forEach(x => {
-      const options: TimeLayersGroupOptions = {
-        name: '',
-        baseUrl: this.options.baseUrl,
-        filterIdField: 'fid',
-        getFillColor: (opt: GetFillColorOpt) => this._getFillColor(opt),
-        createPopupContent: (props: HistoryLayerProperties) => this._createPopupContent(props),
-        addLayers: (url, id) => this._createTimeLayers(url, id)
-      };
-      this.timeMap.addTimeGroup(options);
-    });
+    // config.forEach(x => {});
+    const options: TimeLayersGroupOptions = {
+      name: '',
+      baseUrl: this.options.baseUrl,
+      filterIdField: 'fid',
+      getFillColor: (opt: GetFillColorOpt) => this._getFillColor(opt),
+      createPopupContent: (props: HistoryLayerProperties) => this._createPopupContent(props),
+      addLayers: (url, id) => this._createTimeLayers(url, id)
+    };
+    this.timeMap.addTimeGroup(options);
   }
 
   private _getTimeStop(year: number): string {
