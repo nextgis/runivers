@@ -20,6 +20,7 @@ export interface TimeLayersGroupOptions {
   filterIdField?: string;
   manualOpacity?: boolean;
   opacity?: number;
+  setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
   getFillColor: (...args: any[]) => any;
   createPopupContent: (props: any) => HTMLElement;
   addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
@@ -347,7 +348,10 @@ export class TimeLayersGroup {
 
       const exist = this._getWebMapLayer(id);
       if (!exist) {
-        const url = this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
+        const url = this.options.setUrl
+          ? this.options.setUrl({ baseUrl: this.options.baseUrl, resourceId: id })
+          : this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
+
         return this._addLayer(url, id).then(() => {
           return toggle();
         });
