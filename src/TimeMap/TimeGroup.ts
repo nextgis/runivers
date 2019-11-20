@@ -167,9 +167,7 @@ export class TimeLayersGroup {
   private _isCurrentDataLayer(layerId: string): boolean {
     const currentLayers = this._timeLayers[this.currentLayerId];
     return currentLayers
-      ? currentLayers.some(x => {
-          return x.layer && x.layer.some(y => y === layerId);
-        })
+      ? currentLayers.some(x => x.layer && x.layer.some(y => y === layerId))
       : false;
   }
 
@@ -191,7 +189,10 @@ export class TimeLayersGroup {
     // Find all features within a bounding box around a point
     if (map) {
       const features = map.queryRenderedFeatures(
-        [[point.x - width / 2, point.y - height / 2], [point.x + width / 2, point.y + height / 2]],
+        [
+          [point.x - width / 2, point.y - height / 2],
+          [point.x + width / 2, point.y + height / 2]
+        ],
         { layers: [layerId] }
       );
       const feature = features[0];
