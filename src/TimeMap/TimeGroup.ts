@@ -167,17 +167,39 @@ export class TimeLayersGroup {
   private _isCurrentDataLayer(layerId: string): boolean {
     const currentLayers = this._timeLayers[this.currentLayerId];
     return currentLayers
-      ? currentLayers.some(x => x.layer && x.layer.some(y => y === layerId))
+      ? currentLayers.some(x => {
+          return (
+            x.id === layerId ||
+            x.options.name === layerId ||
+            (x.layer && x.layer.some(y => y === layerId))
+          );
+        })
       : false;
   }
 
+  private _getLayerIdFromSource(target: string) {
+    if (this._timeLayers[target]) {
+      return target;
+    }
+    for (const t in this._timeLayers) {
+      const timeLayerList = this._timeLayers[t];
+      const adapter = timeLayerList.find(x => x.source && x.source === target);
+      if (adapter) {
+        return adapter.id;
+      }
+    }
+  }
+
   private _onData(data: { target: string }) {
-    const layerId = data.target;
-    const loadedYet = this._layersLoaded[layerId];
-    const isCurrentLayer = this._isCurrentDataLayer(data.target);
-    if (!loadedYet && this._isHistoryLayer(data.target) && isCurrentLayer) {
-      this._layersLoaded[layerId] = true;
-      this._onSourceIsLoaded();
+    const layerId = this._getLayerIdFromSource(data.target);
+    if (layerId) {
+      const loadedYet = this._layersLoaded[layerId];
+      const isCurrentLayer = this._isCurrentDataLayer(layerId);
+      const isHistoryLayer = this._isHistoryLayer(layerId);
+      if (!loadedYet && isHistoryLayer && isCurrentLayer) {
+        this._layersLoaded[layerId] = true;
+        this._onSourceIsLoaded();
+      }
     }
   }
 
@@ -263,7 +285,13 @@ export class TimeLayersGroup {
   private _isAllDataLayerLoaded(layer: string) {
     const timeLayer = this._timeLayers[layer];
     if (timeLayer) {
-      return timeLayer.every(x => x.layer && x.layer.some(y => this._layersLoaded[y]));
+      return timeLayer.every(x => {
+        return (
+          x.id === layer ||
+          x.options.name === layer ||
+          (x.layer && x.layer.some(y => this._layersLoaded[y]))
+        );
+      });
     }
   }
 
