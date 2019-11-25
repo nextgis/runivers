@@ -12,6 +12,7 @@ type TLayer = string[];
 export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 
 let EVENTS_IDS = 0;
+let ORDER = 0;
 
 interface Events {
   'loading:start': LayerIdRecord;
@@ -67,6 +68,7 @@ export class TimeMap {
     });
     return Promise.all(promises).then(groups => {
       groups.forEach(x => x());
+      this._reOrderGroupsLayers();
       this.emitter.emit('loading:finish', layerIdRecord);
     });
   }
@@ -86,5 +88,22 @@ export class TimeMap {
       }
     });
     return id;
+  }
+
+  private _reOrderGroupsLayers() {
+    this._timeLayersGroups.forEach(x => {
+      x.forEachTimeLayer(x.currentLayerId, y => {
+        // Fix to avoid moving the non-renewable layer down
+        y.options.order = 1 + ORDER++ * 0.1;
+        if (y.layer) {
+          y.layer.forEach(z => {
+            const map = this.webMap.mapAdapter.map;
+            if (map) {
+              map.moveLayer(z);
+            }
+          });
+        }
+      });
+    });
   }
 }

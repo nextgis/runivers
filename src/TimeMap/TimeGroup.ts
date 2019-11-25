@@ -127,6 +127,13 @@ export class TimeLayersGroup {
     return promise.then(() => toId);
   }
 
+  forEachTimeLayer(layerId: string, fun: (timeLayer: TimeLayer) => void) {
+    const timeLayer = this._timeLayers[layerId];
+    if (timeLayer) {
+      timeLayer.forEach(x => fun(x));
+    }
+  }
+
   private _cleanDataLoadEvents() {
     this._onDataLoadEvents = [];
   }
@@ -152,7 +159,7 @@ export class TimeLayersGroup {
   }
 
   private _setLayerOpacity(id: string, value: number) {
-    this._forEachTimeLayer(id, dataLayerId => {
+    this.forEachTimeLayer(id, dataLayerId => {
       return this.webMap.setLayerOpacity(dataLayerId, value);
     });
   }
@@ -295,15 +302,8 @@ export class TimeLayersGroup {
     }
   }
 
-  private _forEachTimeLayer(layerId: string, fun: (timeLayer: TimeLayer) => void) {
-    const timeLayer = this._timeLayers[layerId];
-    if (timeLayer) {
-      timeLayer.forEach(x => fun(x));
-    }
-  }
-
   private _forEachDataLayer(layerId: string, fun: (dataLayerId: string) => void) {
-    this._forEachTimeLayer(
+    this.forEachTimeLayer(
       layerId,
       timeLayer => timeLayer.layer && timeLayer.layer.forEach(y => fun(y))
     );
@@ -359,7 +359,7 @@ export class TimeLayersGroup {
     if (status) {
       this._showLayer(id);
     } else {
-      this._forEachTimeLayer(id, l => {
+      this.forEachTimeLayer(id, l => {
         this.webMap.removeLayer(l);
       });
     }
@@ -372,7 +372,7 @@ export class TimeLayersGroup {
   private _showLayer(id: string): Promise<any> {
     if (this._visible) {
       const toggle = () => {
-        this._forEachTimeLayer(id, l => this.webMap.toggleLayer(l, true));
+        this.forEachTimeLayer(id, l => this.webMap.toggleLayer(l, true));
       };
 
       const exist = this._getWebMapLayer(id);
