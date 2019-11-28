@@ -68,7 +68,7 @@ export class TimeMap {
     });
     return Promise.all(promises).then(groups => {
       groups.forEach(x => x());
-      this._reOrderGroupsLayers();
+      this.reOrderGroupsLayers();
       this.emitter.emit('loading:finish', layerIdRecord);
     });
   }
@@ -90,7 +90,7 @@ export class TimeMap {
     return id;
   }
 
-  private _reOrderGroupsLayers() {
+  reOrderGroupsLayers() {
     this._timeLayersGroups.forEach(x => {
       x.forEachTimeLayer(x.currentLayerId, y => {
         // Fix to avoid moving the non-renewable layer down
