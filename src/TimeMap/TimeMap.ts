@@ -32,7 +32,7 @@ export class TimeMap {
   constructor(
     private webMap: WebMap<Map, TLayer>,
     private options: TimeMapOptions = {}
-  ) {}
+  ) { }
 
   getTimeGroup(groupName = ''): TimeLayersGroup {
     const group = this._timeLayersGroups.find(
@@ -64,7 +64,9 @@ export class TimeMap {
   updateLayers(layerIdRecord: LayerIdRecord): Promise<void> {
     const promises: Promise<any>[] = [];
     this.emitter.emit('loading:start', layerIdRecord);
-    Object.entries(layerIdRecord).forEach(([key, value]) => {
+    const layerIdRecordList = Object.keys(layerIdRecord);
+    layerIdRecordList.forEach((key) => {
+      const value = layerIdRecord[key];
       const promise = this.updateLayer(value, key).then(x => {
         return () => {
           if (x) {
@@ -75,6 +77,11 @@ export class TimeMap {
       promises.push(promise);
     });
     return Promise.all(promises).then(groups => {
+      this._timeLayersGroups.forEach(x => {
+        if (!layerIdRecordList.includes(x.name)) {
+          x.hideLayer(x.currentLayerId);
+        }
+      })
       groups.forEach(x => x());
       this.reOrderGroupsLayers();
       this.emitter.emit('loading:finish', layerIdRecord);
