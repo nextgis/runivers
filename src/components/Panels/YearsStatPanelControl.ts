@@ -129,7 +129,9 @@ export class YearsStatPanelControl extends Panel {
       const buttonWrap = document.createElement('div');
 
       buttonWrap.className = 'button-wrap';
-      buttonWrap.appendChild(this.createControlButton(() => this.openDialog({ template })));
+      buttonWrap.appendChild(
+        this.createControlButton(() => this.openDialog({ template }))
+      );
 
       element.appendChild(buttonWrap);
     }
@@ -155,7 +157,8 @@ export class YearsStatPanelControl extends Panel {
         //   (previous ? 'back' : 'forward') +
         //   (isActive ? '' : ' hiden');
         flow.className =
-          (previous ? `panel_slider prev` : `panel_slider next`) + (isActive ? '' : ' hidden');
+          (previous ? `panel_slider prev` : `panel_slider next`) +
+          (isActive ? '' : ' hidden');
         if (isActive) {
           flow.onclick = e => {
             e.preventDefault();
@@ -188,7 +191,8 @@ export class YearsStatPanelControl extends Panel {
 
   private _createGainBlock(count: number, isLost?: boolean) {
     const element = document.createElement('div');
-    element.className = 'panel-body__yearstat--gain ' + (isLost ? 'lost' : 'gained');
+    element.className =
+      'panel-body__yearstat--gain ' + (isLost ? 'lost' : 'gained');
     element.innerHTML = (isLost ? '-' : '+') + formatArea(count);
     return element;
   }

@@ -11,7 +11,8 @@ export class Toggler {
       toggleAction?: (status: boolean) => void;
     }
   ) {
-    this._status = this.options.status !== undefined ? this.options.status : this._status;
+    this._status =
+      this.options.status !== undefined ? this.options.status : this._status;
     this._container = this._createContainer();
     this._updateContainer();
   }

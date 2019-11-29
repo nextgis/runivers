@@ -16,7 +16,10 @@ import proj4 from 'proj4';
 import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
 
 import { formatArea, onlyUnique, copyText } from './utils/utils';
-import { getAboutProjectLink, getAffiliatedLinks } from './components/Links/Links';
+import {
+  getAboutProjectLink,
+  getAffiliatedLinks
+} from './components/Links/Links';
 
 import {
   AppOptions,
@@ -195,7 +198,8 @@ export class App {
       baseUrl: this.options.baseUrl,
       filterIdField: 'fid',
       getFillColor: (opt: GetFillColorOpt) => this._getFillColor(opt),
-      createPopupContent: (props: HistoryLayerProperties) => this._createPopupContent(props),
+      createPopupContent: (props: HistoryLayerProperties) =>
+        this._createPopupContent(props),
       addLayers: (url, id) => this._createTimeLayers(url, id)
     };
     this.timeMap.addTimeGroup(options);
@@ -207,7 +211,11 @@ export class App {
   }
 
   private _createSlider() {
-    const stepReady = (year: number, callback: (value: number) => void, previous: boolean) => {
+    const stepReady = (
+      year: number,
+      callback: (value: number) => void,
+      previous: boolean
+    ) => {
       this._stepReady(year, callback, previous);
     };
     const slider = new SliderControl({
@@ -316,7 +324,11 @@ export class App {
     return yearStat;
   }
 
-  private _stepReady(year: number, callback: (year: number) => void, previous?: boolean) {
+  private _stepReady(
+    year: number,
+    callback: (year: number) => void,
+    previous?: boolean
+  ) {
     let nextLayer = this._getLayerByYear(year, previous);
     if (!nextLayer) {
       nextLayer = this._getNextLayer(year, previous);
@@ -344,7 +356,10 @@ export class App {
     }
   }
 
-  private _createTimeLayers(url: string, id: string): Array<Promise<TimeLayer>> {
+  private _createTimeLayers(
+    url: string,
+    id: string
+  ): Array<Promise<TimeLayer>> {
     const paint = {
       'fill-opacity': this.timeMap.getTimeGroup().opacity,
       'fill-opacity-transition': {
@@ -354,7 +369,10 @@ export class App {
       // 'fill-outline-color': '#8b0000', // darkred
       'fill-color': this._getFillColor()
     };
-    const selectedPaint = { ...paint, 'fill-color': this._getFillColor({ darken: 0.5 }) };
+    const selectedPaint = {
+      ...paint,
+      'fill-color': this._getFillColor({ darken: 0.5 })
+    };
     const paintLine = {
       'line-opacity': this.timeMap.getTimeGroup().opacity,
       'line-opacity-transition': {
@@ -388,26 +406,33 @@ export class App {
 
   // TODO: Mapboxgl specific method
   private _addPoint(id: string) {
-    getPointGeojson(id).then((data: FeatureCollection<MultiPoint, PointProperties>) => {
-      const _many =
-        data.features.length > 1 && data.features.map(x => x.properties.numb).filter(onlyUnique);
-      const many = _many && _many.length > 1;
-      data.features.forEach((marker: Feature<Point | MultiPoint, PointProperties>, i) => {
-        const type = marker && marker.geometry && marker.geometry.type;
-        if (type === 'MultiPoint') {
-          const coordinates = marker.geometry.coordinates as Array<[number, number]>;
-          coordinates.forEach(x => {
-            this._addMarkerToMap(x, marker.properties, many);
-          });
-        } else if (type === 'Point') {
-          this._addMarkerToMap(
-            marker.geometry.coordinates as [number, number],
-            marker.properties,
-            many
-          );
-        }
-      });
-    });
+    getPointGeojson(id).then(
+      (data: FeatureCollection<MultiPoint, PointProperties>) => {
+        const _many =
+          data.features.length > 1 &&
+          data.features.map(x => x.properties.numb).filter(onlyUnique);
+        const many = _many && _many.length > 1;
+        data.features.forEach(
+          (marker: Feature<Point | MultiPoint, PointProperties>, i) => {
+            const type = marker && marker.geometry && marker.geometry.type;
+            if (type === 'MultiPoint') {
+              const coordinates = marker.geometry.coordinates as Array<
+                [number, number]
+              >;
+              coordinates.forEach(x => {
+                this._addMarkerToMap(x, marker.properties, many);
+              });
+            } else if (type === 'Point') {
+              this._addMarkerToMap(
+                marker.geometry.coordinates as [number, number],
+                marker.properties,
+                many
+              );
+            }
+          }
+        );
+      }
+    );
   }
 
   // TODO: Mapboxgl specific method
@@ -424,14 +449,18 @@ export class App {
       if (this.controls.yearsStatPanelControl) {
         const yearStat = this.controls.yearsStatPanelControl.yearStat;
         isActive =
-          yearStat && yearStat.year === properties.year && yearStat.numb === properties.numb;
+          yearStat &&
+          yearStat.year === properties.year &&
+          yearStat.numb === properties.numb;
       }
 
       element.className = 'map-marker' + (isActive ? ' active' : ''); // use class `aсtive` for selected
 
       const elInner = document.createElement('div');
       elInner.className = 'map-marker--inner';
-      elInner.innerHTML = many ? `<div class="map-marker__label">${properties.numb}</div>` : '';
+      elInner.innerHTML = many
+        ? `<div class="map-marker__label">${properties.numb}</div>`
+        : '';
 
       element.appendChild(elInner);
 
@@ -452,7 +481,10 @@ export class App {
     }
   }
 
-  private _setMarkerActive(markerMem: AppMarkerMem, properties: PointProperties) {
+  private _setMarkerActive(
+    markerMem: AppMarkerMem,
+    properties: PointProperties
+  ) {
     const yearControl = this.controls.yearsStatPanelControl;
     if (yearControl && yearControl.yearStats) {
       const yearStat = yearControl.yearStats.find(x => {
@@ -468,7 +500,10 @@ export class App {
 
   private _updateActiveMarker(yearsStat: { year: number; numb: number }) {
     this._markers.forEach(x => {
-      if (x.properties.year === yearsStat.year && x.properties.numb === yearsStat.numb) {
+      if (
+        x.properties.year === yearsStat.year &&
+        x.properties.numb === yearsStat.numb
+      ) {
         x.element.classList.add('active');
       } else {
         x.element.classList.remove('active');
@@ -507,13 +542,21 @@ export class App {
     }
   }
 
-  private _getLayerByYear(year: number, previous?: boolean): LayerMeta | undefined {
-    const layers = this._layersConfig.filter(d => year >= d.from && year <= d.to);
+  private _getLayerByYear(
+    year: number,
+    previous?: boolean
+  ): LayerMeta | undefined {
+    const layers = this._layersConfig.filter(
+      d => year >= d.from && year <= d.to
+    );
     // return previous ? layers[0] : layers[layers.length - 1];
     return layers[layers.length - 1];
   }
 
-  private _getLayerIdByYear(year: number, previous?: boolean): string | undefined {
+  private _getLayerIdByYear(
+    year: number,
+    previous?: boolean
+  ): string | undefined {
     const filteredLayer = this._getLayerByYear(year, previous);
     if (filteredLayer) {
       return filteredLayer && String(filteredLayer.id);
@@ -532,13 +575,20 @@ export class App {
   }
 
   // get next or previous territory changed layer
-  private _getNextLayer(year: number, previous?: boolean): LayerMeta | undefined {
+  private _getNextLayer(
+    year: number,
+    previous?: boolean
+  ): LayerMeta | undefined {
     const filteredLayer = this._getLayerByYear(year);
     if (filteredLayer) {
-      if (String(filteredLayer.id) === this.timeMap.getTimeGroup().currentLayerId) {
+      if (
+        String(filteredLayer.id) === this.timeMap.getTimeGroup().currentLayerId
+      ) {
         const index = this._layersConfig.indexOf(filteredLayer);
         if (index !== -1) {
-          const nextLayer = this._layersConfig[previous ? index - 1 : index + 1];
+          const nextLayer = this._layersConfig[
+            previous ? index - 1 : index + 1
+          ];
           return nextLayer;
         }
       } else {
@@ -564,7 +614,8 @@ export class App {
       const _match = name.match('from_(\\d{3,4})_to_(\\d{3,4}).*$');
       if (_match) {
         const [from, to] = _match.slice(1).map(x => Number(x));
-        const allowedYear = this.options.fromYear && from < this.options.fromYear ? false : true;
+        const allowedYear =
+          this.options.fromYear && from < this.options.fromYear ? false : true;
         if (allowedYear) {
           this._minYear = (this._minYear > from ? from : this._minYear) || from;
           this._maxYear = (this._maxYear < to ? to : this._maxYear) || to;
@@ -587,7 +638,10 @@ export class App {
   }
 
   private _createPopupContent(props: HistoryLayerProperties): HTMLElement {
-    const fields: Array<{ name?: string; field: keyof HistoryLayerProperties }> = [
+    const fields: Array<{
+      name?: string;
+      field: keyof HistoryLayerProperties;
+    }> = [
       // { name: 'Fid', field: 'fid' }
       // { field: 'name' }
       // { name: 'Наименование территории', field: 'name' },
@@ -644,7 +698,9 @@ export class App {
         propBlock.className = 'popup__propertyblock';
         propBlock.innerHTML = '';
         if (prop) {
-          const content = x.getHtml ? x.getHtml(prop, _props) : this._createPropElement(prop, '');
+          const content = x.getHtml
+            ? x.getHtml(prop, _props)
+            : this._createPropElement(prop, '');
           block.appendChild(content);
         }
       }
@@ -653,7 +709,9 @@ export class App {
     if (props.status) {
       block.innerHTML += this._createPropStatusHtml(props);
     }
-    const featureLink = block.getElementsByClassName('feature-link')[0] as HTMLElement;
+    const featureLink = block.getElementsByClassName(
+      'feature-link'
+    )[0] as HTMLElement;
     if (featureLink) {
       featureLink.addEventListener('click', () => {
         let url = document.location.origin + document.location.pathname;
@@ -696,7 +754,10 @@ export class App {
     return prince;
   }
 
-  private _addPrincipalitiesFields(fields: PopupContentField[], props: Record<string, any>) {
+  private _addPrincipalitiesFields(
+    fields: PopupContentField[],
+    props: Record<string, any>
+  ) {
     const addProp = (value: any, opt: PopupContentField) => {
       fields.push({ name: opt.field, ...opt });
       props[opt.field] = value;
@@ -710,7 +771,10 @@ export class App {
       }
       const prince01 = this._findPrincipalities01(fid, this.currentYear);
       if (prince01) {
-        const getHtml = (prop: keyof Principalities01, props: Principalities01) => {
+        const getHtml = (
+          prop: keyof Principalities01,
+          props: Principalities01
+        ) => {
           return this._createPropElement(
             `<a href="${props.desc_link}" target="_blank">${prop}</a>`,
             ''
@@ -724,7 +788,8 @@ export class App {
 
   private _createPropStatusHtml(props: HistoryLayerProperties) {
     let str = '';
-    const alias = this.options.statusAliases && this.options.statusAliases[props.status];
+    const alias =
+      this.options.statusAliases && this.options.statusAliases[props.status];
     if (alias) {
       str += `
               <div class="popup__property--value status"><p>${alias}</p></div>
@@ -774,9 +839,12 @@ export class App {
 
   private _addEventsListeners() {
     if (this.controls.yearsStatPanelControl) {
-      this.controls.yearsStatPanelControl.emitter.on('update', ({ yearStat }) => {
-        this._updateActiveMarker(yearStat);
-      });
+      this.controls.yearsStatPanelControl.emitter.on(
+        'update',
+        ({ yearStat }) => {
+          this._updateActiveMarker(yearStat);
+        }
+      );
     }
   }
 }

@@ -10,7 +10,11 @@ function _start(f: (...args: any[]) => void, name: string, timer: number) {
   _execute[name] = window.setTimeout(f, timer);
 }
 
-export function doNotRepeat(name: string, func: (...args: any[]) => void, timer: number) {
+export function doNotRepeat(
+  name: string,
+  func: (...args: any[]) => void,
+  timer: number
+) {
   timer = timer || 100;
   _stop(name);
   _start(func, name, timer);

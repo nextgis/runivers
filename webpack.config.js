@@ -1,3 +1,4 @@
+const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -37,6 +38,8 @@ module.exports = (env, argv) => {
         {
           test: /\.ts$/,
           enforce: 'pre',
+          exclude: /node_modules/,
+          include: [path.resolve(__dirname, 'src')],
           use: [
             {
               loader: 'eslint-loader',

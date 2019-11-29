@@ -29,10 +29,15 @@ export class TimeMap {
   private readonly _timeLayersGroups: TimeLayersGroup[] = [];
   private _onGroupsLoadEvents: Record<number, (...args: any[]) => void> = [];
 
-  constructor(private webMap: WebMap<Map, TLayer>, private options: TimeMapOptions = {}) {}
+  constructor(
+    private webMap: WebMap<Map, TLayer>,
+    private options: TimeMapOptions = {}
+  ) {}
 
   getTimeGroup(groupName = ''): TimeLayersGroup {
-    const group = this._timeLayersGroups.find(x => x.name === groupName) as TimeLayersGroup;
+    const group = this._timeLayersGroups.find(
+      x => x.name === groupName
+    ) as TimeLayersGroup;
     return group;
   }
 
@@ -45,7 +50,10 @@ export class TimeMap {
     this._timeLayersGroups.push(timeLayersGroup);
   }
 
-  updateLayer(layerId: string, groupName = ''): Promise<TimeLayersGroup | undefined> {
+  updateLayer(
+    layerId: string,
+    groupName = ''
+  ): Promise<TimeLayersGroup | undefined> {
     const group = this.getTimeGroup(groupName);
     if (group) {
       return group.updateLayer(layerId).then(() => group);

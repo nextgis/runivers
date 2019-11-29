@@ -36,7 +36,9 @@ export class Controls {
 
   private _mobileTogglePanels: Panel[] = [];
   private _openPanels: Panel[] = [];
-  private _eventBindings: { [name: string]: (...args: any[]) => void } = { onMapClick: () => null };
+  private _eventBindings: { [name: string]: (...args: any[]) => void } = {
+    onMapClick: () => null
+  };
 
   private _mobSizeConst: ScreenSize = {
     height: 700,
@@ -86,14 +88,20 @@ export class Controls {
   }
 
   private async initControls() {
-    this.periodsPanelControl = new PeriodPanelControl({ webMap: this.app.webMap });
-    this.yearsStatPanelControl = new YearsStatPanelControl({ webMap: this.app.webMap });
+    this.periodsPanelControl = new PeriodPanelControl({
+      webMap: this.app.webMap
+    });
+    this.yearsStatPanelControl = new YearsStatPanelControl({
+      webMap: this.app.webMap
+    });
 
     this.legendPanel = new LegendPanelControl({
       // colors: this.options.lineColor,
       colors: this.app.options.lineColorLegend
     });
-    this.legendPanel.emitter.on('change', colors => this.app.updateLayersColor());
+    this.legendPanel.emitter.on('change', colors =>
+      this.app.updateLayersColor()
+    );
     this._socialLinksPanel = getSocialLinksPanel();
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
@@ -112,8 +120,16 @@ export class Controls {
     this._mobileTogglePanels.forEach(x => x.show());
   }
 
-  private async _addControl(control: any, position: ControlPositions, options?: any) {
-    const addedControl = await this.app.webMap.addControl(control, position, options);
+  private async _addControl(
+    control: any,
+    position: ControlPositions,
+    options?: any
+  ) {
+    const addedControl = await this.app.webMap.addControl(
+      control,
+      position,
+      options
+    );
     if (addedControl) {
       this._installedControls.push(addedControl);
     }
@@ -154,7 +170,9 @@ export class Controls {
   private _manualControlMove() {
     const container = this.app.webMap.getContainer();
     if (container) {
-      const attrContainer = container.querySelector('.mapboxgl-ctrl.mapboxgl-ctrl-attrib');
+      const attrContainer = container.querySelector(
+        '.mapboxgl-ctrl.mapboxgl-ctrl-attrib'
+      );
       if (attrContainer && attrContainer.parentNode) {
         attrContainer.parentNode.removeChild(attrContainer);
         container.appendChild(attrContainer);
@@ -189,7 +207,10 @@ export class Controls {
     );
     // leave labels for minimum and maximum
     // no check for second and second last signature, admit that they are always
-    hideElements = hideElements.concat([labelNodes[0 + 1], labelNodes[labelNodes.length - 2]]);
+    hideElements = hideElements.concat([
+      labelNodes[0 + 1],
+      labelNodes[labelNodes.length - 2]
+    ]);
 
     if (window.innerWidth <= this._mobSizeConst.width) {
       hideElements.forEach(x => {
@@ -266,6 +287,9 @@ export class Controls {
   }
 
   private _removeMapClickEvent() {
-    this.app.webMap.emitter.removeListener('click', this._eventBindings.onMapClick);
+    this.app.webMap.emitter.removeListener(
+      'click',
+      this._eventBindings.onMapClick
+    );
   }
 }

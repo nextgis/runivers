@@ -8,7 +8,11 @@ export function formatArea(area: number) {
   return `${numberWithSpaces(Math.round(area))} км²`;
 }
 
-export function onlyUnique<T = any>(value: T, index: number, self: T[]): boolean {
+export function onlyUnique<T = any>(
+  value: T,
+  index: number,
+  self: T[]
+): boolean {
   return self.indexOf(value) === index;
 }
 

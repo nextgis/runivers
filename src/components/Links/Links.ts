@@ -31,7 +31,8 @@ function getBaseLayerToggler(controls: Controls) {
 function openDialog(options: DialogAdapterOptions) {
   const dialog = new Dialog(options);
 
-  const isSame = options && options.template && dialog.options.template === options.template;
+  const isSame =
+    options && options.template && dialog.options.template === options.template;
   if (!isSame) {
     dialog.updateContent(options.template);
   }
@@ -161,14 +162,20 @@ function getAboutBlock(block: string) {
 }
 
 export function openAboutDialog(app: App, language = 'ru') {
-  const attrs = app.webMap.getAttributions({ onlyVisible: false, onlyBasemap: true });
+  const attrs = app.webMap.getAttributions({
+    onlyVisible: false,
+    onlyBasemap: true
+  });
   const templates: Record<string, string> = {
     ru: aboutShortRu,
     en: aboutShortEn
   };
   let template = templates[language];
   if (attrs.length) {
-    let str = language === 'ru' ? 'Использована картографическая подложка: ' : 'The basemap used: ';
+    let str =
+      language === 'ru'
+        ? 'Использована картографическая подложка: '
+        : 'The basemap used: ';
     attrs.forEach(x => {
       str += x;
     });
@@ -216,20 +223,27 @@ export function openSettingsDialog(app: App) {
   const settings: SliderSettings[] = [
     { name: 'animationDelay', label: 'Задержка анимации, мс', type: 'number' },
     { name: 'step', label: 'Шаг изменения года', type: 'number' },
-    { name: 'animationStep', label: 'Шаг изменения года (анимация)', type: 'number' }
+    {
+      name: 'animationStep',
+      label: 'Шаг изменения года (анимация)',
+      type: 'number'
+    }
   ];
 
   settings.forEach(x => {
     const id = x.name + '-' + Math.round(Math.random() * 10000);
     const inputBlock = document.createElement('label');
     inputBlock.className = 'settings-dialog__input-block';
-    inputBlock.innerHTML = `<div class="settings-dialog__input-block--label">${x.label}: </div>
+    inputBlock.innerHTML = `<div class="settings-dialog__input-block--label">${
+      x.label
+    }: </div>
       <input class="${id}" class=type=${x.type} value=${s.options[x.name]}>
       </input>
     `;
     const input = inputBlock.getElementsByClassName(id)[0] as HTMLInputElement;
     input.addEventListener('input', () => {
-      const value = x.type === 'number' ? parseInt(input.value, 10) : input.value;
+      const value =
+        x.type === 'number' ? parseInt(input.value, 10) : input.value;
       Object.defineProperty(s.options, x.name, { value, enumerable: true });
     });
 
@@ -237,7 +251,9 @@ export function openSettingsDialog(app: App) {
   });
 
   // editable legend
-  const legend = app.controls.legendPanel && app.controls.legendPanel.createLegendBlock(true);
+  const legend =
+    app.controls.legendPanel &&
+    app.controls.legendPanel.createLegendBlock(true);
   if (legend) {
     template.appendChild(legend);
   }
@@ -277,7 +293,9 @@ export function getAffiliatedLinks(app: App): HTMLElement {
   <a href="#" class="affiliated-logo settings__logo__min" target="_blank" title="Настройки"></a>
   `;
 
-  const settings = block.getElementsByClassName('settings__logo__min')[0] as HTMLElement;
+  const settings = block.getElementsByClassName(
+    'settings__logo__min'
+  )[0] as HTMLElement;
   if (settings) {
     settings.onclick = e => {
       e.preventDefault();
@@ -301,7 +319,8 @@ export function getHomeBtnControl(control: Controls) {
   const _control = control.app.webMap.createButtonControl({
     addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
     onClick: () =>
-      control.app.options.bounds && control.app.webMap.fitBounds(control.app.options.bounds)
+      control.app.options.bounds &&
+      control.app.webMap.fitBounds(control.app.options.bounds)
   });
 
   return _control;
@@ -310,7 +329,10 @@ export function getHomeBtnControl(control: Controls) {
 export function getTimelineButton() {
   const link = document.createElement('a');
   link.className = 'panel__toggler graph_logo';
-  link.setAttribute('href', 'https://www.runivers.ru/granitsy-rossii/charts/index.php');
+  link.setAttribute(
+    'href',
+    'https://www.runivers.ru/granitsy-rossii/charts/index.php'
+  );
   link.setAttribute('title', 'График изменения территории России');
   link.setAttribute('target', '_blank');
   return link;

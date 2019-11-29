@@ -87,7 +87,9 @@ export class PeriodPanelControl extends Panel {
     periodElement.innerHTML = `
       ${imageHtml ? imageHtml : ''}
       <div class="panel-body__period--name">${period.name}</div>
-      <div class="panel-body__period--period">${period.years_from} – ${period.years_to} гг.</div>
+      <div class="panel-body__period--period">${period.years_from} – ${
+      period.years_to
+    } гг.</div>
       <div class="panel-body__period--description">${period.description}</div>
       ${
         areaStat
@@ -103,7 +105,8 @@ export class PeriodPanelControl extends Panel {
     `;
     element.appendChild(periodElement);
 
-    const detailLink = period.detail_link && this.createRefButton(period.detail_link);
+    const detailLink =
+      period.detail_link && this.createRefButton(period.detail_link);
 
     if (detailLink) {
       element.appendChild(detailLink);

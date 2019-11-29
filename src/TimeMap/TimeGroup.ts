@@ -42,7 +42,10 @@ export class TimeLayersGroup {
     };
   } = {};
 
-  constructor(private webMap: WebMap<Map, TLayer>, private options: TimeLayersGroupOptions) {
+  constructor(
+    private webMap: WebMap<Map, TLayer>,
+    private options: TimeLayersGroupOptions
+  ) {
     this.name = this.options.name;
     if (options.opacity !== undefined) {
       this.opacity = options.opacity;
@@ -76,7 +79,11 @@ export class TimeLayersGroup {
     if (map) {
       for (const l in this._layersLoaded) {
         if (l.indexOf('-bound') !== -1) {
-          map.setPaintProperty(l, 'line-color', this.options.getFillColor({ darken: 0.5 }));
+          map.setPaintProperty(
+            l,
+            'line-color',
+            this.options.getFillColor({ darken: 0.5 })
+          );
         } else {
           map.setPaintProperty(l, 'fill-color', this.options.getFillColor());
         }
@@ -91,7 +98,10 @@ export class TimeLayersGroup {
   fitToFilter(filter: any[], sourceLayer: string, sourceId: string) {
     const map = this.webMap.mapAdapter.map;
     if (map) {
-      const features = map.querySourceFeatures(sourceId, { filter, sourceLayer });
+      const features = map.querySourceFeatures(sourceId, {
+        filter,
+        sourceLayer
+      });
       this._fitToFeatures(features);
     }
   }
@@ -143,7 +153,7 @@ export class TimeLayersGroup {
   }
 
   private hideNotCurrentLayers() {
-    Object.entries(this._timeLayers).forEach(([id, layers]) => {
+    Object.keys(this._timeLayers).forEach(id => {
       if (id !== this.currentLayerId) {
         this._hideLayer(id);
       }
@@ -155,7 +165,9 @@ export class TimeLayersGroup {
   }
 
   private _getWebMapLayer(id: string): VectorLayerAdapter {
-    return this.webMap.getLayer(this._getWebMapLayerId(id)) as VectorLayerAdapter;
+    return this.webMap.getLayer(
+      this._getWebMapLayerId(id)
+    ) as VectorLayerAdapter;
   }
 
   private _setLayerOpacity(id: string, value: number) {
@@ -210,7 +222,11 @@ export class TimeLayersGroup {
     }
   }
 
-  private _onLayerClick(e: MapMouseEvent & EventData, layerId: string, adapterId: string) {
+  private _onLayerClick(
+    e: MapMouseEvent & EventData,
+    layerId: string,
+    adapterId: string
+  ) {
     const map = this.webMap.mapAdapter.map;
     const point = e.point;
     const width = 5;
@@ -267,7 +283,8 @@ export class TimeLayersGroup {
       this._forEachDataLayer(id, layerId => {
         const layerClickBind = (ev: MapMouseEvent & EventData) =>
           this._onLayerClick(ev, layerId, id);
-        const layerMouseEnterBind = () => (map.getCanvas().style.cursor = 'pointer');
+        const layerMouseEnterBind = () =>
+          (map.getCanvas().style.cursor = 'pointer');
         const layerMouseLeaveBind = () => (map.getCanvas().style.cursor = '');
 
         map.on('click', layerId, layerClickBind);
@@ -302,7 +319,10 @@ export class TimeLayersGroup {
     }
   }
 
-  private _forEachDataLayer(layerId: string, fun: (dataLayerId: string) => void) {
+  private _forEachDataLayer(
+    layerId: string,
+    fun: (dataLayerId: string) => void
+  ) {
     this.forEachTimeLayer(
       layerId,
       timeLayer => timeLayer.layer && timeLayer.layer.forEach(y => fun(y))
@@ -378,7 +398,10 @@ export class TimeLayersGroup {
       const exist = this._getWebMapLayer(id);
       if (!exist) {
         const url = this.options.setUrl
-          ? this.options.setUrl({ baseUrl: this.options.baseUrl, resourceId: id })
+          ? this.options.setUrl({
+              baseUrl: this.options.baseUrl,
+              resourceId: id
+            })
           : this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
 
         return this._addLayer(url, id).then(() => {

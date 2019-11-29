@@ -23,7 +23,11 @@ export interface SliderOptions {
   playerControl?: boolean;
   pips?: PipsOptions;
 
-  stepReady?(nextValue: number, callback: (value: number) => void, previous?: boolean): void;
+  stepReady?(
+    nextValue: number,
+    callback: (value: number) => void,
+    previous?: boolean
+  ): void;
   filterPips?(value: any, type: number): -1 | 0 | 1 | 2; // -1 (no pip at all) 0 (no value) 1 (large value) 2 (small value)
 }
 
@@ -55,7 +59,8 @@ export class SliderControl {
 
   constructor(public options: SliderOptions) {
     this.options = Object.assign({}, OPTIONS, options);
-    this.options.animationStep = this.options.animationStep || this.options.step;
+    this.options.animationStep =
+      this.options.animationStep || this.options.step;
   }
 
   onAdd(map: any) {
@@ -74,7 +79,9 @@ export class SliderControl {
     element.appendChild(this._createSliderContainer());
 
     const playerControl =
-      this.options.playerControl !== undefined ? this.options.playerControl : true;
+      this.options.playerControl !== undefined
+        ? this.options.playerControl
+        : true;
     if (playerControl) {
       element.appendChild(this._createNavigationContainer());
     }
@@ -215,7 +222,9 @@ export class SliderControl {
       const btn = document.createElement('button');
       btn.className = 'slider-control-steps-btn'; // + (previous ? 'previous' : 'next');
       btn.innerHTML = `
-        <img src="images/rewind_${previous ? 'previous' : 'next'}.svg" width="24" height="24"/>
+        <img src="images/rewind_${
+          previous ? 'previous' : 'next'
+        }.svg" width="24" height="24"/>
       `;
       playerSteps.appendChild(btn);
       if (previous) {
@@ -304,7 +313,9 @@ export class SliderControl {
     this._animationStatus = status;
     // this._playerControl.innerHTML = this._getPlayerControlLabel();
     if (this._playerControl) {
-      this._playerControl.classList[this._animationStatus ? 'add' : 'remove']('paused');
+      this._playerControl.classList[this._animationStatus ? 'add' : 'remove'](
+        'paused'
+      );
     }
     if (status) {
       this._startAnimation();
@@ -318,7 +329,9 @@ export class SliderControl {
       const timerStart = new Date().getTime();
       this._stepReady((step: number | boolean) => {
         const isReady =
-          typeof step !== 'boolean' && (step < this.options.max && step > this.options.min);
+          typeof step !== 'boolean' &&
+          step < this.options.max &&
+          step > this.options.min;
         if (isReady && this._animationStatus) {
           const stepDelay = new Date().getTime() - timerStart;
           let delay = this.options.animationDelay - stepDelay;
@@ -346,10 +359,15 @@ export class SliderControl {
     this._onChange(step);
   }
 
-  _stepReady(callback: (val: number | boolean) => void, previous?: boolean, stepLength?: number) {
+  _stepReady(
+    callback: (val: number | boolean) => void,
+    previous?: boolean,
+    stepLength?: number
+  ) {
     const nextValue = this._getNextValue(previous, stepLength);
     const inRange =
-      this.options.value <= this.options.max && this.options.value >= this.options.min;
+      this.options.value <= this.options.max &&
+      this.options.value >= this.options.min;
     if (nextValue && inRange) {
       this.options.value = nextValue;
       if (this.options.stepReady) {

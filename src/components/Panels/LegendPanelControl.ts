@@ -44,7 +44,10 @@ export class LegendPanelControl extends Panel {
     return element;
   }
 
-  private _createLegendItem(c: [number, string, string, number[]], interactive = false) {
+  private _createLegendItem(
+    c: [number, string, string, number[]],
+    interactive = false
+  ) {
     const block = document.createElement('div');
     block.className = 'panel-body__legend--block';
 
