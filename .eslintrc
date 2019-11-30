@@ -1,6 +1,6 @@
 {
   "extends": [
-    "./nextgisweb_frontend/packages/eslint-config/index.js"
+    "@nextgisweb/eslint-config"
   ],
   "rules": {
     "@typescript-eslint/member-ordering": 2
