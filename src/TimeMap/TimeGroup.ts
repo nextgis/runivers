@@ -206,7 +206,10 @@ export class TimeLayersGroup {
     }
     for (const t in this._timeLayers) {
       const timeLayerList = this._timeLayers[t];
-      const adapter = timeLayerList.find(x => x.source && x.source === target);
+      const adapter = timeLayerList.find(x => {
+        return (x.source && x.source === target) ||
+          (x.options && x.options.url && x.options.url === target);
+      });
       if (adapter) {
         return adapter.id;
       }
@@ -380,6 +383,7 @@ export class TimeLayersGroup {
     this._forEachDataLayer(id, l => {
       this._layersLoaded[l] = false;
     });
+    this._layersLoaded[id] = false;
     if (status) {
       this._showLayer(id);
     } else {
