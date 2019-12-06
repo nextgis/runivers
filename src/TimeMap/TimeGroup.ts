@@ -191,12 +191,12 @@ export class TimeLayersGroup {
     const currentLayers = this._timeLayers[this.currentLayerId];
     return currentLayers
       ? currentLayers.some(x => {
-        return (
-          x.id === layerId ||
-          x.options.name === layerId ||
-          (x.layer && x.layer.some(y => y === layerId))
-        );
-      })
+          return (
+            x.id === layerId ||
+            x.options.name === layerId ||
+            (x.layer && x.layer.some(y => y === layerId))
+          );
+        })
       : false;
   }
 
@@ -207,8 +207,10 @@ export class TimeLayersGroup {
     for (const t in this._timeLayers) {
       const timeLayerList = this._timeLayers[t];
       const adapter = timeLayerList.find(x => {
-        return (x.source && x.source === target) ||
-          (x.options && x.options.url && x.options.url === target);
+        return (
+          (x.source && x.source === target) ||
+          (x.options && x.options.url && x.options.url === target)
+        );
       });
       if (adapter) {
         return adapter.id;
@@ -407,9 +409,9 @@ export class TimeLayersGroup {
       if (!exist) {
         const url = this.options.setUrl
           ? this.options.setUrl({
-            baseUrl: this.options.baseUrl,
-            resourceId: id
-          })
+              baseUrl: this.options.baseUrl,
+              resourceId: id
+            })
           : this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
 
         return this._addLayer(url, id).then(() => {

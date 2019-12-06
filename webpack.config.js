@@ -29,6 +29,7 @@ module.exports = (env, argv) => {
     },
 
     resolve: {
+      modules: [path.resolve(__dirname, 'node_modules')],
       extensions: ['.js', '.ts', '.json'],
       alias
     },
@@ -62,7 +63,10 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.css$/,
-          use: [MiniCssExtractPlugin.loader, { loader: 'css-loader', options: { sourceMap: true } }]
+          use: [
+            MiniCssExtractPlugin.loader,
+            { loader: 'css-loader', options: { sourceMap: true } }
+          ]
         },
         {
           test: /\.(scss)$/,
@@ -106,7 +110,10 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
-          use: ['file-loader?name=images/[name].[ext]', 'image-webpack-loader?bypassOnDebug']
+          use: [
+            'file-loader?name=images/[name].[ext]',
+            'image-webpack-loader?bypassOnDebug'
+          ]
         },
         {
           test: /\.csv$/,
@@ -122,7 +129,10 @@ module.exports = (env, argv) => {
 
     plugins: [
       new ForkTsCheckerWebpackPlugin({ vue: true }),
-      new MiniCssExtractPlugin({ filename: '[name][hash:7].css', allChunks: true }),
+      new MiniCssExtractPlugin({
+        filename: '[name][hash:7].css',
+        allChunks: true
+      }),
       new HtmlWebpackPlugin({ template: 'src/index.html' }),
       new FaviconsWebpackPlugin('./src/img/favicon.png')
     ],

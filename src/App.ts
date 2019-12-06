@@ -10,12 +10,11 @@ import { getLayers } from './services/GetLayersService';
 import { getPoints, getPointGeojson } from './services/GetPointsService';
 
 import { EventEmitter } from 'events';
-import Color from 'color';
 
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
 
-import { formatArea, onlyUnique, copyText } from './utils/utils';
+import { onlyUnique } from './utils/utils';
 import {
   getAboutProjectLink,
   getAffiliatedLinks
@@ -27,27 +26,16 @@ import {
   PointProperties,
   PointMeta,
   AreaStat,
-  HistoryLayerProperties,
   AppMarkerMem,
   HistoryLayerResource
 } from './interfaces';
 
 import { Controls } from './Controls';
 import { TimeMap, TimeLayer } from './TimeMap/TimeMap';
-import { Principalities01 } from './data/Principalities01';
+
 import { urlParams } from './services/UrlParams';
 import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
-
-interface GetFillColorOpt {
-  lighten?: number;
-  darken?: number;
-}
-
-interface PopupContentField<T = any> {
-  name?: string;
-  field: T;
-  getHtml?: (prop: any, props: any) => HTMLElement;
-}
+import { BaseLayer } from './layers/BaseLayer';
 
 export class App {
   options: AppOptions = {
@@ -89,28 +77,26 @@ export class App {
     if (this.options.currentYear) {
       this.currentYear = this.options.currentYear;
     }
-    this.createWebMap();
-    this._buildApp();
+    this.createWebMap().then(() => {
+      this._buildApp();
+    });
   }
 
-  createWebMap() {
+  async createWebMap() {
     const options = { ...this.options };
     const webMap = new WebMap({
       mapAdapter: new MapboxglAdapter(),
       starterKits: [new QmsKit()]
     });
-
-    webMap.create(options).then(() => {
-      this.timeMap = new TimeMap(this.webMap, {});
-      webMap.addBaseLayer('QMS', {
-        id: 'baselayer',
-        qmsId: 2550,
-        visibility: true
-      });
+    await webMap.create(options);
+    this.timeMap = new TimeMap(webMap, {});
+    webMap.addBaseLayer('QMS', {
+      id: 'baselayer',
+      qmsId: 2550,
+      visibility: true
     });
-
+    this._addTimeLayersGroups();
     this.webMap = webMap;
-
     return webMap;
   }
 
@@ -160,10 +146,22 @@ export class App {
     // this.timeMap.updateLayersColor();
   }
 
+  _findYearInDateStr(dateStr: string): number | undefined {
+    const datePattern = /(\d{4})/;
+    const date = datePattern.exec(dateStr);
+    if (date) {
+      return Number(date[0]);
+    }
+  }
+
+  _getTimeStop(year: number): string {
+    const stop = this.options.timeStops.find(x => year < x.toYear);
+    return stop ? stop.name : '';
+  }
+
   private _buildApp() {
     getLayers(data => {
       this._layersConfig = this._processLayersMeta(data);
-      this._addTimeLayersGroups(data);
       if (!this.currentYear && this._minYear) {
         this.currentYear = this._minYear;
       }
@@ -191,23 +189,16 @@ export class App {
     });
   }
 
-  private _addTimeLayersGroups(config: HistoryLayerResource[]) {
-    // config.forEach(x => {});
-    const options: TimeLayersGroupOptions = {
+  private _addTimeLayersGroups(config?: HistoryLayerResource[]) {
+    const options: Partial<TimeLayersGroupOptions> = {
       name: '',
       baseUrl: this.options.baseUrl,
-      filterIdField: 'fid',
-      getFillColor: (opt: GetFillColorOpt) => this._getFillColor(opt),
-      createPopupContent: (props: HistoryLayerProperties) =>
-        this._createPopupContent(props),
-      addLayers: (url, id) => this._createTimeLayers(url, id)
+      filterIdField: 'fid'
     };
-    this.timeMap.addTimeGroup(options);
-  }
 
-  private _getTimeStop(year: number): string {
-    const stop = this.options.timeStops.find(x => year < x.toYear);
-    return stop ? stop.name : '';
+    const baseLayer = new BaseLayer(this, options);
+
+    this.timeMap.addTimeGroup(baseLayer);
   }
 
   private _createSlider() {
@@ -300,14 +291,6 @@ export class App {
     }
   }
 
-  private _findYearInDateStr(dateStr: string): number | undefined {
-    const datePattern = /(\d{4})/;
-    const date = datePattern.exec(dateStr);
-    if (date) {
-      return Number(date[0]);
-    }
-  }
-
   private _findAreaStatByYear(year: number): AreaStat | undefined {
     if (this.options.areaStat) {
       return this.options.areaStat.find(x => x.year === year);
@@ -354,54 +337,6 @@ export class App {
         callback(previous ? this._minYear : this._maxYear);
       }
     }
-  }
-
-  private _createTimeLayers(
-    url: string,
-    id: string
-  ): Array<Promise<TimeLayer>> {
-    const paint = {
-      'fill-opacity': this.timeMap.getTimeGroup().opacity,
-      'fill-opacity-transition': {
-        duration: 0
-      },
-      // 'fill-outline-color': '#8b0000', // darkred
-      // 'fill-outline-color': '#8b0000', // darkred
-      'fill-color': this._getFillColor()
-    };
-    const selectedPaint = {
-      ...paint,
-      'fill-color': this._getFillColor({ darken: 0.5 })
-    };
-    const paintLine = {
-      'line-opacity': this.timeMap.getTimeGroup().opacity,
-      'line-opacity-transition': {
-        duration: 0
-      },
-      'line-width': 1,
-      'line-color': this._getFillColor({ darken: 0.5 })
-    };
-    const sourceLayer = id;
-    const fillLayer = this.webMap.addLayer('MVT', {
-      url,
-      id,
-      paint,
-      selectedPaint,
-      selectable: true,
-      type: 'fill',
-      nativePaint: true,
-      labelField: 'name',
-      sourceLayer
-    }) as Promise<TimeLayer>;
-    const boundLayer = this.webMap.addLayer('MVT', {
-      url,
-      id: id + '-bound',
-      paint: paintLine,
-      type: 'line',
-      sourceLayer,
-      nativePaint: true
-    }) as Promise<TimeLayer>;
-    return [fillLayer, boundLayer];
   }
 
   // TODO: Mapboxgl specific method
@@ -511,37 +446,6 @@ export class App {
     });
   }
 
-  private _getFillColor(opt: GetFillColorOpt = {}) {
-    const { lineColorLegend, lineColor } = this.options;
-    if (lineColor && lineColorLegend) {
-      const meta: any = ['match', ['get', 'status']];
-      // update lineColor by legend colors
-      lineColorLegend.forEach(x => {
-        const linksToLineColors = x[3];
-        linksToLineColors.forEach(y => {
-          const _lineColor = lineColor.find(z => z[0] === y);
-          if (_lineColor) {
-            _lineColor[1] = x[1];
-          }
-        });
-      });
-
-      const colors = lineColor.reduce<Array<string | number>>((a, b) => {
-        const [param, color] = b;
-        let c = Color(color);
-        if (param) {
-          a.push(param);
-        }
-        if (opt.darken) {
-          c = c.darken(opt.darken);
-        }
-        a.push(c.hex());
-        return a;
-      }, []);
-      return meta.concat(colors);
-    }
-  }
-
   private _getLayerByYear(
     year: number,
     previous?: boolean
@@ -635,206 +539,6 @@ export class App {
       const [year] = _match.slice(1).map(x => Number(x));
       return { name, year: year as number, id: resource.id };
     });
-  }
-
-  private _createPopupContent(props: HistoryLayerProperties): HTMLElement {
-    const fields: Array<{
-      name?: string;
-      field: keyof HistoryLayerProperties;
-    }> = [
-      // { name: 'Fid', field: 'fid' }
-      // { field: 'name' }
-      // { name: 'Наименование территории', field: 'name' },
-      // { name: 'Дата возникновения', field: 'lwdate' },
-      // { name: 'Дата исчезновения', field: 'updtrl' },
-      // { name: 'Комментарий', field: 'linecomnt' },
-    ];
-    return this._createPropBlock(fields, props);
-  }
-
-  private _formatDateStr(str: string): string {
-    const formated = str
-      .split('-')
-      .reverse()
-      .join('.');
-    return formated;
-  }
-
-  private _createPropElement(html: string, addClass: string) {
-    const propBlock = document.createElement('div');
-    propBlock.className = 'popup__propertyblock';
-    propBlock.innerHTML = `<div class="popup__property--value${
-      addClass ? ' ' + addClass : ''
-    }" >${html}</div >`;
-    return propBlock;
-  }
-
-  private _createPropBlock(
-    fields: Array<PopupContentField<keyof HistoryLayerProperties>>,
-    props: HistoryLayerProperties,
-    headerField = 'name'
-  ) {
-    const block = document.createElement('div');
-    const _fields: PopupContentField[] = [...fields];
-    const _props: Record<string, any> = { ...props };
-    const timeStop = this._getTimeStop(this.currentYear);
-    if (timeStop === 'principalities') {
-      this._addPrincipalitiesFields(_fields, _props);
-    }
-
-    if (_props[headerField]) {
-      block.appendChild(
-        this._createPropElement(
-          `<h2>${_props[headerField]} <a class="feature-link">&#x1f517;</a></h2>`,
-          'prop header'
-        )
-      );
-    }
-
-    _fields.forEach(x => {
-      const prop = _props[x.field];
-      if (prop) {
-        const propBlock = document.createElement('div');
-        propBlock.className = 'popup__propertyblock';
-        propBlock.innerHTML = '';
-        if (prop) {
-          const content = x.getHtml
-            ? x.getHtml(prop, _props)
-            : this._createPropElement(prop, '');
-          block.appendChild(content);
-        }
-      }
-    });
-
-    if (props.status) {
-      block.innerHTML += this._createPropStatusHtml(props);
-    }
-    const featureLink = block.getElementsByClassName(
-      'feature-link'
-    )[0] as HTMLElement;
-    if (featureLink) {
-      featureLink.addEventListener('click', () => {
-        let url = document.location.origin + document.location.pathname;
-        url += `?year=${this.currentYear}&id=${props.fid}`;
-        this.urlParams.set('id', String(props.fid));
-        copyText(url);
-      });
-    }
-    this._addPropShowDateClickEvent(block);
-    return block;
-  }
-
-  private _findPrincipalities01(fid: number, year: number) {
-    const princes = this.options.principalities01 || [];
-
-    const prince = princes.find(x => {
-      const upperdat = this._findYearInDateStr(x.upperdat);
-      const lwdate = this._findYearInDateStr(x.lwdate);
-      if (upperdat && lwdate) {
-        return x.fid === fid && year <= upperdat && year >= lwdate;
-      }
-      return false;
-    });
-
-    return prince;
-  }
-
-  private _findPrincipalities02(fid: number, year: number) {
-    const princes = this.options.principalities02 || [];
-
-    const prince = princes.find(x => {
-      const upperdat = this._findYearInDateStr(x.years_to);
-      const lwdate = this._findYearInDateStr(x.years_from);
-      if (upperdat && lwdate) {
-        return fid === x.fid && year <= upperdat && year >= lwdate;
-      }
-      return false;
-    });
-
-    return prince;
-  }
-
-  private _addPrincipalitiesFields(
-    fields: PopupContentField[],
-    props: Record<string, any>
-  ) {
-    const addProp = (value: any, opt: PopupContentField) => {
-      fields.push({ name: opt.field, ...opt });
-      props[opt.field] = value;
-    };
-    const fid = props.fid;
-    if (fid) {
-      const prince02 = this._findPrincipalities02(fid, this.currentYear);
-      if (prince02) {
-        addProp(prince02.ruler, { field: 'ruler' });
-        // addProp(prince02.name, { field: 'name' });
-      }
-      const prince01 = this._findPrincipalities01(fid, this.currentYear);
-      if (prince01) {
-        const getHtml = (
-          prop: keyof Principalities01,
-          props: Principalities01
-        ) => {
-          return this._createPropElement(
-            `<a href="${props.desc_link}" target="_blank">${prop}</a>`,
-            ''
-          );
-        };
-        props.desc_link = prince01.desc_link;
-        addProp(prince01.name, { field: 'name_prince', getHtml });
-      }
-    }
-  }
-
-  private _createPropStatusHtml(props: HistoryLayerProperties) {
-    let str = '';
-    const alias =
-      this.options.statusAliases && this.options.statusAliases[props.status];
-    if (alias) {
-      str += `
-              <div class="popup__property--value status"><p>${alias}</p></div>
-            `;
-    }
-    if (props.status > 0 && props.status < 6) {
-      const lwdate = this._formatDateStr(props.lwdate);
-      const updtrl = this._formatDateStr(props.updtrl || props.upperdat);
-      if (lwdate && updtrl) {
-        str += `
-              <div class="popup__property--value dates">
-                <span>
-                  <span class="show-date">${lwdate}</span> -
-                  <span class="show-date">${updtrl}</span>
-                </span>
-              </div>
-            `;
-      }
-    }
-    if (props.Area) {
-      str += `
-              <div class="popup__property--value area">
-                <span>
-                  ${formatArea(props.Area / 1000000)}
-                </span>
-              </div>
-            `;
-    }
-    return str;
-  }
-
-  private _addPropShowDateClickEvent(block: HTMLElement) {
-    const yearsLinks = block.querySelectorAll('.show-date');
-    for (let fry = 0; fry < yearsLinks.length; fry++) {
-      const link = yearsLinks[fry];
-      link.addEventListener('click', () => {
-        const year = this._findYearInDateStr(link.innerHTML);
-        if (year) {
-          this.updateByYear(year);
-          if (this.slider && this.slider._slider) {
-            this.slider._slider.set(year);
-          }
-        }
-      });
-    }
   }
 
   private _addEventsListeners() {

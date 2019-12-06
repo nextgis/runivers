@@ -105,5 +105,16 @@ export interface HistoryLayerResource {
   };
 }
 
+export interface GetFillColorOpt {
+  lighten?: number;
+  darken?: number;
+}
+
+export interface PopupContentField<T = any> {
+  name?: string;
+  field: T;
+  getHtml?: (prop: any, props: any) => HTMLElement;
+}
+
 export type LayerMetaRecord = { [groupName: string]: LayerMeta };
 export type LayerIdRecord = { [groupName: string]: string };
