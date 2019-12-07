@@ -5,16 +5,12 @@ import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
 import QmsKit from '@nextgis/qms-kit';
 
 import { SliderControl } from './components/SliderControl';
-import { Marker, Map } from 'mapbox-gl';
+import { Map } from 'mapbox-gl';
 import { getLayers } from './services/GetLayersService';
-import { getPoints, getPointGeojson } from './services/GetPointsService';
+import { getPoints } from './services/GetPointsService';
 
 import { EventEmitter } from 'events';
 
-import proj4 from 'proj4';
-import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
-
-import { onlyUnique } from './utils/utils';
 import {
   getAboutProjectLink,
   getAffiliatedLinks
@@ -23,19 +19,18 @@ import {
 import {
   AppOptions,
   LayerMeta,
-  PointProperties,
   PointMeta,
   AreaStat,
-  AppMarkerMem,
   HistoryLayerResource
 } from './interfaces';
 
 import { Controls } from './Controls';
-import { TimeMap, TimeLayer } from './TimeMap/TimeMap';
+import { TimeMap } from './TimeMap/TimeMap';
 
 import { urlParams } from './services/UrlParams';
 import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 import { BaseLayer } from './layers/BaseLayer';
+import { MarkerLayer } from './layers/MarkerLayer';
 
 export class App {
   options: AppOptions = {
@@ -59,11 +54,11 @@ export class App {
   private _layersConfig: LayerMeta[] = [];
 
   private _pointsConfig: PointMeta[] = [];
-  private _markers: AppMarkerMem[] = [];
+  private _markers: MarkerLayer;
 
   constructor(options: AppOptions) {
     this.options = { ...this.options, ...options };
-
+    this._markers = new MarkerLayer(this);
     const urlYear = this.urlParams.get('year');
     if (urlYear) {
       this.options.currentYear = parseInt(urlYear, 10);
@@ -112,7 +107,7 @@ export class App {
   updateDataByYear(year: number) {
     const pointId = this._getPointIdByYear(year);
 
-    this.updatePoint(pointId);
+    this._markers.updatePoint(pointId);
 
     const areaStat = this._findAreaStatByYear(year);
 
@@ -124,22 +119,6 @@ export class App {
 
   updateLayer(layerId: string) {
     this.timeMap.updateLayer(layerId);
-  }
-
-  updatePoint(pointId?: string) {
-    if (pointId !== this.currentPointId) {
-      if (this.currentPointId) {
-        // this._removePoint(this.currentPointId);
-        this._markers.forEach(x => {
-          x.marker.remove();
-        });
-        this._markers = [];
-      }
-      this.currentPointId = pointId;
-      if (pointId) {
-        this._addPoint(pointId);
-      }
-    }
   }
 
   updateLayersColor() {
@@ -184,7 +163,7 @@ export class App {
       this._pointsConfig = this._processPointsMeta(points);
       const pointId = this._getPointIdByYear(this.currentYear);
       if (pointId) {
-        this.updatePoint(pointId);
+        this._markers.updatePoint(pointId);
       }
     });
   }
@@ -339,113 +318,6 @@ export class App {
     }
   }
 
-  // TODO: Mapboxgl specific method
-  private _addPoint(id: string) {
-    getPointGeojson(id).then(
-      (data: FeatureCollection<MultiPoint, PointProperties>) => {
-        const _many =
-          data.features.length > 1 &&
-          data.features.map(x => x.properties.numb).filter(onlyUnique);
-        const many = _many && _many.length > 1;
-        data.features.forEach(
-          (marker: Feature<Point | MultiPoint, PointProperties>, i) => {
-            const type = marker && marker.geometry && marker.geometry.type;
-            if (type === 'MultiPoint') {
-              const coordinates = marker.geometry.coordinates as Array<
-                [number, number]
-              >;
-              coordinates.forEach(x => {
-                this._addMarkerToMap(x, marker.properties, many);
-              });
-            } else if (type === 'Point') {
-              this._addMarkerToMap(
-                marker.geometry.coordinates as [number, number],
-                marker.properties,
-                many
-              );
-            }
-          }
-        );
-      }
-    );
-  }
-
-  // TODO: Mapboxgl specific method
-  private _addMarkerToMap(
-    coordinates: [number, number],
-    properties: PointProperties,
-    many: boolean
-  ) {
-    const map: Map | undefined = this.webMap.mapAdapter.map;
-    if (map) {
-      // create a DOM element for the marker
-      const element = document.createElement('div');
-      let isActive;
-      if (this.controls.yearsStatPanelControl) {
-        const yearStat = this.controls.yearsStatPanelControl.yearStat;
-        isActive =
-          yearStat &&
-          yearStat.year === properties.year &&
-          yearStat.numb === properties.numb;
-      }
-
-      element.className = 'map-marker' + (isActive ? ' active' : ''); // use class `aсtive` for selected
-
-      const elInner = document.createElement('div');
-      elInner.className = 'map-marker--inner';
-      elInner.innerHTML = many
-        ? `<div class="map-marker__label">${properties.numb}</div>`
-        : '';
-
-      element.appendChild(elInner);
-
-      const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);
-      // add marker to map
-      const marker = new Marker(element);
-      const markerMem = { marker, element, properties };
-      this._markers.push(markerMem);
-      marker.setLngLat(coordEPSG4326);
-
-      marker.addTo(map);
-
-      element.addEventListener('click', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        this._setMarkerActive(markerMem, properties);
-      });
-    }
-  }
-
-  private _setMarkerActive(
-    markerMem: AppMarkerMem,
-    properties: PointProperties
-  ) {
-    const yearControl = this.controls.yearsStatPanelControl;
-    if (yearControl && yearControl.yearStats) {
-      const yearStat = yearControl.yearStats.find(x => {
-        return x.year === properties.year && x.numb === properties.numb;
-      });
-      if (yearStat) {
-        yearControl.updateYearStat(yearStat);
-        yearControl.unBlock();
-        yearControl.show();
-      }
-    }
-  }
-
-  private _updateActiveMarker(yearsStat: { year: number; numb: number }) {
-    this._markers.forEach(x => {
-      if (
-        x.properties.year === yearsStat.year &&
-        x.properties.numb === yearsStat.numb
-      ) {
-        x.element.classList.add('active');
-      } else {
-        x.element.classList.remove('active');
-      }
-    });
-  }
-
   private _getLayerByYear(
     year: number,
     previous?: boolean
@@ -546,7 +418,7 @@ export class App {
       this.controls.yearsStatPanelControl.emitter.on(
         'update',
         ({ yearStat }) => {
-          this._updateActiveMarker(yearStat);
+          this._markers.updateActiveMarker(yearStat);
         }
       );
     }
