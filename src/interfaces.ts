@@ -116,5 +116,16 @@ export interface PopupContentField<T = any> {
   getHtml?: (prop: any, props: any) => HTMLElement;
 }
 
+export interface GroupsMeta {
+  name: string;
+  layersMeta: LayerMeta[];
+}
+
+export interface LayersGroup {
+  name: string;
+  // resourceId: number;
+  items: HistoryLayerResource[];
+}
+
 export type LayerMetaRecord = { [groupName: string]: LayerMeta };
 export type LayerIdRecord = { [groupName: string]: string };
