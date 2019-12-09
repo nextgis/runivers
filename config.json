@@ -1,6 +1,11 @@
 {
   "baseUrl": "https://gis.runivers.ru",
-  "sourceGroupId": 5344,
+  "sourceGroups": [
+    {
+      "name": "base",
+      "resourceId": 5344
+    }
+  ],
   "pointsGroupId": 6541,
   "lineColor": [
     [

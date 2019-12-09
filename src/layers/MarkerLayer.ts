@@ -5,7 +5,12 @@ import { Map, Marker } from 'mapbox-gl';
 import { onlyUnique } from '../utils/utils';
 
 import { App } from '../App';
-import { AppMarkerMem, PointProperties } from '../interfaces';
+import {
+  AppMarkerMem,
+  PointProperties,
+  PointMeta,
+  HistoryLayerResource
+} from '../interfaces';
 import { getPointGeojson } from '../services/GetPointsService';
 
 export class MarkerLayer {
@@ -16,20 +21,30 @@ export class MarkerLayer {
   opacity = 1;
   simplification = 8;
 
+  private currentPointId?: string;
   private _markers: AppMarkerMem[] = [];
+  private _pointsConfig: PointMeta[] = [];
 
   constructor(protected app: App) {}
 
+  setPoints(points: HistoryLayerResource[]) {
+    this._pointsConfig = this._processPointsMeta(points);
+    const pointId = this._getPointIdByYear(this.app.timeMap.currentYear);
+    if (pointId) {
+      this.updatePoint(pointId);
+    }
+  }
+
   updatePoint(pointId?: string) {
-    if (pointId !== this.app.currentPointId) {
-      if (this.app.currentPointId) {
+    if (pointId !== this.currentPointId) {
+      if (this.currentPointId) {
         // this._removePoint(this.currentPointId);
         this._markers.forEach(x => {
           x.marker.remove();
         });
         this._markers = [];
       }
-      this.app.currentPointId = pointId;
+      this.currentPointId = pointId;
       if (pointId) {
         this._addPoint(pointId);
       }
@@ -47,6 +62,13 @@ export class MarkerLayer {
         x.element.classList.remove('active');
       }
     });
+  }
+
+  _getPointIdByYear(year: number): string | undefined {
+    const point = this._getPointByYear(year);
+    if (point) {
+      return point && String(point.id);
+    }
   }
 
   private _addPoint(id: string) {
@@ -140,5 +162,20 @@ export class MarkerLayer {
         yearControl.show();
       }
     }
+  }
+
+  private _getPointByYear(year: number): PointMeta | undefined {
+    return this._pointsConfig.find(x => x.year === year);
+  }
+
+  private _processPointsMeta(pointsMeta: HistoryLayerResource[]): PointMeta[] {
+    return pointsMeta.map(({ resource }) => {
+      const name = resource.display_name;
+      // const [year, month, day] = name.match('(\\d{4})-(\\d{2})-(\\d{2})*$').slice(1).map((x) => Number(x));
+      // return { name, year, month, day, id: resource.id };
+      const _match = name.match('(\\d{4})*$') as string[];
+      const [year] = _match.slice(1).map(x => Number(x));
+      return { name, year: year as number, id: resource.id };
+    });
   }
 }

@@ -1,17 +1,10 @@
-// import { connector } from './NgwConnectorService';
-// import config from '../../config.json';
 import layers from '../data/layers.json';
-import { HistoryLayerResource } from '../interfaces.js';
+import { LayersGroup } from '../interfaces';
 
-export function getLayers(callback: (l: HistoryLayerResource[]) => void) {
-  const _layers = layers as HistoryLayerResource[];
+export function getLayers(callback: (layers: LayersGroup[]) => void) {
   if (layers) {
     setTimeout(() => {
-      callback(_layers);
+      callback(layers as LayersGroup[]);
     });
-  } else {
-    // connector.makeQuery('/api/resource/?parent={id}', callback, {
-    //   id: config.sourceGroupId
-    // });
   }
 }

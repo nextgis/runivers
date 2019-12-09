@@ -21,7 +21,8 @@ import {
   LayerMeta,
   PointMeta,
   AreaStat,
-  HistoryLayerResource
+  HistoryLayerResource,
+  LayersGroup
 } from './interfaces';
 
 import { Controls } from './Controls';
@@ -36,11 +37,9 @@ export class App {
   options: AppOptions = {
     target: '#app'
   } as AppOptions;
-  currentYear!: number;
   controls!: Controls;
   slider!: SliderControl;
   webMap!: WebMap<Map, string[]>;
-  currentPointId?: string;
 
   urlParams = urlParams;
 
@@ -48,12 +47,6 @@ export class App {
 
   timeMap!: TimeMap;
 
-  private _minYear = 0;
-  private _maxYear = 0;
-
-  private _layersConfig: LayerMeta[] = [];
-
-  private _pointsConfig: PointMeta[] = [];
   private _markers: MarkerLayer;
 
   constructor(options: AppOptions) {
@@ -69,9 +62,6 @@ export class App {
     if (fromYear && currentYear && currentYear < fromYear) {
       this.options.currentYear = fromYear;
     }
-    if (this.options.currentYear) {
-      this.currentYear = this.options.currentYear;
-    }
     this.createWebMap().then(() => {
       this._buildApp();
     });
@@ -84,28 +74,26 @@ export class App {
       starterKits: [new QmsKit()]
     });
     await webMap.create(options);
-    this.timeMap = new TimeMap(webMap, {});
+    this.timeMap = new TimeMap(webMap, {
+      fromYear: this.options.fromYear,
+      getStatusLayer: (config: LayersGroup) => this._getStatusLayer(config),
+      onStepReady: (year: number) => this.updateDataByYear(year),
+      onLayerUpdate: (year: number) => this.updateDataByYear(year)
+    });
+    if (this.options.currentYear) {
+      this.timeMap.currentYear = this.options.currentYear;
+    }
     webMap.addBaseLayer('QMS', {
       id: 'baselayer',
       qmsId: 2550,
       visibility: true
     });
-    this._addTimeLayersGroups();
     this.webMap = webMap;
     return webMap;
   }
 
-  updateByYear(year: number, previous?: boolean) {
-    const layerId = this._getLayerIdByYear(year, previous);
-    if (layerId) {
-      this.updateLayer(layerId);
-    }
-
-    this.updateDataByYear(year);
-  }
-
   updateDataByYear(year: number) {
-    const pointId = this._getPointIdByYear(year);
+    const pointId = this._markers._getPointIdByYear(year);
 
     this._markers.updatePoint(pointId);
 
@@ -117,34 +105,9 @@ export class App {
     this.urlParams.set('year', String(year));
   }
 
-  updateLayer(layerId: string) {
-    this.timeMap.updateLayer(layerId);
-  }
-
-  updateLayersColor() {
-    // this.timeMap.updateLayersColor();
-  }
-
-  _findYearInDateStr(dateStr: string): number | undefined {
-    const datePattern = /(\d{4})/;
-    const date = datePattern.exec(dateStr);
-    if (date) {
-      return Number(date[0]);
-    }
-  }
-
-  _getTimeStop(year: number): string {
-    const stop = this.options.timeStops.find(x => year < x.toYear);
-    return stop ? stop.name : '';
-  }
-
   private _buildApp() {
     getLayers(data => {
-      this._layersConfig = this._processLayersMeta(data);
-      if (!this.currentYear && this._minYear) {
-        this.currentYear = this._minYear;
-      }
-      this._layersConfig.sort((a, b) => (a.from < b.from ? -1 : 1));
+      this.timeMap.buildTimeMap(data);
 
       this.slider = this._createSlider();
 
@@ -154,30 +117,28 @@ export class App {
       this.controls.updateControls();
 
       this.webMap.onMapLoad(() => {
-        this.updateByYear(this.currentYear);
+        this.timeMap.updateByYear(this.timeMap.currentYear);
       });
       this.emitter.emit('build');
       this._addEventsListeners();
     });
     getPoints().then(points => {
-      this._pointsConfig = this._processPointsMeta(points);
-      const pointId = this._getPointIdByYear(this.currentYear);
-      if (pointId) {
-        this._markers.updatePoint(pointId);
-      }
+      this._markers.setPoints(points);
     });
   }
 
-  private _addTimeLayersGroups(config?: HistoryLayerResource[]) {
+  private _getStatusLayer(config: LayersGroup) {
     const options: Partial<TimeLayersGroupOptions> = {
-      name: '',
+      name: config.name,
       baseUrl: this.options.baseUrl,
+      manualOpacity: true,
       filterIdField: 'fid'
     };
-
-    const baseLayer = new BaseLayer(this, options);
-
-    this.timeMap.addTimeGroup(baseLayer);
+    let statusLayer: BaseLayer | undefined;
+    if (config.name === 'base') {
+      statusLayer = new BaseLayer(this, options);
+    }
+    return statusLayer;
   }
 
   private _createSlider() {
@@ -186,23 +147,23 @@ export class App {
       callback: (value: number) => void,
       previous: boolean
     ) => {
-      this._stepReady(year, callback, previous);
+      this.timeMap._stepReady(year, callback, previous);
     };
     const slider = new SliderControl({
       type: 'range',
-      min: this._minYear,
-      max: this._maxYear,
+      min: this.timeMap._minYear,
+      max: this.timeMap._maxYear,
       step: 1,
       animationStep: this.options.animationStep || 1,
-      value: this.currentYear,
+      value: this.timeMap.currentYear,
       animationDelay: this.options.animationDelay || 100,
       stepReady
     });
     slider.emitter.on('change', (year: number) => {
       // may be updated in _stepReady method
-      if (year !== this.currentYear) {
-        this.currentYear = year;
-        this.updateByYear(year);
+      if (year !== this.timeMap.currentYear) {
+        this.timeMap.currentYear = year;
+        this.timeMap.updateByYear(year);
       }
     });
 
@@ -218,7 +179,7 @@ export class App {
     const header = document.createElement('div');
     header.className = 'font-effect-shadow-multiple app-header';
     const headerText = document.createElement('span');
-    headerText.innerHTML = `Границы России ${this._minYear}-${this._maxYear} гг.`;
+    headerText.innerHTML = `Границы России ${this.timeMap._minYear}-${this.timeMap._maxYear} гг.`;
     header.appendChild(headerText);
     header.appendChild(getAboutProjectLink(this));
 
@@ -284,133 +245,6 @@ export class App {
     });
 
     return yearStat;
-  }
-
-  private _stepReady(
-    year: number,
-    callback: (year: number) => void,
-    previous?: boolean
-  ) {
-    let nextLayer = this._getLayerByYear(year, previous);
-    if (!nextLayer) {
-      nextLayer = this._getNextLayer(year, previous);
-    }
-
-    if (nextLayer) {
-      const y = year;
-      // const y = previous ? nextLayer.to : nextLayer.from;
-
-      const next = () => {
-        this.currentYear = y;
-        callback(y);
-      };
-      if (this.timeMap.getTimeGroup().currentLayerId !== String(nextLayer.id)) {
-        this.timeMap.pushDataLoadEvent(next);
-        this.updateLayer(String(nextLayer.id));
-      } else {
-        next();
-      }
-      this.updateDataByYear(y);
-    } else {
-      if (this._minYear && this._maxYear) {
-        callback(previous ? this._minYear : this._maxYear);
-      }
-    }
-  }
-
-  private _getLayerByYear(
-    year: number,
-    previous?: boolean
-  ): LayerMeta | undefined {
-    const layers = this._layersConfig.filter(
-      d => year >= d.from && year <= d.to
-    );
-    // return previous ? layers[0] : layers[layers.length - 1];
-    return layers[layers.length - 1];
-  }
-
-  private _getLayerIdByYear(
-    year: number,
-    previous?: boolean
-  ): string | undefined {
-    const filteredLayer = this._getLayerByYear(year, previous);
-    if (filteredLayer) {
-      return filteredLayer && String(filteredLayer.id);
-    }
-  }
-
-  private _getPointByYear(year: number): PointMeta | undefined {
-    return this._pointsConfig.find(x => x.year === year);
-  }
-
-  private _getPointIdByYear(year: number): string | undefined {
-    const point = this._getPointByYear(year);
-    if (point) {
-      return point && String(point.id);
-    }
-  }
-
-  // get next or previous territory changed layer
-  private _getNextLayer(
-    year: number,
-    previous?: boolean
-  ): LayerMeta | undefined {
-    const filteredLayer = this._getLayerByYear(year);
-    if (filteredLayer) {
-      if (
-        String(filteredLayer.id) === this.timeMap.getTimeGroup().currentLayerId
-      ) {
-        const index = this._layersConfig.indexOf(filteredLayer);
-        if (index !== -1) {
-          const nextLayer = this._layersConfig[
-            previous ? index - 1 : index + 1
-          ];
-          return nextLayer;
-        }
-      } else {
-        return filteredLayer;
-      }
-    } else {
-      // if no layer for this year find nearest
-      if (previous) {
-        return this._layersConfig
-          .slice()
-          .reverse()
-          .find(d => d.to <= year);
-      } else {
-        return this._layersConfig.find(d => d.from >= year);
-      }
-    }
-  }
-
-  private _processLayersMeta(layersMeta: HistoryLayerResource[]) {
-    const layers: LayerMeta[] = [];
-    layersMeta.forEach(({ resource }) => {
-      const name = resource.display_name;
-      const _match = name.match('from_(\\d{3,4})_to_(\\d{3,4}).*$');
-      if (_match) {
-        const [from, to] = _match.slice(1).map(x => Number(x));
-        const allowedYear =
-          this.options.fromYear && from < this.options.fromYear ? false : true;
-        if (allowedYear) {
-          this._minYear = (this._minYear > from ? from : this._minYear) || from;
-          this._maxYear = (this._maxYear < to ? to : this._maxYear) || to;
-          layers.push({ name, from, to, id: resource.id });
-        }
-      }
-    });
-    return layers;
-  }
-
-  private _processPointsMeta(pointsMeta: HistoryLayerResource[]): PointMeta[] {
-    return pointsMeta.map(({ resource }) => {
-      const name = resource.display_name;
-      // const [year, month, day] = name.match('(\\d{4})-(\\d{2})-(\\d{2})*$').slice(1).map((x) => Number(x));
-      // return { name, year, month, day, id: resource.id };
-      const _match = name.match('(\\d{4})*$') as string[];
-      const [year] = _match.slice(1).map(x => Number(x));
-      return { name, year: year as number, id: resource.id };
-    });
   }
 
   private _addEventsListeners() {

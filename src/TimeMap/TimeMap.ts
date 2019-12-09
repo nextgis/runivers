@@ -30,7 +30,7 @@ export interface TimeMapOptions {
   fromYear?: number;
   onLayerUpdate?: (year: number) => void;
   onStepReady?: (year: number) => void;
-  getStatusLayer: (config: LayersGroup) => TimeLayersGroupOptions;
+  getStatusLayer: (config: LayersGroup) => TimeLayersGroupOptions | undefined;
 }
 
 export class TimeMap {
