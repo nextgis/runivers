@@ -14,7 +14,8 @@ import {
 } from '../interfaces';
 
 import { formatArea, copyText } from '../utils/utils';
-import { Principalities01 } from 'src/data/Principalities01';
+import { Principalities01 } from '../data/Principalities01';
+import findYearInDateStr from '../utils/findYearInDateStr';
 
 export class BaseLayer implements TimeLayersGroupOptions {
   name!: string;
@@ -52,67 +53,78 @@ export class BaseLayer implements TimeLayersGroupOptions {
     return this._getFillColor(opt);
   }
 
-  createPopupContent(props: HistoryLayerProperties): HTMLElement {
-    const fields: Array<{
-      name?: string;
-      field: keyof HistoryLayerProperties;
-    }> = [
-      // { name: 'Fid', field: 'fid' }
-      // { field: 'name' }
-      // { name: 'Наименование территории', field: 'name' },
-      // { name: 'Дата возникновения', field: 'lwdate' },
-      // { name: 'Дата исчезновения', field: 'updtrl' },
-      // { name: 'Комментарий', field: 'linecomnt' },
-    ];
-    return this._createPropBlock(fields, props);
+  createPopupContent(props: HistoryLayerProperties): HTMLElement | undefined {
+    if (props && props.status && props.status < 6) {
+      const fields: Array<{
+        name?: string;
+        field: keyof HistoryLayerProperties;
+      }> = [
+        // { name: 'Fid', field: 'fid' }
+        // { field: 'name' }
+        // { name: 'Наименование территории', field: 'name' },
+        // { name: 'Дата возникновения', field: 'lwdate' },
+        // { name: 'Дата исчезновения', field: 'updtrl' },
+        // { name: 'Комментарий', field: 'linecomnt' },
+      ];
+      return this._createPropBlock(fields, props);
+    }
+  }
+
+  private _getTimeGroup() {
+    return this.app.timeMap.getTimeGroup(this.name);
   }
 
   private _createTimeLayers(
     url: string,
     id: string
   ): Array<Promise<TimeLayer>> {
-    const paint = {
-      'fill-opacity': this.app.timeMap.getTimeGroup().opacity,
-      'fill-opacity-transition': {
-        duration: 0
-      },
-      // 'fill-outline-color': '#8b0000', // darkred
-      // 'fill-outline-color': '#8b0000', // darkred
-      'fill-color': this._getFillColor()
-    };
-    const selectedPaint = {
-      ...paint,
-      'fill-color': this._getFillColor({ darken: 0.5 })
-    };
-    const paintLine = {
-      'line-opacity': this.app.timeMap.getTimeGroup().opacity,
-      'line-opacity-transition': {
-        duration: 0
-      },
-      'line-width': 1,
-      'line-color': this._getFillColor({ darken: 0.5 })
-    };
-    const sourceLayer = id;
-    const fillLayer = this.app.webMap.addLayer('MVT', {
-      url,
-      id,
-      paint,
-      selectedPaint,
-      selectable: true,
-      type: 'fill',
-      nativePaint: true,
-      labelField: 'name',
-      sourceLayer
-    }) as Promise<TimeLayer>;
-    const boundLayer = this.app.webMap.addLayer('MVT', {
-      url,
-      id: id + '-bound',
-      paint: paintLine,
-      type: 'line',
-      sourceLayer,
-      nativePaint: true
-    }) as Promise<TimeLayer>;
-    return [fillLayer, boundLayer];
+    const timeGroup = this._getTimeGroup();
+    if (timeGroup) {
+      const paint = {
+        'fill-opacity': timeGroup.opacity,
+        'fill-opacity-transition': {
+          duration: 0
+        },
+        // 'fill-outline-color': '#8b0000', // darkred
+        // 'fill-outline-color': '#8b0000', // darkred
+        'fill-color': this._getFillColor()
+      };
+      const selectedPaint = {
+        ...paint,
+        'fill-color': this._getFillColor({ darken: 0.5 })
+      };
+      const paintLine = {
+        'line-opacity': timeGroup.opacity,
+        'line-opacity-transition': {
+          duration: 0
+        },
+        'line-width': 1,
+        'line-color': this._getFillColor({ darken: 0.5 })
+      };
+      const sourceLayer = id;
+      const fillLayer = this.app.webMap.addLayer('MVT', {
+        url,
+        id,
+        paint,
+        selectedPaint,
+        selectable: true,
+        type: 'fill',
+        nativePaint: true,
+        labelField: 'name',
+        sourceLayer
+      }) as Promise<TimeLayer>;
+      const boundLayer = this.app.webMap.addLayer('MVT', {
+        url,
+        id: id + '-bound',
+        name: id,
+        paint: paintLine,
+        type: 'line',
+        sourceLayer,
+        nativePaint: true
+      }) as Promise<TimeLayer>;
+      return [fillLayer, boundLayer];
+    }
+    return [];
   }
 
   private _getFillColor(opt: GetFillColorOpt = {}) {
@@ -167,8 +179,8 @@ export class BaseLayer implements TimeLayersGroupOptions {
     const princes = this.app.options.principalities01 || [];
 
     const prince = princes.find(x => {
-      const upperdat = this.app._findYearInDateStr(x.upperdat);
-      const lwdate = this.app._findYearInDateStr(x.lwdate);
+      const upperdat = findYearInDateStr(x.upperdat);
+      const lwdate = findYearInDateStr(x.lwdate);
       if (upperdat && lwdate) {
         return x.fid === fid && year <= upperdat && year >= lwdate;
       }
@@ -182,8 +194,8 @@ export class BaseLayer implements TimeLayersGroupOptions {
     const princes = this.app.options.principalities02 || [];
 
     const prince = princes.find(x => {
-      const upperdat = this.app._findYearInDateStr(x.years_to);
-      const lwdate = this.app._findYearInDateStr(x.years_from);
+      const upperdat = findYearInDateStr(x.years_to);
+      const lwdate = findYearInDateStr(x.years_from);
       if (upperdat && lwdate) {
         return fid === x.fid && year <= upperdat && year >= lwdate;
       }
@@ -201,7 +213,7 @@ export class BaseLayer implements TimeLayersGroupOptions {
     const block = document.createElement('div');
     const _fields: PopupContentField[] = [...fields];
     const _props: Record<string, any> = { ...props };
-    const timeStop = this.app._getTimeStop(this.app.currentYear);
+    const timeStop = this.app.getTimeStop(this.app.timeMap.currentYear);
     if (timeStop === 'principalities') {
       this._addPrincipalitiesFields(_fields, _props);
     }
@@ -209,7 +221,9 @@ export class BaseLayer implements TimeLayersGroupOptions {
     if (_props[headerField]) {
       block.appendChild(
         this._createPropElement(
-          `<h2>${_props[headerField]} <a class="feature-link">&#x1f517;</a></h2>`,
+          `<h2>${_props[headerField]}
+            <a class="feature-link">&#x1f517;</a>
+          </h2>`,
           'prop header'
         )
       );
@@ -239,7 +253,7 @@ export class BaseLayer implements TimeLayersGroupOptions {
     if (featureLink) {
       featureLink.addEventListener('click', () => {
         let url = document.location.origin + document.location.pathname;
-        url += `?year=${this.app.currentYear}&id=${props.fid}`;
+        url += `?year=${this.app.timeMap.currentYear}&id=${props.fid}`;
         this.app.urlParams.set('id', String(props.fid));
         copyText(url);
       });
@@ -258,12 +272,18 @@ export class BaseLayer implements TimeLayersGroupOptions {
     };
     const fid = props.fid;
     if (fid) {
-      const prince02 = this._findPrincipalities02(fid, this.app.currentYear);
+      const prince02 = this._findPrincipalities02(
+        fid,
+        this.app.timeMap.currentYear
+      );
       if (prince02) {
         addProp(prince02.ruler, { field: 'ruler' });
         // addProp(prince02.name, { field: 'name' });
       }
-      const prince01 = this._findPrincipalities01(fid, this.app.currentYear);
+      const prince01 = this._findPrincipalities01(
+        fid,
+        this.app.timeMap.currentYear
+      );
       if (prince01) {
         const getHtml = (
           prop: keyof Principalities01,
@@ -321,9 +341,9 @@ export class BaseLayer implements TimeLayersGroupOptions {
     for (let fry = 0; fry < yearsLinks.length; fry++) {
       const link = yearsLinks[fry];
       link.addEventListener('click', () => {
-        const year = this.app._findYearInDateStr(link.innerHTML);
+        const year = findYearInDateStr(link.innerHTML);
         if (year) {
-          this.app.updateByYear(year);
+          this.app.timeMap.updateByYear(year);
           if (this.app.slider && this.app.slider._slider) {
             this.app.slider._slider.set(year);
           }

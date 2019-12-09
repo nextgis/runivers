@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 let alias = {};
@@ -134,6 +135,7 @@ module.exports = (env, argv) => {
         allChunks: true
       }),
       new HtmlWebpackPlugin({ template: 'src/index.html' }),
+      new CopyPlugin([{ from: 'font', to: 'font' }]),
       new FaviconsWebpackPlugin('./src/img/favicon.png')
     ],
 

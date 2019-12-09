@@ -1,16 +1,15 @@
 import './App.css';
 
-import WebMap from '@nextgis/webmap';
-import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
-import QmsKit from '@nextgis/qms-kit';
-
-import { SliderControl } from './components/SliderControl';
 import { Map } from 'mapbox-gl';
-import { getLayers } from './services/GetLayersService';
-import { getPoints } from './services/GetPointsService';
-
 import { EventEmitter } from 'events';
 
+import WebMap from '@nextgis/webmap';
+import QmsKit from '@nextgis/qms-kit';
+import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
+
+import { SliderControl } from './components/SliderControl';
+import { getLayers } from './services/GetLayersService';
+import { getPoints } from './services/GetPointsService';
 import {
   getAboutProjectLink,
   getAffiliatedLinks
@@ -25,6 +24,8 @@ import { urlParams } from './services/UrlParams';
 import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 import { BaseLayer } from './layers/BaseLayer';
 import { MarkerLayer } from './layers/MarkerLayer';
+import { CitiesLayer } from './layers/CitiesLayer';
+import { LinesLayer } from './layers/LinesLayer';
 
 export class App {
   options: AppOptions = {
@@ -98,6 +99,15 @@ export class App {
     this.urlParams.set('year', String(year));
   }
 
+  getTimeStop(year: number): string {
+    const stop = this.options.timeStops.find(x => year < x.toYear);
+    return stop ? stop.name : '';
+  }
+
+  updateLayersColor() {
+    // ignore
+  }
+
   private _buildApp() {
     getLayers(data => {
       this.timeMap.buildTimeMap(data);
@@ -127,9 +137,13 @@ export class App {
       manualOpacity: true,
       filterIdField: 'fid'
     };
-    let statusLayer: BaseLayer | undefined;
+    let statusLayer: TimeLayersGroupOptions | undefined;
     if (config.name === 'base') {
       statusLayer = new BaseLayer(this, options);
+    } else if (config.name === 'cities') {
+      statusLayer = new CitiesLayer(this, options);
+    } else if (config.name === 'lines') {
+      statusLayer = new LinesLayer(this, options);
     }
     return statusLayer;
   }
@@ -172,7 +186,8 @@ export class App {
     const header = document.createElement('div');
     header.className = 'font-effect-shadow-multiple app-header';
     const headerText = document.createElement('span');
-    headerText.innerHTML = `Границы России ${this.timeMap._minYear}-${this.timeMap._maxYear} гг.`;
+    headerText.innerHTML = `
+      Границы России ${this.timeMap._minYear}-${this.timeMap._maxYear} гг.`;
     header.appendChild(headerText);
     header.appendChild(getAboutProjectLink(this));
 

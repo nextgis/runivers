@@ -20,10 +20,10 @@ export interface TimeLayersGroupOptions {
   filterIdField?: string;
   manualOpacity?: boolean;
   opacity?: number;
-  setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
-  getFillColor: (...args: any[]) => any;
-  createPopupContent: (props: any) => HTMLElement;
   addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
+  setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
+  getFillColor?: (...args: any[]) => any;
+  createPopupContent?: (props: any) => HTMLElement | undefined;
 }
 
 export class TimeLayersGroup {
@@ -77,15 +77,15 @@ export class TimeLayersGroup {
   updateLayersColor() {
     const map = this.webMap.mapAdapter.map;
     if (map) {
-      for (const l in this._layersLoaded) {
-        if (l.indexOf('-bound') !== -1) {
-          map.setPaintProperty(
-            l,
-            'line-color',
-            this.options.getFillColor({ darken: 0.5 })
-          );
-        } else {
-          map.setPaintProperty(l, 'fill-color', this.options.getFillColor());
+      if (this.options.getFillColor) {
+        const fillColorDarken = this.options.getFillColor({ darken: 0.5 });
+        const fillColor = this.options.getFillColor();
+        for (const l in this._layersLoaded) {
+          if (l.indexOf('-bound') !== -1) {
+            map.setPaintProperty(l, 'line-color', fillColorDarken);
+          } else {
+            map.setPaintProperty(l, 'fill-color', fillColor);
+          }
         }
       }
     }
@@ -251,13 +251,15 @@ export class TimeLayersGroup {
       );
       const feature = features[0];
       const prop = feature.properties;
-      if (prop && prop.status && prop.status < 6) {
+      if (this.options.createPopupContent) {
         const html = this.options.createPopupContent(prop);
-        this._removePopup();
-        this._popup = new Popup()
-          .setLngLat(e.lngLat)
-          .setDOMContent(html)
-          .addTo(map);
+        if (html) {
+          this._removePopup();
+          this._popup = new Popup()
+            .setLngLat(e.lngLat)
+            .setDOMContent(html)
+            .addTo(map);
+        }
       }
       if (prop && this.options.filterIdField) {
         const fid = prop[this.options.filterIdField];
