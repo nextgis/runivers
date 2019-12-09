@@ -4,6 +4,14 @@
     {
       "name": "base",
       "resourceId": 5344
+    },
+    {
+      "name": "lines",
+      "resourceId": 12443
+    },
+    {
+      "name": "cities",
+      "resourceId": 11486
     }
   ],
   "pointsGroupId": 6541,

@@ -16,14 +16,7 @@ import {
   getAffiliatedLinks
 } from './components/Links/Links';
 
-import {
-  AppOptions,
-  LayerMeta,
-  PointMeta,
-  AreaStat,
-  HistoryLayerResource,
-  LayersGroup
-} from './interfaces';
+import { AppOptions, AreaStat, LayersGroup } from './interfaces';
 
 import { Controls } from './Controls';
 import { TimeMap } from './TimeMap/TimeMap';
