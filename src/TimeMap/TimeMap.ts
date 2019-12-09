@@ -55,6 +55,21 @@ export class TimeMap {
     return group;
   }
 
+  getTimeGroupByLayerId(id: string) {
+    for (let fry = 0; fry < this._timeLayersGroups.length; fry++) {
+      const layerGroup = this._timeLayersGroups[fry];
+      const timeLayer = layerGroup.getTimeLayer();
+      if (timeLayer) {
+        for (let f = 0; f < timeLayer.length; f++) {
+          const layer = timeLayer[f];
+          if (layer && layer.id === id) {
+            return layerGroup;
+          }
+        }
+      }
+    }
+  }
+
   getTimeGroups() {
     return this._timeLayersGroups;
   }

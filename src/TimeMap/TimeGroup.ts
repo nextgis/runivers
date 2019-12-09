@@ -141,6 +141,11 @@ export class TimeLayersGroup {
     this._hideLayer(layerId);
   }
 
+  getTimeLayer(layerId?: string) {
+    layerId = layerId !== undefined ? layerId : this.currentLayerId;
+    return this._timeLayers[layerId];
+  }
+
   forEachTimeLayer(layerId: string, fun: (timeLayer: TimeLayer) => void) {
     const timeLayer = this._timeLayers[layerId];
     if (timeLayer) {
