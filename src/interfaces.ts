@@ -1,7 +1,8 @@
+import { Marker } from 'mapbox-gl';
+import { LngLatBoundsArray } from '@nextgis/webmap';
+import { MapboxglMapAdapterOptions } from '@nextgis/mapboxgl-map-adapter';
 import { Period } from './components/Panels/PeriodPanelControl';
 import { YearStat } from './components/Panels/YearsStatPanelControl';
-import { LngLatBoundsArray } from '@nextgis/webmap';
-import { Marker } from 'mapbox-gl';
 import { Principalities01 } from './data/Principalities01';
 import { Principalities02 } from './data/Principalities02';
 
@@ -17,7 +18,7 @@ export interface TimeStop {
   name: string;
 }
 
-export interface AppOptions {
+export interface AppOptions extends MapboxglMapAdapterOptions {
   baseUrl: string;
   target: string;
   fromYear?: number;

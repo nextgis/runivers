@@ -29,7 +29,15 @@ import { LinesLayer } from './layers/LinesLayer';
 
 export class App {
   options: AppOptions = {
-    target: '#app'
+    target: '#app',
+    style: {
+      transition: {
+        duration: 0,
+        delay: 0
+      },
+      glyphs:
+        location.origin + location.pathname + 'font/{fontstack}/{range}.pbf'
+    }
   } as AppOptions;
   controls!: Controls;
   slider!: SliderControl;

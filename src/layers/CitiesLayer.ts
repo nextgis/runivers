@@ -53,19 +53,19 @@ export class CitiesLayer implements TimeLayersGroupOptions {
           'text-halo-width': 1
         },
         layout: {
-          'icon-image': 'city'
-          //   'icon-allow-overlap': true,
-          //   'icon-optional': true,
-          //   'text-field': ['to-string', ['get', 'toponym']],
-          //   'text-anchor': 'top',
-          //   'text-size': 10,
-          //   'text-font': ['Open Sans Semibold'],
-          //   'text-variable-anchor': ['top'],
-          //   'text-radial-offset': 0.95,
-          //   'text-line-height': 1.1,
-          //   'text-letter-spacing': 0.06,
-          //   'text-padding': 0,
-          //   'text-justify': 'auto'
+          'icon-image': 'city',
+          'icon-allow-overlap': true,
+          'icon-optional': true,
+          'text-field': ['to-string', ['get', 'toponym']],
+          'text-anchor': 'top',
+          'text-size': 10,
+          'text-font': ['Open Sans Semibold'],
+          'text-variable-anchor': ['top'],
+          'text-radial-offset': 0.95,
+          'text-line-height': 1.1,
+          'text-letter-spacing': 0.06,
+          'text-padding': 0,
+          'text-justify': 'auto'
         },
         type: 'icon',
         nativePaint: true,

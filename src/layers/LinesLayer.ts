@@ -1,11 +1,15 @@
-import Color from 'color';
+import { LinePaint } from 'mapbox-gl';
 import {
   TimeLayersGroupOptions,
   TimeLayer,
   TimeLayersGroup
 } from '../TimeMap/TimeGroup';
-import { GetFillColorOpt } from 'src/interfaces';
 import { App } from '../App';
+
+export interface LineTypePaint {
+  width: number;
+  color: string;
+}
 
 export class LinesLayer implements TimeLayersGroupOptions {
   name!: string;
@@ -14,6 +18,13 @@ export class LinesLayer implements TimeLayersGroupOptions {
   filterIdField?: string;
   opacity = 1;
   simplification = 8;
+
+  private _lineTypes: { [linetype: number]: LineTypePaint } = {
+    1: { width: 1.06, color: 'rgba(132, 73, 58, 1.00)' },
+    2: { width: 1.06, color: 'rgba(132, 73, 58, 0.50)' },
+    3: { width: 2.26, color: 'rgba(132, 73, 58, 0.25)' }
+  };
+
   constructor(protected app: App, options: Partial<TimeLayersGroupOptions>) {
     Object.assign(this, options);
   }
@@ -36,18 +47,14 @@ export class LinesLayer implements TimeLayersGroupOptions {
   addLayers(url: string, id: string) {
     const opacity = this.groupLayer ? this.groupLayer.opacity : 1;
 
-    const paintLine: mapboxgl.LinePaint = {
+    const paintLine: LinePaint = {
       'line-opacity': opacity,
       'line-opacity-transition': {
         duration: 0
       },
       'line-width': 2,
-      'line-color': '#697483'
+      ...this._getLinePaint()
     };
-    if (this.name === 'earl') {
-      paintLine['line-width'] = 1;
-      paintLine['line-color'] = '#777';
-    }
     // const sourceLayer = 'ngw:' + id;
     const sourceLayer = id;
 
@@ -64,24 +71,14 @@ export class LinesLayer implements TimeLayersGroupOptions {
     return [boundLayer];
   }
 
-  getFillColor(opt: GetFillColorOpt = {} as GetFillColorOpt) {
-    const colors: Record<string, string> = {
-      king: 'red',
-      duke: '#697483',
-      earl: '#697483'
-    };
-    const color = colors[this.name] || 'orange';
-    let c = Color(color);
-
-    if (opt.darken) {
-      c = c.darken(opt.darken);
-    }
-    return c.hex();
+  private _getLinePaint(): LinePaint {
+    const color: LinePaint['line-color'] = ['match', ['get', 'linetype']];
+    Object.entries(this._lineTypes).forEach(([linetype, value]) => {
+      color.push(Number(linetype));
+      color.push(value.color);
+    });
+    // default
+    color.push('#000000');
+    return { 'line-color': color };
   }
-
-  // createPopupContent(props: Record<string, any>) {
-  //   const content = document.createElement('div');
-  //   content.innerHTML = JSON.stringify(props, null, 2);
-  //   return content;
-  // }
 }
