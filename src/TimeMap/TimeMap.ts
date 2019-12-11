@@ -161,6 +161,16 @@ export class TimeMap {
     });
   }
 
+  unselect() {
+    this._timeLayersGroups.forEach(x => {
+      x.forEachTimeLayer(x.currentLayerId, (y: VectorLayerAdapter) => {
+        if (y.unselect && y.selected) {
+          y.unselect();
+        }
+      });
+    });
+  }
+
   buildTimeMap(data: LayersGroup[]) {
     this._groupsConfig = this._processGroupsMeta(data);
     this._addTimeLayersGroups(data);

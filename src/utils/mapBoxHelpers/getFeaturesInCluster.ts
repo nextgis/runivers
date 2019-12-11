@@ -5,21 +5,25 @@ export default function getFeaturesInCluster(
   source: GeoJSONSource,
   feature: MapboxGeoJSONFeature | Feature,
   _features: Array<Feature | MapboxGeoJSONFeature> = []
-): Feature[] {
-  const props = feature.properties && feature.properties;
-  if (props) {
-    const isCluster = props.cluster;
-    if (isCluster) {
-      const clusterId =
-        props.cluster_id !== undefined ? props.cluster_id : false;
-      source.getClusterChildren(clusterId, (error, features) => {
-        features.forEach(x => {
-          getFeaturesInCluster(source, x, _features);
+): Promise<Feature[]> {
+  return new Promise(resolve => {
+    const props = feature.properties && feature.properties;
+    if (props) {
+      const isCluster = props.cluster;
+      if (isCluster) {
+        const clusterId =
+          props.cluster_id !== undefined ? props.cluster_id : false;
+        source.getClusterChildren(clusterId, (error, features) => {
+          const promises = [];
+          for (const x of features) {
+            promises.push(getFeaturesInCluster(source, x, _features));
+          }
+          Promise.all(promises).then(() => resolve());
         });
-      });
-    } else {
-      _features.push(feature);
+      } else {
+        _features.push(feature);
+        resolve(_features);
+      }
     }
-  }
-  return _features;
+  });
 }

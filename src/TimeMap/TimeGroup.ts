@@ -267,10 +267,11 @@ export class TimeLayersGroup {
         }
       }
       if (prop && this.options.filterIdField) {
-        const fid = prop[this.options.filterIdField];
+        const filterIdField = this.options.filterIdField;
+        const fid = prop[filterIdField];
         const adapter = this._getWebMapLayer(adapterId);
         if (adapter && adapter.select) {
-          adapter.select([[this.options.filterIdField, 'eq', Number(fid)]]);
+          adapter.select([[filterIdField, 'eq', Number(fid)]]);
           // urlParams.set('id', String(fid));
         }
       }
