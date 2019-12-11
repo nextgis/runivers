@@ -51,10 +51,10 @@ export class SliderControl {
   _animationStepInput?: HTMLInputElement;
   _sliderContainer?: HTMLElement;
   _slider?: noUiSlider.noUiSlider;
+  protected _playerControl?: HTMLElement;
   private _container?: HTMLElement;
   private _input?: HTMLInputElement;
   private _animationStatus?: boolean;
-  private _playerControl?: HTMLElement;
   // private _nextStepTimeoutId: number;
 
   constructor(public options: SliderOptions) {
