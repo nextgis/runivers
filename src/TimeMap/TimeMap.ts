@@ -161,13 +161,16 @@ export class TimeMap {
     });
   }
 
-  unselect() {
+  unselect(opt: { exclude?: string[] } = {}) {
     this._timeLayersGroups.forEach(x => {
-      x.forEachTimeLayer(x.currentLayerId, (y: VectorLayerAdapter) => {
-        if (y.unselect && y.selected) {
-          y.unselect();
-        }
-      });
+      const include = opt.exclude ? opt.exclude.indexOf(x.name) === -1 : true;
+      if (include) {
+        x.forEachTimeLayer(x.currentLayerId, (y: VectorLayerAdapter) => {
+          if (y.unselect && y.selected) {
+            y.unselect();
+          }
+        });
+      }
     });
   }
 
