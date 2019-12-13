@@ -213,7 +213,11 @@ export class TimeMap {
       };
       const noChange = Object.entries(nextLayers).every(([groupName, x]) => {
         const timeGroup = this.getTimeGroup(groupName);
-        return timeGroup ? timeGroup.currentLayerId === String(x.id) : true;
+        if (timeGroup) {
+          const newId = x && x.id;
+          return timeGroup.currentLayerId === String(newId);
+        }
+        return true;
       });
       if (noChange) {
         next();
@@ -235,12 +239,14 @@ export class TimeMap {
 
   private _getLayersByYear(year: number, previous?: boolean): LayerMetaRecord {
     const layersMeta: LayerMetaRecord = {};
-    Object.values(this._groupsConfig).forEach(x => {
-      const layers = x.layersMeta.filter(d => year >= d.from && year <= d.to);
+    this.getTimeGroups().forEach(x => {
+      const groupConfig = this._groupsConfig[x.name];
+      const layers = groupConfig.layersMeta.filter(
+        d => year >= d.from && year <= d.to
+      );
       // return previous ? layers[0] : layers[layers.length - 1];
-      if (layers.length) {
-        layersMeta[x.name] = layers[layers.length - 1];
-      }
+
+      layersMeta[x.name] = layers.length ? layers[layers.length - 1] : false;
     });
     return layersMeta;
   }
@@ -253,7 +259,9 @@ export class TimeMap {
   private _layerMetaToIdRecord(metaRecord: LayerMetaRecord): LayerIdRecord {
     const layersId: LayerIdRecord = {};
     Object.entries(metaRecord).forEach(([key, value]) => {
-      layersId[key] = String(value.id);
+      if (value) {
+        layersId[key] = String(value.id);
+      }
     });
     return layersId;
   }
@@ -265,7 +273,7 @@ export class TimeMap {
     for (const l in layersMetaInYear) {
       const layerMeta = layersMetaInYear[l];
       let nextLayer: LayerMeta | undefined;
-      const config = this._groupsConfig[layerMeta.name];
+      const config = this._groupsConfig[l];
       if (layerMeta) {
         if (
           String(layerMeta.id) === this.getTimeGroup(config.name).currentLayerId

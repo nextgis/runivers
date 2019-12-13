@@ -128,5 +128,5 @@ export interface LayersGroup {
   items: HistoryLayerResource[];
 }
 
-export type LayerMetaRecord = { [groupName: string]: LayerMeta };
+export type LayerMetaRecord = { [groupName: string]: LayerMeta | false };
 export type LayerIdRecord = { [groupName: string]: string };
