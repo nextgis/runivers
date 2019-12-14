@@ -20,6 +20,7 @@ export interface TimeLayersGroupOptions {
   filterIdField?: string;
   manualOpacity?: boolean;
   opacity?: number;
+  dataLoaded?: boolean;
   addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
   setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
   getFillColor?: (...args: any[]) => any;
@@ -50,8 +51,10 @@ export class TimeLayersGroup {
     if (options.opacity !== undefined) {
       this.opacity = options.opacity;
     }
-    webMap.mapAdapter.emitter.on('data-loaded', data => this._onData(data));
-    webMap.mapAdapter.emitter.on('data-error', data => this._onData(data));
+    if (this._isDataLoaded()) {
+      webMap.mapAdapter.emitter.on('data-loaded', data => this._onData(data));
+      webMap.mapAdapter.emitter.on('data-error', data => this._onData(data));
+    }
   }
 
   hide() {
@@ -112,9 +115,6 @@ export class TimeLayersGroup {
   }
 
   switchLayer(fromId: string, toId: string) {
-    // if (fromId) {
-    //   urlParams.remove('id');
-    // }
     const promise = new Promise((resolve, reject) => {
       this._removePopup();
       this._cleanDataLoadEvents();
@@ -128,13 +128,20 @@ export class TimeLayersGroup {
               this._removeLayerListeners(fromId);
               this._setLayerOpacity(toId, 0);
             }
+            if (!this._isDataLoaded()) {
+              this._onSourceIsLoaded();
+            }
           })
-          .catch(reject);
+          .catch(er => {
+            reject(er);
+          });
       } else {
         resolve();
       }
     });
-    return promise.then(() => toId);
+    return promise.then(() => {
+      return toId;
+    });
   }
 
   hideLayer(layerId: string) {
@@ -179,9 +186,24 @@ export class TimeLayersGroup {
     ) as VectorLayerAdapter;
   }
 
+  private _isDataLoaded() {
+    return this.options.dataLoaded !== undefined
+      ? this.options.dataLoaded
+      : true;
+  }
+
   private _setLayerOpacity(id: string, value: number) {
+    const dataLoaded = this._isDataLoaded();
     this.forEachTimeLayer(id, dataLayerId => {
-      return this.webMap.setLayerOpacity(dataLayerId, value);
+      if (dataLoaded) {
+        return this.webMap.setLayerOpacity(dataLayerId, value);
+      } else {
+        if (value === 0) {
+          return this.webMap.hideLayer(dataLayerId);
+        } else {
+          return this.webMap.showLayer(dataLayerId);
+        }
+      }
     });
   }
 
@@ -195,13 +217,12 @@ export class TimeLayersGroup {
   private _isCurrentDataLayer(layerId: string): boolean {
     const currentLayers = this._timeLayers[this.currentLayerId];
     return currentLayers
-      ? currentLayers.some(x => {
-          return (
+      ? currentLayers.some(
+          x =>
             x.id === layerId ||
             x.options.name === layerId ||
             (x.layer && x.layer.some(y => y === layerId))
-          );
-        })
+        )
       : false;
   }
 
@@ -324,15 +345,19 @@ export class TimeLayersGroup {
   }
 
   private _isAllDataLayerLoaded(layer: string) {
-    const timeLayer = this._timeLayers[layer];
-    if (timeLayer) {
-      return timeLayer.every(x => {
-        return (
-          x.id === layer ||
-          x.options.name === layer ||
-          (x.layer && x.layer.some(y => this._layersLoaded[y]))
-        );
-      });
+    if (this._isDataLoaded()) {
+      const timeLayer = this._timeLayers[layer];
+      if (timeLayer) {
+        return timeLayer.every(x => {
+          return (
+            x.id === layer ||
+            x.options.name === layer ||
+            (x.layer && x.layer.some(y => this._layersLoaded[y]))
+          );
+        });
+      }
+    } else {
+      return true;
     }
   }
 
