@@ -3,7 +3,7 @@ import './App.css';
 import { Map } from 'mapbox-gl';
 import { EventEmitter } from 'events';
 
-import WebMap from '@nextgis/webmap';
+import WebMap, { Type } from '@nextgis/webmap';
 import QmsKit from '@nextgis/qms-kit';
 import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
 
@@ -48,6 +48,14 @@ export class App {
   emitter = new EventEmitter();
 
   timeMap!: TimeMap;
+
+  private statusLayers: {
+    [groupName: string]: Type<TimeLayersGroupOptions>;
+  } = {
+    base: BaseLayer,
+    cities: CitiesLayer,
+    lines: LinesLayer
+  };
 
   private _markers: MarkerLayer;
 
@@ -145,15 +153,12 @@ export class App {
       manualOpacity: true,
       filterIdField: 'fid'
     };
-    let statusLayer: TimeLayersGroupOptions | undefined;
-    if (config.name === 'base') {
-      statusLayer = new BaseLayer(this, options);
-    } else if (config.name === 'cities') {
-      statusLayer = new CitiesLayer(this, options);
-    } else if (config.name === 'lines') {
-      statusLayer = new LinesLayer(this, options);
+    const StatusLayer: Type<TimeLayersGroupOptions> | undefined = this
+      .statusLayers[config.name];
+    if (StatusLayer) {
+      const statusLayer = new StatusLayer(this, options);
+      return statusLayer;
     }
-    return statusLayer;
   }
 
   private _createSlider() {
