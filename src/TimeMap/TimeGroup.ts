@@ -25,6 +25,7 @@ export interface TimeLayersGroupOptions {
   setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
   getFillColor?: (...args: any[]) => any;
   createPopupContent?: (props: any) => HTMLElement | undefined;
+  visible?: boolean;
 }
 
 export class TimeLayersGroup {
@@ -48,6 +49,7 @@ export class TimeLayersGroup {
     private options: TimeLayersGroupOptions
   ) {
     this.name = this.options.name;
+    this._visible = this.options.visible ?? true;
     if (options.opacity !== undefined) {
       this.opacity = options.opacity;
     }
@@ -59,8 +61,13 @@ export class TimeLayersGroup {
 
   hide() {
     if (this._visible) {
-      Object.keys(this._timeLayers).forEach(x => this._hideLayer(x));
+      const hide = () =>
+        Object.keys(this._timeLayers).forEach(x => this._hideLayer(x));
+      hide();
       this._visible = false;
+      this.pushDataLoadEvent(() => {
+        hide();
+      });
     }
   }
 
@@ -194,17 +201,19 @@ export class TimeLayersGroup {
 
   private _setLayerOpacity(id: string, value: number) {
     const dataLoaded = this._isDataLoaded();
-    this.forEachTimeLayer(id, dataLayerId => {
-      if (dataLoaded) {
-        return this.webMap.setLayerOpacity(dataLayerId, value);
-      } else {
-        if (value === 0) {
-          return this.webMap.hideLayer(dataLayerId);
+    if (value && this._visible) {
+      this.forEachTimeLayer(id, dataLayerId => {
+        if (dataLoaded) {
+          return this.webMap.setLayerOpacity(dataLayerId, value);
         } else {
-          return this.webMap.showLayer(dataLayerId);
+          if (value === 0) {
+            return this.webMap.hideLayer(dataLayerId);
+          } else {
+            return this.webMap.showLayer(dataLayerId);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   private _removePopup() {
