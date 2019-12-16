@@ -9,6 +9,7 @@ import {
 
 import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
 import { urlParams } from '../services/UrlParams';
+import { Feature } from 'geojson';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
 type TLayer = string[];
@@ -26,6 +27,7 @@ export interface TimeLayersGroupOptions {
   getFillColor?: (...args: any[]) => any;
   createPopupContent?: (props: any) => HTMLElement | undefined;
   visible?: boolean;
+  selectOnLayerClick?: boolean;
 }
 
 export class TimeLayersGroup {
@@ -65,9 +67,6 @@ export class TimeLayersGroup {
         Object.keys(this._timeLayers).forEach(x => this._hideLayer(x));
       hide();
       this._visible = false;
-      this.pushDataLoadEvent(() => {
-        hide();
-      });
     }
   }
 
@@ -164,6 +163,19 @@ export class TimeLayersGroup {
     const timeLayer = this._timeLayers[layerId];
     if (timeLayer) {
       timeLayer.forEach(x => fun(x));
+    }
+  }
+
+  selectLayerFeature(feature: Feature, adapterId: string) {
+    const prop = feature.properties;
+    if (prop && this.options.filterIdField) {
+      const filterIdField = this.options.filterIdField;
+      const fid = prop[filterIdField];
+      const adapter = this._getWebMapLayer(adapterId);
+      if (adapter && adapter.select) {
+        adapter.select([[filterIdField, 'eq', Number(fid)]]);
+        // urlParams.set('id', String(fid));
+      }
     }
   }
 
@@ -296,14 +308,9 @@ export class TimeLayersGroup {
             .addTo(map);
         }
       }
-      if (prop && this.options.filterIdField) {
-        const filterIdField = this.options.filterIdField;
-        const fid = prop[filterIdField];
-        const adapter = this._getWebMapLayer(adapterId);
-        if (adapter && adapter.select) {
-          adapter.select([[filterIdField, 'eq', Number(fid)]]);
-          // urlParams.set('id', String(fid));
-        }
+      const selectOnLayerClick = this.options.selectOnLayerClick ?? true;
+      if (selectOnLayerClick) {
+        this.selectLayerFeature(feature, adapterId);
       }
     }
   }

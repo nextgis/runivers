@@ -55,19 +55,12 @@ export class TimeMap {
     return group;
   }
 
+  getTimeGroupByAdapterId(id: string) {
+    return this._getTimeGroupBy(timeLayer => timeLayer.id === id);
+  }
+
   getTimeGroupByLayerId(id: string) {
-    for (let fry = 0; fry < this._timeLayersGroups.length; fry++) {
-      const layerGroup = this._timeLayersGroups[fry];
-      const timeLayer = layerGroup.getTimeLayer();
-      if (timeLayer) {
-        for (let f = 0; f < timeLayer.length; f++) {
-          const layer = timeLayer[f];
-          if (layer && layer.id === id) {
-            return layerGroup;
-          }
-        }
-      }
-    }
+    return this._getTimeGroupBy(timeLayer => !!timeLayer.layer?.includes(id));
   }
 
   getTimeGroups() {
@@ -233,6 +226,23 @@ export class TimeMap {
     } else {
       if (this._minYear && this._maxYear) {
         callback(previous ? this._minYear : this._maxYear);
+      }
+    }
+  }
+
+  private _getTimeGroupBy(
+    fun: (timeLayer: TimeLayer) => boolean
+  ): { timeGroup: TimeLayersGroup; timeLayer: TimeLayer } | undefined {
+    for (let fry = 0; fry < this._timeLayersGroups.length; fry++) {
+      const layerGroup = this._timeLayersGroups[fry];
+      const timeLayer = layerGroup.getTimeLayer();
+      if (timeLayer) {
+        for (let f = 0; f < timeLayer.length; f++) {
+          const layer = timeLayer[f];
+          if (layer && fun(layer)) {
+            return { timeGroup: layerGroup, timeLayer: layer };
+          }
+        }
       }
     }
   }
