@@ -55,7 +55,7 @@ export class TimeLayersGroup {
     if (options.opacity !== undefined) {
       this.opacity = options.opacity;
     }
-    if (this._isDataLoaded()) {
+    if (this._waitDataLoaded()) {
       webMap.mapAdapter.emitter.on('data-loaded', data => this._onData(data));
       webMap.mapAdapter.emitter.on('data-error', data => this._onData(data));
     }
@@ -63,9 +63,7 @@ export class TimeLayersGroup {
 
   hide() {
     if (this._visible) {
-      const hide = () =>
-        Object.keys(this._timeLayers).forEach(x => this._hideLayer(x));
-      hide();
+      Object.keys(this._timeLayers).forEach(x => this._hideLayer(x));
       this._visible = false;
     }
   }
@@ -134,7 +132,7 @@ export class TimeLayersGroup {
               this._removeLayerListeners(fromId);
               this._setLayerOpacity(toId, 0);
             }
-            if (!this._isDataLoaded()) {
+            if (!this._waitDataLoaded()) {
               this._onSourceIsLoaded();
             }
           })
@@ -205,27 +203,25 @@ export class TimeLayersGroup {
     ) as VectorLayerAdapter;
   }
 
-  private _isDataLoaded() {
+  private _waitDataLoaded() {
     return this.options.dataLoaded !== undefined
       ? this.options.dataLoaded
       : true;
   }
 
   private _setLayerOpacity(id: string, value: number) {
-    const dataLoaded = this._isDataLoaded();
-    if (value && this._visible) {
-      this.forEachTimeLayer(id, dataLayerId => {
-        if (dataLoaded) {
-          return this.webMap.setLayerOpacity(dataLayerId, value);
+    const dataLoaded = this._waitDataLoaded();
+    this.forEachTimeLayer(id, dataLayerId => {
+      if (dataLoaded) {
+        return this.webMap.setLayerOpacity(dataLayerId, value);
+      } else {
+        if (value === 0) {
+          return this.webMap.hideLayer(dataLayerId);
         } else {
-          if (value === 0) {
-            return this.webMap.hideLayer(dataLayerId);
-          } else {
-            return this.webMap.showLayer(dataLayerId);
-          }
+          return this.webMap.showLayer(dataLayerId);
         }
-      });
-    }
+      }
+    });
   }
 
   private _removePopup() {
@@ -361,7 +357,7 @@ export class TimeLayersGroup {
   }
 
   private _isAllDataLayerLoaded(layer: string) {
-    if (this._isDataLoaded()) {
+    if (this._waitDataLoaded()) {
       const timeLayer = this._timeLayers[layer];
       if (timeLayer) {
         return timeLayer.every(x => {
