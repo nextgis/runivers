@@ -48,7 +48,7 @@ export class TimeLayersGroup {
 
   constructor(
     private webMap: WebMap<Map, TLayer>,
-    private options: TimeLayersGroupOptions
+    public options: TimeLayersGroupOptions
   ) {
     this.name = this.options.name;
     this._visible = this.options.visible ?? true;
@@ -177,6 +177,32 @@ export class TimeLayersGroup {
     }
   }
 
+  select(fids: string, id?: string) {
+    id = id ?? this.currentLayerId;
+    // const idsParam = urlParams.get('id') as string;
+    const ids: number[] = fids.split(',').map(x => Number(x));
+    const layers = this._timeLayers[this.currentLayerId];
+    const filterIdField = this.options.filterIdField;
+    let mapLayer: string | undefined;
+    layers.forEach(x => {
+      mapLayer = x && x.layer && x.layer[0];
+      if (ids && mapLayer && filterIdField) {
+        if (x && x.select) {
+          x.select([[filterIdField, 'in', ids]]);
+        }
+
+        // this._onDataLoadEvents.push(() => {
+        //   if (x && x.select) {
+        //     x.select([[filterIdField, 'in', ids]]);
+        //   }
+        // });
+      }
+    });
+    // if (mapLayer) {
+    //   this.fitToFilter(['in', filterIdField, ...ids], id, mapLayer);
+    // }
+  }
+
   private _cleanDataLoadEvents() {
     this._onDataLoadEvents = [];
   }
@@ -234,12 +260,13 @@ export class TimeLayersGroup {
   private _isCurrentDataLayer(layerId: string): boolean {
     const currentLayers = this._timeLayers[this.currentLayerId];
     return currentLayers
-      ? currentLayers.some(
-          x =>
+      ? currentLayers.some(x => {
+          return (
             x.id === layerId ||
             x.options.name === layerId ||
             (x.layer && x.layer.some(y => y === layerId))
-        )
+          );
+        })
       : false;
   }
 
@@ -403,25 +430,9 @@ export class TimeLayersGroup {
   private async _addLayer(url: string, id: string): Promise<TimeLayer[]> {
     const layers = this.options.addLayers(url, id);
     this._timeLayers[id] = [];
-    let fillLayer: TimeLayer | undefined;
     for (const l of layers) {
       const layer = await l;
-      if (!fillLayer) {
-        fillLayer = layer;
-      }
       this._timeLayers[id].push(layer);
-    }
-    const idsParam = urlParams.get('id') as string;
-    const ids = idsParam && idsParam.split(',').map(x => Number(x));
-    const firstFillLayer = fillLayer && fillLayer.layer && fillLayer.layer[0];
-    const filterIdField = this.options.filterIdField;
-    if (ids && firstFillLayer && filterIdField) {
-      this._onDataLoadEvents.push(() => {
-        if (fillLayer && fillLayer.select) {
-          fillLayer.select([[filterIdField, 'in', ids]]);
-        }
-        this.fitToFilter(['in', filterIdField, ...ids], id, firstFillLayer);
-      });
     }
     return this._timeLayers[id];
   }
