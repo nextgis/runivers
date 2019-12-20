@@ -252,7 +252,8 @@ export class TimeMap {
     this.getTimeGroups().forEach(x => {
       const groupConfig = this._groupsConfig[x.name];
       const layers = groupConfig.layersMeta.filter(
-        d => year >= d.from && year <= d.to
+        // if range from 900 to 901, event may be only in 900
+        d => year >= d.from && year < d.to
       );
       // return previous ? layers[0] : layers[layers.length - 1];
 
