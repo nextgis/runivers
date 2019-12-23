@@ -73,9 +73,9 @@ export class TimeMap {
   }
 
   updateByYear(year: number, previous?: boolean) {
-    const layerId = this._getLayerIdsByYear(year, previous);
-    if (layerId) {
-      this.updateLayers(layerId);
+    const layersId = this._getLayerIdsByYear(year, previous);
+    if (layersId) {
+      this.updateLayers(layersId);
     }
     if (this.options.onLayerUpdate) {
       this.options.onLayerUpdate(year);

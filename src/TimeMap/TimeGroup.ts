@@ -125,15 +125,17 @@ export class TimeLayersGroup {
       if (toId && fromId !== toId) {
         this.pushDataLoadEvent(resolve);
         this._showLayer(toId)
-          .then(() => {
-            this._addLayerListeners(toId);
-            // do not hide unloaded layer if it first
-            if (fromId) {
-              this._removeLayerListeners(fromId);
-              this._setLayerOpacity(toId, 0);
-            }
-            if (!this._waitDataLoaded()) {
-              this._onSourceIsLoaded();
+          .then(id_ => {
+            if (id_ === this.currentLayerId) {
+              this._addLayerListeners(id_);
+              // do not hide unloaded layer if it first
+              if (fromId) {
+                this._removeLayerListeners(fromId);
+                this._setLayerOpacity(id_, 0);
+              }
+              if (!this._waitDataLoaded()) {
+                this._onSourceIsLoaded();
+              }
             }
           })
           .catch(er => {
@@ -190,7 +192,6 @@ export class TimeLayersGroup {
         if (x && x.select) {
           x.select([[filterIdField, 'in', ids]]);
         }
-
         // this._onDataLoadEvents.push(() => {
         //   if (x && x.select) {
         //     x.select([[filterIdField, 'in', ids]]);
@@ -455,10 +456,11 @@ export class TimeLayersGroup {
     this._toggleLayer(layerId, false);
   }
 
-  private _showLayer(id: string): Promise<any> {
+  private _showLayer(id: string): Promise<string> {
     if (this._visible) {
       const toggle = () => {
         this.forEachTimeLayer(id, l => this.webMap.toggleLayer(l, true));
+        return id;
       };
 
       const exist = this._getWebMapLayer(id);
@@ -479,7 +481,8 @@ export class TimeLayersGroup {
     }
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve(this._executeDataLoadEvents());
+        this._executeDataLoadEvents();
+        resolve(id);
       }, 0);
     });
   }
