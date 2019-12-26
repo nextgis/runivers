@@ -15,6 +15,7 @@ import { BaseLayer } from './BaseLayer';
 
 export class BoundaryLayer extends BaseLayer {
   oldNgwMvtApi = true;
+  filterIdField = 'fid';
 
   addLayers(url: string, id: string) {
     return this._createTimeLayers(url, id);
@@ -26,10 +27,10 @@ export class BoundaryLayer extends BaseLayer {
 
   createPopupContent(props: HistoryLayerProperties): HTMLElement | undefined {
     if (props && props.status && props.status < 6) {
-      const fields: Array<{
+      const fields: {
         name?: string;
         field: keyof HistoryLayerProperties;
-      }> = [
+      }[] = [
         // { name: 'Fid', field: 'fid' }
         // { field: 'name' }
         // { name: 'Наименование территории', field: 'name' },
@@ -41,10 +42,7 @@ export class BoundaryLayer extends BaseLayer {
     }
   }
 
-  private _createTimeLayers(
-    url: string,
-    id: string
-  ): Array<Promise<TimeLayer>> {
+  private _createTimeLayers(url: string, id: string): Promise<TimeLayer>[] {
     const timeGroup = this.groupLayer;
     if (timeGroup) {
       const paint = {
@@ -115,7 +113,7 @@ export class BoundaryLayer extends BaseLayer {
         });
       });
 
-      const colors = lineColor.reduce<Array<string | number>>((a, b) => {
+      const colors = lineColor.reduce<(string | number)[]>((a, b) => {
         const [param, color] = b;
         let c = Color(color);
         if (param) {
@@ -179,7 +177,7 @@ export class BoundaryLayer extends BaseLayer {
   }
 
   private _createPropBlock(
-    fields: Array<PopupContentField<keyof HistoryLayerProperties>>,
+    fields: PopupContentField<keyof HistoryLayerProperties>[],
     props: HistoryLayerProperties,
     headerField = 'name'
   ) {
@@ -243,32 +241,37 @@ export class BoundaryLayer extends BaseLayer {
       fields.push({ name: opt.field, ...opt });
       props[opt.field] = value;
     };
+    const getHtml = (prop: keyof Principalities01, props: Principalities01) => {
+      return this._createPropElement(
+        `<a href="${props.desc_link}" target="_blank">${prop}</a>`,
+        ''
+      );
+    };
+    const getHtml2 = (
+      prop: keyof Principalities01,
+      props: Principalities01
+    ) => {
+      return this._createPropElement(
+        `Правитель: <a href="${props.desc_link}" target="_blank">${prop}</a>`,
+        ''
+      );
+    };
     const fid = props.fid;
     if (fid) {
-      const prince02 = this._findPrincipalities02(
-        fid,
-        this.app.timeMap.currentYear
-      );
-      if (prince02) {
-        addProp(prince02.ruler, { field: 'ruler' });
-        // addProp(prince02.name, { field: 'name' });
-      }
       const prince01 = this._findPrincipalities01(
         fid,
         this.app.timeMap.currentYear
       );
+      const prince02 = this._findPrincipalities02(
+        fid,
+        this.app.timeMap.currentYear
+      );
       if (prince01) {
-        const getHtml = (
-          prop: keyof Principalities01,
-          props: Principalities01
-        ) => {
-          return this._createPropElement(
-            `<a href="${props.desc_link}" target="_blank">${prop}</a>`,
-            ''
-          );
-        };
         props.desc_link = prince01.desc_link;
         addProp(prince01.name, { field: 'name_prince', getHtml });
+      }
+      if (prince02) {
+        addProp(prince02.ruler, { field: 'ruler', getHtml: getHtml2 });
       }
     }
   }

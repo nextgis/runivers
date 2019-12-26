@@ -1,5 +1,5 @@
 import { LinePaint } from 'mapbox-gl';
-import { TimeLayer, TimeLayersGroup } from '../TimeMap/TimeGroup';
+import { TimeLayer } from '../TimeMap/TimeGroup';
 import { BaseLayer } from './BaseLayer';
 
 export interface LineTypePaint {

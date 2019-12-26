@@ -82,9 +82,10 @@ export class MarkerLayer {
           (marker: Feature<Point | MultiPoint, PointProperties>, i) => {
             const type = marker && marker.geometry && marker.geometry.type;
             if (type === 'MultiPoint') {
-              const coordinates = marker.geometry.coordinates as Array<
-                [number, number]
-              >;
+              const coordinates = marker.geometry.coordinates as [
+                number,
+                number
+              ][];
               coordinates.forEach(x => {
                 this._addMarkerToMap(x, marker.properties, many);
               });

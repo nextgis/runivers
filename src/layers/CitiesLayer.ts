@@ -34,10 +34,7 @@ export class CitiesLayer extends BaseLayer {
     }
   }
 
-  private _createTimeLayers(
-    url: string,
-    id: string
-  ): Array<Promise<TimeLayer>> {
+  private _createTimeLayers(url: string, id: string): Promise<TimeLayer>[] {
     // const sourceLayer = 'ngw:' + id;
     const sourceLayer = id;
     const label = this.events.onLoad('load-images').then(() => {

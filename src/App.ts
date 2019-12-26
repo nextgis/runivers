@@ -90,6 +90,9 @@ export class App {
       onStepReady: (year: number) => this.updateDataByYear(year),
       onLayerUpdate: (year: number) => this.updateDataByYear(year)
     });
+    this.timeMap.emitter.once('loading:finish', () => {
+      this._setSelectedLayerFromUrl();
+    });
     if (this.options.currentYear) {
       this.timeMap.currentYear = this.options.currentYear;
     }
@@ -122,6 +125,16 @@ export class App {
 
   updateLayersColor() {
     // ignore
+  }
+
+  private _setSelectedLayerFromUrl() {
+    const id = urlParams.get('id');
+    if (id) {
+      const group = this.timeMap.getTimeGroup('base');
+      if (group) {
+        group.select(id);
+      }
+    }
   }
 
   private _buildApp() {

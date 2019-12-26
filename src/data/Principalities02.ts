@@ -4,4 +4,5 @@ export interface Principalities02 {
   years_from: string;
   years_to: string;
   ruler: string;
+  desc_link: string;
 }
