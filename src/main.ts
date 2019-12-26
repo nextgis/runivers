@@ -5,7 +5,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import { App } from './App';
-import config from '../config.json';
+import config from '../config';
 import { version } from '../package.json';
 // @ts-ignore
 import periods from './data/periods.csv';
@@ -29,6 +29,7 @@ const app = new App({
   animationDelay: 100,
   animationStep: 1,
   bounds: [2, 27, 203, 82],
+  minZoom: 3,
   periods,
   yearsStat,
   areaStat,

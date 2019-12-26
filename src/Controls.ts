@@ -12,6 +12,7 @@ import { YearsStatPanelControl } from './components/Panels/YearsStatPanelControl
 import { IControl } from 'mapbox-gl';
 
 import './Controls.css';
+import { TimeMapLoadingControl } from './TimeMap/TimeMapLoadingControl';
 
 interface ScreenSize {
   height: number;
@@ -29,6 +30,7 @@ export class Controls {
   private _switchersPanel?: Panel;
   private _homeBtnPanel: any | Promise<any>;
   private _zoomControl?: IControl;
+  private _loadingControl?: TimeMapLoadingControl;
 
   private _attributions?: IControl;
 
@@ -118,6 +120,7 @@ export class Controls {
     ];
 
     this._mobileTogglePanels.forEach(x => x.show());
+    this._loadingControl = new TimeMapLoadingControl(this.app.timeMap);
   }
 
   private async _addControl(
@@ -152,6 +155,8 @@ export class Controls {
   }
 
   private async _addMobileControls() {
+    await this._addControl(this._loadingControl, 'top-right');
+
     await this._addControl(this._switchersPanel, 'top-left');
 
     await this._addControl(this.legendPanel, 'bottom-right');

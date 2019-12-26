@@ -1,48 +1,20 @@
 import { LinePaint } from 'mapbox-gl';
-import {
-  TimeLayersGroupOptions,
-  TimeLayer,
-  TimeLayersGroup
-} from '../TimeMap/TimeGroup';
-import { App } from '../App';
+import { TimeLayer, TimeLayersGroup } from '../TimeMap/TimeGroup';
+import { BaseLayer } from './BaseLayer';
 
 export interface LineTypePaint {
   width: number;
   color: string;
 }
 
-export class LinesLayer implements TimeLayersGroupOptions {
-  name!: string;
-  baseUrl!: string;
-  manualOpacity?: boolean;
-  filterIdField?: string;
-  opacity = 1;
-  simplification = 8;
+export class LinesLayer extends BaseLayer {
+  oldNgwMvtApi = true;
 
   private _lineTypes: { [linetype: number]: LineTypePaint } = {
     1: { width: 1.06, color: 'rgba(132, 73, 58, 1.00)' },
     2: { width: 1.06, color: 'rgba(132, 73, 58, 0.50)' },
     3: { width: 2.26, color: 'rgba(132, 73, 58, 0.25)' }
   };
-
-  constructor(protected app: App, options: Partial<TimeLayersGroupOptions>) {
-    Object.assign(this, options);
-  }
-
-  get groupLayer(): TimeLayersGroup | false {
-    return this.app.timeMap && this.app.timeMap.getTimeGroup(this.name);
-  }
-
-  // setUrl(opt: { baseUrl: string; resourceId: string }) {
-  //   return (
-  //     opt.baseUrl +
-  //     '/api/component/feature_layer/mvt?x={x}&y={y}&z={z}&' +
-  //     'resource=' +
-  //     opt.resourceId +
-  //     '&simplification=' +
-  //     this.simplification
-  //   );
-  // }
 
   addLayers(url: string, id: string) {
     const opacity = this.groupLayer ? this.groupLayer.opacity : 1;

@@ -28,6 +28,7 @@ export interface TimeLayersGroupOptions {
   createPopupContent?: (props: any) => HTMLElement | undefined;
   visible?: boolean;
   selectOnLayerClick?: boolean;
+  oldNgwMvtApi?: boolean;
 }
 
 export class TimeLayersGroup {
@@ -470,7 +471,12 @@ export class TimeLayersGroup {
               baseUrl: this.options.baseUrl,
               resourceId: id
             })
-          : this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt';
+          : this.options.oldNgwMvtApi
+          ? this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt'
+          : this.newNgwMvtUrl({
+              baseUrl: this.options.baseUrl,
+              resourceId: id
+            });
 
         return this._addLayer(url, id).then(() => {
           return toggle();
@@ -485,6 +491,15 @@ export class TimeLayersGroup {
         resolve(id);
       }, 0);
     });
+  }
+
+  private newNgwMvtUrl(opt: { baseUrl: string; resourceId: string }) {
+    return (
+      opt.baseUrl +
+      '/api/component/feature_layer/mvt?x={x}&y={y}&z={z}&' +
+      'resource=' +
+      opt.resourceId
+    );
   }
 
   private _fitToFeatures(features: MapboxGeoJSONFeature[]) {

@@ -1,5 +1,5 @@
 import { connector } from './NgwConnectorService';
-import config from '../../config.json';
+import config from '../../config';
 
 export function getPoints() {
   // if (points) {

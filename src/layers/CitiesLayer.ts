@@ -7,17 +7,15 @@ import { Events } from '@nextgis/utils';
 import { App } from '../App';
 
 import { TimeLayer, TimeLayersGroupOptions } from '../TimeMap/TimeGroup';
+import { BaseLayer } from './BaseLayer';
 
-export class CitiesLayer implements TimeLayersGroupOptions {
+export class CitiesLayer extends BaseLayer {
+  oldNgwMvtApi = true;
   emitter = new EventEmitter();
-  name!: string;
-  baseUrl!: string;
-  opacity = 1;
-  simplification = 8;
   private events: Events;
 
   constructor(protected app: App, options: Partial<TimeLayersGroupOptions>) {
-    Object.assign(this, options);
+    super(app, options);
     this.events = new Events(this.emitter);
     this.app.webMap.onLoad().then(() => this._registerMapboxImages());
   }

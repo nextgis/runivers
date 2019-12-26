@@ -22,10 +22,10 @@ import { TimeMap } from './TimeMap/TimeMap';
 
 import { urlParams } from './services/UrlParams';
 import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
-import { BaseLayer } from './layers/BaseLayer';
 import { MarkerLayer } from './layers/MarkerLayer';
 import { CitiesLayer } from './layers/CitiesLayer';
 import { LinesLayer } from './layers/LinesLayer';
+import { BoundaryLayer } from './layers/BoundaryLayer';
 
 export class App {
   options: AppOptions = {
@@ -52,7 +52,7 @@ export class App {
   private statusLayers: {
     [groupName: string]: Type<TimeLayersGroupOptions>;
   } = {
-    base: BaseLayer,
+    base: BoundaryLayer,
     cities: CitiesLayer,
     lines: LinesLayer
   };
