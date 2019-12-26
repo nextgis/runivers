@@ -33,9 +33,9 @@ export interface AppOptions extends MapboxglMapAdapterOptions {
   principalities02?: Principalities02[];
   timeStops: TimeStop[];
   version?: string;
-  lineColor?: Array<[number | string, string]>;
+  lineColor?: [number | string, string][];
   /** self id, color, label, array of link to lineColor id */
-  lineColorLegend?: Array<[number, string, string, number[]]>;
+  lineColorLegend?: [number, string, string, number[]][];
   statusAliases?: { [name: string]: string };
 }
 
@@ -128,5 +128,9 @@ export interface LayersGroup {
   items: HistoryLayerResource[];
 }
 
-export type LayerMetaRecord = { [groupName: string]: LayerMeta | false };
-export type LayerIdRecord = { [groupName: string]: string };
+export interface LayerMetaRecord {
+  [groupName: string]: LayerMeta | false;
+}
+export interface LayerIdRecord {
+  [groupName: string]: string;
+}
