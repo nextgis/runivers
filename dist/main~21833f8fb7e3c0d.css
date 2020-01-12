@@ -1,0 +1,338 @@
+/* FONTS */
+
+body {
+  font-family: 'PT Sans', sans-serif !important;
+}
+
+.app-header, .popup__property--value.prop.header, .panel-body__period--name, .panel-body__period--year, .panel-body__yearstat--gain {
+  font-family: "PT Serif", serif !important;
+}
+
+/* /FONTS */
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  line-height: 1.4em;
+  color: #454545;
+}
+
+.clear {
+  clear: both;
+}
+
+.alignright {
+  margin-top: 0;
+  text-align: right;
+}
+
+.small {
+  font-size: 0.9em;
+}
+
+/* END CONTENT */
+
+/* CUSTOMIZATION */
+
+/* SLIDER */
+
+.slider-control {
+  bottom: 40px;
+}
+
+.mapboxgl-map {
+  /* font-family: "PT Serif", serif !important; */
+  font-family: 'PT Sans', sans-serif !important;
+  line-height: 1.4em;
+  color: #454545;
+  overflow: hidden;
+  position: relative;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.noUi-target {
+  height: 10px;
+  border-radius: 7px;
+  margin: 0 115px 0 0;
+  background: rgba(49, 49, 49, 0.8);
+  box-shadow: none!important;
+  border: 0!important;
+}
+
+.noUi-handle {
+  right: -10px !important;
+  outline: none;
+  top: -6px !important;
+  border-radius: 50%;
+  width: 21px !important;
+  height: 21px !important;
+  background: #fff;
+  opacity: 1;
+  box-shadow: none;
+}
+
+.noUi-handle:before, .noUi-handle:after {
+  content: none;
+  background: inherit;
+}
+
+.noUi-handle:before {
+  content: "";
+  background: rgb(187, 16, 16);
+  width: 7px;
+  height: 7px;
+  left: 6px;
+  top: 6px;
+  border-radius: 50%;
+}
+
+.noUi-pips {
+  top: 0 !important;
+  padding: 0;
+  height: 0px;
+}
+
+.noUi-value {
+  top: 5px;
+  color: #000;
+  font-weight: 600;
+}
+
+.noUi-marker-normal {
+  top: 3px;
+  border-radius: 16px;
+  height: 4px !important;
+  width: 4px!important;
+}
+
+.noUi-marker-large {
+  top: 3px;
+  border-radius: 16px;
+  height: 4px !important;
+  width: 4px!important;
+  background: #fff!important;
+}
+
+.noUi-tooltip {
+  font-size: 12px;
+  border-radius: 2px;
+  padding: 2px 5px;
+  background: rgba(49, 49, 49, 0.8);
+  color: #fff;
+  border: none;
+}
+
+.slider-control-player {
+  margin-left: 20px;
+}
+
+/* .noUi-base:before,
+.noUi-base:after {
+  width: 17px;
+  content: "";
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: block;
+}
+.noUi-base:before {
+  left: -17px;
+}
+.noUi-base:after {
+  left: 100%;
+} */
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  color: rgb(187, 16, 16);
+  line-height: 1rem;
+  background: transparent;
+  text-transform: uppercase;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+}
+
+.btn:focus {
+  outline-color: rgba(255, 255, 255, 0);
+  /* box-shadow: 0 0 0 0.1rem rgba(187, 16, 16, 0.5); */
+}
+
+.dialog-component {
+  max-width: 600px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.dialog-component::-webkit-scrollbar {
+  width: 0px;
+  display: none;
+}
+
+/* DIALOG */
+
+.dialog-component {
+  max-height: 100%;
+  max-width: 900px;
+  width: 90%;
+  box-shadow: none;
+  border: 0;
+  padding: 0 20px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background: transparent;
+  color: white;
+  font-size: 14px;
+}
+
+.dialog-component a {
+  color: #d39a29;
+  text-decoration: none;
+}
+
+.dialog-component::backdrop {
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+.dialog-component__close {
+  position: fixed;
+  right: 0;
+  top: 0;
+  border: 0;
+  border-radius: 0 3px 0 0;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.dialog-component h2 {
+  color: #d39a29;
+  font-size: 22px;
+  margin: 25px 0;
+  text-align: left;
+}
+
+.dialog-component__close svg {
+  width: 64px!important;
+  height: 64px!important;
+  fill: #fff;
+}
+
+/* MAPBOX GL */
+
+.mapboxgl-ctrl-top-left, .mapboxgl-ctrl-bottom-left {
+  margin-left: 10px;
+}
+
+.mapboxgl-ctrl-top-right, .mapboxgl-ctrl-bottom-right {
+  margin-right: 10px;
+}
+
+.mapboxgl-ctrl-top-left {
+  top: 64px;
+}
+
+.mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right {
+  margin-bottom: 80px;
+  z-index: 0;
+}
+
+.mapboxgl-ctrl-group {
+  border-radius: 0;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  overflow: hidden;
+  background: none;
+}
+
+.mapboxgl-ctrl-group:not(:empty) {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.mapboxgl-ctrl-bottom-left .mapboxgl-ctrl .mapboxgl-ctrl-group {
+  margin: 0 0 3px 10px;
+}
+
+.mapboxgl-ctrl-group>button+button {
+  border-top: 0;
+  margin-top: 3px;
+}
+
+.mapboxgl-ctrl-group>button {
+  width: 25px;
+  height: 25px;
+  background: rgba(49, 49, 49, 1);
+  border-radius: 30px;
+}
+
+.mapboxgl-ctrl-zoom-in .mapboxgl-ctrl-icon {
+  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDM1NyAzNTciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDM1NyAzNTc7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8ZyBpZD0iYWRkIj4KCQk8cGF0aCBkPSJNMzU3LDIwNEgyMDR2MTUzaC01MVYyMDRIMHYtNTFoMTUzVjBoNTF2MTUzaDE1M1YyMDR6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8L2c+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==)!important;
+  opacity: 0.8;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  background-position: center;
+}
+
+.mapboxgl-ctrl-icon.mapboxgl-ctrl-home {
+  background-image: url(images/home-button.svg)!important;
+  opacity: 0.8;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  background-position: center;
+}
+
+.mapboxgl-ctrl-icon.mapboxgl-ctrl-home:hover {
+  opacity: 1;
+}
+
+.mapboxgl-ctrl-zoom-in .mapboxgl-ctrl-icon:hover {
+  opacity: 1;
+}
+
+.mapboxgl-ctrl-zoom-out .mapboxgl-ctrl-icon {
+  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMS4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDQ5MS44NTggNDkxLjg1OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDkxLjg1OCA0OTEuODU4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCI+CjxnPgoJPGc+CgkJPHBhdGggZD0iTTQ2NS4xNjcsMjExLjYxM0gyNDAuMjFIMjYuNjljLTguNDI0LDAtMjYuNjksMTEuNDM5LTI2LjY5LDM0LjMxNnMxOC4yNjcsMzQuMzE2LDI2LjY5LDM0LjMxNmgyMTMuNTJoMjI0Ljk1OSAgICBjOC40MjEsMCwyNi42ODktMTEuNDM5LDI2LjY4OS0zNC4zMTZTNDczLjU5LDIxMS42MTMsNDY1LjE2NywyMTEuNjEzeiIgZmlsbD0iI0ZGRkZGRiIvPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgoJPGc+Cgk8L2c+Cgk8Zz4KCTwvZz4KCTxnPgoJPC9nPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=)!important;
+  opacity: 0.8;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  background-position: center;
+}
+
+.mapboxgl-ctrl-zoom-out .mapboxgl-ctrl-icon:hover {
+  opacity: 1;
+}
+
+.mapboxgl-ctrl>button:hover {
+  background-color: rgba(49, 49, 49, 1);
+}
+

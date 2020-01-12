@@ -1,0 +1,155 @@
+.popup__propertyblock {
+  margin-bottom: 0;
+  text-align: center;
+  width: 300px;
+}
+
+.popup__propertyblock .feature-link {
+  cursor: pointer;
+}
+
+.popup__property--name {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  color: #525252;
+}
+
+.popup__property--value {
+  font-size: 1rem;
+  line-height: 1.2rem;
+}
+
+.popup__property--value.dates .show-date {
+  cursor: pointer;
+}
+
+.popup__property--center {
+  text-align: center;
+}
+
+.map-marker {
+  display: block;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  background: #9c9c9c;
+  width: 23px;
+  height: 23px;
+}
+
+.map-marker.active {
+  background: black!important;
+}
+
+.map-marker--inner {
+  border-radius: 50%;
+  border: 1px solid #fff;
+  width: 15px;
+  height: 15px;
+  margin: 3px;
+}
+
+.map-marker__label {
+  color: white;
+  text-align: center;
+  line-height: 15px;
+}
+
+.popup__property--value, .popup__property--value span, .popup__property--value p {
+  text-align: left;
+}
+
+.popup__property--value.status {
+  font-size: 14px;
+  color: #797979;
+  margin-bottom: 15px;
+}
+
+.popup__property--value.prop h2 {
+  font-size: 16px;
+  text-align: left;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  margin-right: 20px;
+}
+
+.popup__property--value.dates {
+  width: 160px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(187, 16, 16);
+}
+
+.popup__property--value.area {
+  width: 135px;
+  display: inline-block;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b9b9b9;
+}
+
+.mapboxgl-popup-close-button {
+  font-size: 30px;
+  line-height: 20px;
+  margin: 3px 5px 0 0;
+  color: #b9b9b9;
+  font-weight: lighter;
+}
+
+.mapboxgl-popup-close-button:hover {
+  background-color: unset;
+}
+
+.mapboxgl-popup-content {
+  padding: 10px;
+  width: 300px;
+}
+
+.backdrop {
+  background-color: rgba(0, 0, 0, 0.85)!important;
+}
+
+.app-header {
+  position: absolute;
+  text-align: center;
+  margin: 1.3rem 15px;
+  font-size: 1.7rem;
+  line-height: 1.7rem;
+  color: #000000;
+}
+
+.app-header span {
+  vertical-align: middle;
+}
+
+.app-header .about_icon {
+  vertical-align: middle;
+  line-height: 15px;
+}
+
+.app-affiliated-logos {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+@media screen and (max-width: 450px) {
+  .app-header {
+    font-size: 1.4rem;
+  }
+}
+
+.mapboxgl-map > .mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+  position: absolute;
+  bottom: 0;
+}
+
+.mapboxgl-map  > .mapboxgl-ctrl-attrib.mapboxgl-compact {
+  left: 0;
+  display: none;
+}
+
