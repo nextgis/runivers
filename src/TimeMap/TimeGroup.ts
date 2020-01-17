@@ -103,14 +103,17 @@ export class TimeLayersGroup {
     this._onDataLoadEvents.push(event);
   }
 
-  fitToFilter(filter: any[], sourceLayer: string, sourceId: string) {
+  fitToFilter(filter: any[], timeLayer: TimeLayer) {
     const map = this.webMap.mapAdapter.map;
-    if (map) {
-      const features = map.querySourceFeatures(sourceId, {
+    if (map && typeof timeLayer.source === 'string') {
+      const features = map.querySourceFeatures(timeLayer.source, {
         filter,
-        sourceLayer
+        sourceLayer: 'ngw:' + timeLayer.id
       });
-      this._fitToFeatures(features);
+      if (features && features.length) {
+        this._fitToFeatures(features);
+        return features;
+      }
     }
   }
 
@@ -180,18 +183,19 @@ export class TimeLayersGroup {
     }
   }
 
-  select(fids: string, id?: string) {
+  select(fids: string, id?: string, fit = false) {
     id = id ?? this.currentLayerId;
     // const idsParam = urlParams.get('id') as string;
     const ids: number[] = fids.split(',').map(x => Number(x));
     const layers = this._timeLayers[this.currentLayerId];
     const filterIdField = this.options.filterIdField;
-    let mapLayer: string | undefined;
+    const mapLayers: TimeLayer[] = [];
     layers.forEach(x => {
-      mapLayer = x && x.layer && x.layer[0];
+      const mapLayer = x && x.layer && x.layer[0];
       if (ids && mapLayer && filterIdField) {
         if (x && x.select) {
           x.select([[filterIdField, 'in', ids]]);
+          mapLayers.push(x);
         }
         // this._onDataLoadEvents.push(() => {
         //   if (x && x.select) {
@@ -200,9 +204,10 @@ export class TimeLayersGroup {
         // });
       }
     });
-    // if (mapLayer) {
-    //   this.fitToFilter(['in', filterIdField, ...ids], id, mapLayer);
-    // }
+    const timeLayer = mapLayers[0];
+    if (fit && timeLayer) {
+      return this.fitToFilter(['in', filterIdField, ...ids], timeLayer);
+    }
   }
 
   private _cleanDataLoadEvents() {
@@ -507,8 +512,12 @@ export class TimeLayersGroup {
 
     const extendCoords = (coords: any[]) => {
       if (coords.length === 2) {
-        // @ts-ignore
-        bounds.extend(coords);
+        try {
+          // @ts-ignore
+          bounds.extend(coords);
+        } catch (er) {
+          // ignore
+        }
       } else {
         coords.forEach(c => {
           extendCoords(c);
