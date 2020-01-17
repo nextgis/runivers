@@ -28,6 +28,7 @@ interface Events {
 export interface TimeMapOptions {
   timeLayersGroups?: TimeLayersGroupOptions[];
   fromYear?: number;
+  toYear?: number;
   onLayerUpdate?: (year: number) => void;
   onStepReady?: (year: number) => void;
   getStatusLayer: (config: LayersGroup) => TimeLayersGroupOptions | undefined;
@@ -327,7 +328,8 @@ export class TimeMap {
         if (_match) {
           const [from, to] = [_match[1], _match[3]].map(x => Number(x));
           const allowedYear =
-            this.options.fromYear && from < this.options.fromYear
+            (this.options.fromYear && from < this.options.fromYear) ||
+            (this.options.toYear && to > this.options.toYear)
               ? false
               : true;
           if (allowedYear) {
