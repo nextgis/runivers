@@ -3,14 +3,12 @@ import {
   Popup,
   MapMouseEvent,
   EventData,
-  MapboxGeoJSONFeature,
   LngLatBounds,
   GeoJSONSource
 } from 'mapbox-gl';
 
 import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
-import { urlParams } from '../services/UrlParams';
-import { Feature, FeatureCollection } from 'geojson';
+import { Feature, FeatureCollection, Point, Polygon } from 'geojson';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
 type TLayer = string[];
@@ -36,6 +34,8 @@ export class TimeLayersGroup {
   name: string;
   currentLayerId!: string;
   opacity = 0.8;
+  pointFitMaxZoom = 7;
+  polygonFitMaxZoom = 12;
 
   private _visible = true;
   private _popup?: Popup;
@@ -221,11 +221,6 @@ export class TimeLayersGroup {
           x.select([[filterIdField, 'in', ids]]);
           mapLayers.push(x);
         }
-        // this._onDataLoadEvents.push(() => {
-        //   if (x && x.select) {
-        //     x.select([[filterIdField, 'in', ids]]);
-        //   }
-        // });
       }
     });
     if (fit) {
@@ -540,7 +535,7 @@ export class TimeLayersGroup {
 
   private _fitToFeatures(features: Feature[]) {
     const bounds = new LngLatBounds();
-
+    const types: string[] = [];
     const extendCoords = (coords: any[]) => {
       if (coords.length === 2) {
         try {
@@ -557,13 +552,15 @@ export class TimeLayersGroup {
     };
 
     features.forEach(feature => {
-      // @ts-ignore
-      extendCoords(feature.geometry.coordinates);
+      const geometry: Polygon | Point = feature.geometry as Polygon | Point;
+      extendCoords(geometry.coordinates);
+      types.push(feature.geometry.type);
     });
     if (this.webMap.mapAdapter.map) {
+      const onlyPoint = types.every(x => x === 'Point');
       this.webMap.mapAdapter.map.fitBounds(bounds, {
         padding: 20,
-        maxZoom: 17
+        maxZoom: onlyPoint ? this.pointFitMaxZoom : this.polygonFitMaxZoom
       });
     }
   }
