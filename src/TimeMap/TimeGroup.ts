@@ -4,12 +4,13 @@ import {
   MapMouseEvent,
   EventData,
   MapboxGeoJSONFeature,
-  LngLatBounds
+  LngLatBounds,
+  GeoJSONSource
 } from 'mapbox-gl';
 
 import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
 import { urlParams } from '../services/UrlParams';
-import { Feature } from 'geojson';
+import { Feature, FeatureCollection } from 'geojson';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
 type TLayer = string[];
@@ -106,10 +107,33 @@ export class TimeLayersGroup {
   fitToFilter(filter: any[], timeLayer: TimeLayer) {
     const map = this.webMap.mapAdapter.map;
     if (map && typeof timeLayer.source === 'string') {
-      const features = map.querySourceFeatures(timeLayer.source, {
-        filter,
-        sourceLayer: 'ngw:' + timeLayer.id
-      });
+      const isNgwGeoJson = timeLayer.source.startsWith('ngw:');
+      let features: Feature[] = [];
+      if (isNgwGeoJson) {
+        // const layers = timeLayer.getLayers();
+        // features = layers.map(x => x.feature) as Feature[];
+        const source = map.getSource(timeLayer.source) as GeoJSONSource;
+        const featureCollection: FeatureCollection =
+          // @ts-ignore
+          source._data as FeatureCollection;
+        const filterIdField = this.options.filterIdField || 'id';
+        features = featureCollection.features.filter(x => {
+          const ids: number[] = [].concat(filter[2]);
+          return (
+            x.properties && ids.indexOf(x.properties[filterIdField]) !== -1
+          );
+        });
+        // features = map.querySourceFeatures(timeLayer.source, {
+        //   filter
+        // });
+      } else {
+        const sourceLayer: string | undefined = 'ngw:' + timeLayer.id;
+        const source: string | undefined = timeLayer.source;
+        features = map.querySourceFeatures(source, {
+          filter,
+          sourceLayer
+        });
+      }
       if (features && features.length) {
         this._fitToFeatures(features);
         return features;
@@ -204,9 +228,16 @@ export class TimeLayersGroup {
         // });
       }
     });
-    const timeLayer = mapLayers[0];
-    if (fit && timeLayer) {
-      return this.fitToFilter(['in', filterIdField, ...ids], timeLayer);
+    if (fit) {
+      for (const timeLayer of mapLayers) {
+        const features = this.fitToFilter(
+          ['in', filterIdField, ...ids],
+          timeLayer
+        );
+        if (features && features.length) {
+          return features;
+        }
+      }
     }
   }
 
@@ -507,7 +538,7 @@ export class TimeLayersGroup {
     );
   }
 
-  private _fitToFeatures(features: MapboxGeoJSONFeature[]) {
+  private _fitToFeatures(features: Feature[]) {
     const bounds = new LngLatBounds();
 
     const extendCoords = (coords: any[]) => {
@@ -531,7 +562,8 @@ export class TimeLayersGroup {
     });
     if (this.webMap.mapAdapter.map) {
       this.webMap.mapAdapter.map.fitBounds(bounds, {
-        padding: 20
+        padding: 20,
+        maxZoom: 17
       });
     }
   }
