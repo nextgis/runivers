@@ -7,7 +7,11 @@ import {
   GeoJSONSource
 } from 'mapbox-gl';
 
-import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
+import WebMap, {
+  MvtAdapterOptions,
+  VectorLayerAdapter,
+  PropertiesFilter
+} from '@nextgis/webmap';
 import { Feature, FeatureCollection, Point, Polygon } from 'geojson';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
@@ -37,6 +41,7 @@ export class TimeLayersGroup {
   pointFitMaxZoom = 7;
   polygonFitMaxZoom = 12;
 
+  private _filter?: PropertiesFilter;
   private _visible = true;
   private _popup?: Popup;
   private _timeLayers: { [layerId: string]: TimeLayer[] } = {};
@@ -234,6 +239,15 @@ export class TimeLayersGroup {
         }
       }
     }
+  }
+
+  setFilter(filter: PropertiesFilter) {
+    if (filter && filter.length) {
+      this._filter = filter;
+    } else {
+      this._filter = undefined;
+    }
+    this._updateFilter();
   }
 
   private _cleanDataLoadEvents() {
@@ -563,5 +577,17 @@ export class TimeLayersGroup {
         maxZoom: onlyPoint ? this.pointFitMaxZoom : this.polygonFitMaxZoom
       });
     }
+  }
+
+  private _updateFilter() {
+    const layers = this._timeLayers[this.currentLayerId];
+    const filterIdField = this.options.filterIdField;
+    layers.forEach(x => {
+      if (filterIdField) {
+        if (x && x.propertiesFilter) {
+          x.propertiesFilter(this._filter || []);
+        }
+      }
+    });
   }
 }
