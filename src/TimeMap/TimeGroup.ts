@@ -134,7 +134,8 @@ export class TimeLayersGroup {
         //   filter
         // });
       } else {
-        const sourceLayer: string | undefined = 'ngw:' + timeLayer.id;
+        const sourceLayer: string | undefined =
+          'ngw:' + (timeLayer.options.name || timeLayer.id);
         const source: string | undefined = timeLayer.source;
         features = map.querySourceFeatures(source, {
           filter,
