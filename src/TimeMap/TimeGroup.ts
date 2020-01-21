@@ -25,13 +25,15 @@ export interface TimeLayersGroupOptions {
   manualOpacity?: boolean;
   opacity?: number;
   dataLoaded?: boolean;
+  visible?: boolean;
+  selectOnLayerClick?: boolean;
+  oldNgwMvtApi?: boolean;
   addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
   setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
   getFillColor?: (...args: any[]) => any;
   createPopupContent?: (props: any) => HTMLElement | undefined;
-  visible?: boolean;
-  selectOnLayerClick?: boolean;
-  oldNgwMvtApi?: boolean;
+  setFilter?: (properties: PropertiesFilter, id?: number | string) => void;
+  removeFilter?: (id?: number | string) => void;
 }
 
 export class TimeLayersGroup {
@@ -247,7 +249,15 @@ export class TimeLayersGroup {
     } else {
       this._filter = undefined;
     }
-    this._updateFilter();
+    if (this.options.setFilter) {
+      if (this._filter) {
+        this.options.setFilter(this._filter, this.currentLayerId);
+      } else if (this.options.removeFilter) {
+        this.options.removeFilter(this.currentLayerId);
+      }
+    } else {
+      this._updateFilter();
+    }
   }
 
   private _cleanDataLoadEvents() {
