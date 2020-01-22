@@ -37,7 +37,7 @@ export interface TimeMapOptions {
 export class TimeMap {
   emitter: StrictEventEmitter<EventEmitter, Events> = new EventEmitter();
   currentYear!: number;
-
+  nextYear?: number;
   _minYear = 0;
   _maxYear = 0;
   private readonly _timeLayersGroups: TimeLayersGroup[] = [];
@@ -200,9 +200,10 @@ export class TimeMap {
     if (nextLayers) {
       const y = year;
       // const y = previous ? nextLayer.to : nextLayer.from;
-
+      this.nextYear = y;
       const next = () => {
         this.currentYear = y;
+        this.nextYear = undefined;
         callback(y);
       };
       const noChange = Object.entries(nextLayers).every(([groupName, x]) => {
