@@ -219,7 +219,7 @@ export class TimeLayersGroup {
     id = id ?? this.currentLayerId;
     // const idsParam = urlParams.get('id') as string;
     const ids: number[] = fids.split(',').map(x => Number(x));
-    const layers = this._timeLayers[this.currentLayerId];
+    const layers = this._timeLayers[id];
     const filterIdField = this.options.filterIdField;
     const mapLayers: TimeLayer[] = [];
     layers.forEach(x => {
