@@ -1,6 +1,6 @@
 import NgwConnector from '@nextgis/ngw-connector';
 // @ts-ignore
-import config from '../../config';
+import config from '../../config.json';
 
 const ngwUrl = config.baseUrl;
 
