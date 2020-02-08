@@ -55,8 +55,8 @@ export class App {
     base: BoundaryLayer,
     cities: CitiesLayer,
     lines: LinesLayer,
-    lines1: LinesLayer,
-    lines2: LinesLayer
+    status1: BoundaryLayer,
+    status2: BoundaryLayer
   };
 
   private _markers: MarkerLayer;

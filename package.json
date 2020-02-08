@@ -14,12 +14,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nextgis/dialog": "^0.24.1",
-    "@nextgis/mapboxgl-map-adapter": "^0.24.2",
-    "@nextgis/ngw-connector": "^0.24.1",
-    "@nextgis/qms-kit": "^0.24.1",
-    "@nextgis/url-runtime-params": "^0.24.1",
-    "@nextgis/webmap": "^0.24.1",
+    "@nextgis/dialog": "^0.25.4",
+    "@nextgis/mapboxgl-map-adapter": "^0.25.4",
+    "@nextgis/ngw-connector": "^0.25.4",
+    "@nextgis/qms-kit": "^0.25.4",
+    "@nextgis/url-runtime-params": "^0.25.4",
+    "@nextgis/webmap": "^0.25.4",
     "@types/color": "^3.0.1",
     "@types/node": "^13.7.0",
     "@types/proj4": "^2.5.0",
@@ -34,7 +34,7 @@
     "wnumb": "^1.2.0"
   },
   "devDependencies": {
-    "@nextgis/eslint-config": "^0.24.1",
+    "@nextgis/eslint-config": "^0.25.0",
     "@types/geojson": "^7946.0.7",
     "@types/mapbox-gl": "^1.7.0",
     "@types/nouislider": "^9.0.6",
@@ -62,6 +62,6 @@
     "url-loader": "^3.0.0",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.2"
+    "webpack-dev-server": "^3.10.3"
   }
 }
