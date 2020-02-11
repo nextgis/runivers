@@ -251,11 +251,7 @@ export class TimeLayersGroup {
       this._filter = undefined;
     }
     if (this.options.setFilter) {
-      if (this._filter) {
-        this.options.setFilter(this._filter, this.currentLayerId);
-      } else if (this.options.removeFilter) {
-        this.options.removeFilter(this.currentLayerId);
-      }
+      this.options.setFilter(this._filter || [], this.currentLayerId);
     } else {
       this._updateFilter();
     }
