@@ -28,7 +28,10 @@ export interface TimeLayersGroupOptions {
   visible?: boolean;
   selectOnLayerClick?: boolean;
   oldNgwMvtApi?: boolean;
-  addLayers: (url: string, id: string) => Array<Promise<TimeLayer>>;
+  addLayers: (
+    url: string,
+    id: string
+  ) => Promise<TimeLayer>[] | Promise<Promise<TimeLayer>[]>;
   setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
   getFillColor?: (...args: any[]) => any;
   createPopupContent?: (props: any) => HTMLElement | undefined;
@@ -482,7 +485,7 @@ export class TimeLayersGroup {
   }
 
   private async _addLayer(url: string, id: string): Promise<TimeLayer[]> {
-    const layers = this.options.addLayers(url, id);
+    const layers = await this.options.addLayers(url, id);
     this._timeLayers[id] = [];
     for (const l of layers) {
       const layer = await l;
