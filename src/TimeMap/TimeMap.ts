@@ -18,7 +18,7 @@ type TLayer = string[];
 export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 
 let EVENTS_IDS = 0;
-const ORDER = 0;
+// const ORDER = 0;
 
 interface Events {
   'loading:start': LayerIdRecord;
