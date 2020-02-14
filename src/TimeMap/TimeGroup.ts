@@ -24,6 +24,7 @@ export interface TimeLayersGroupOptions {
   filterIdField?: string;
   manualOpacity?: boolean;
   opacity?: number;
+  order?: number;
   dataLoaded?: boolean;
   visible?: boolean;
   selectOnLayerClick?: boolean;
@@ -43,6 +44,7 @@ export class TimeLayersGroup {
   name: string;
   currentLayerId!: string;
   opacity = 0.8;
+  order?: number;
   pointFitMaxZoom = 7;
   polygonFitMaxZoom = 12;
 
@@ -64,6 +66,9 @@ export class TimeLayersGroup {
   ) {
     this.name = this.options.name;
     this._visible = this.options.visible ?? true;
+    // @ts-ignore TODO: update webmap version
+    options.order = options.order ?? this.webMap.reserveOrder();
+    this.order = options.order;
     if (options.opacity !== undefined) {
       this.opacity = options.opacity;
     }
