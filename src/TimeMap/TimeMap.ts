@@ -20,9 +20,15 @@ export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 let EVENTS_IDS = 0;
 // const ORDER = 0;
 
+export interface LoadingLayerFinishEvent {
+  layerId: string;
+  layer: TimeLayersGroup;
+}
+
 interface Events {
   'loading:start': LayerIdRecord;
   'loading:finish': LayerIdRecord;
+  'loading-layer:finish': LoadingLayerFinishEvent;
 }
 
 export interface TimeMapOptions {
@@ -104,6 +110,10 @@ export class TimeMap {
         return () => {
           if (x) {
             x.showOnlyCurrentLayer();
+            this.emitter.emit('loading-layer:finish', {
+              layerId: value,
+              layer: x
+            });
           }
         };
       });
