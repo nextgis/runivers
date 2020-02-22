@@ -8,42 +8,6 @@ const baseUrl = config.baseUrl;
 
 const out = './src/data/layers.json';
 
-const adapterFor = (function() {
-  const url = require('url');
-  const adapters = {
-    'http:': require('http'),
-    'https:': require('https')
-  };
-  return function(inputUrl) {
-    return adapters[url.parse(inputUrl).protocol];
-  };
-})();
-
-NgwConnector.prototype._getJson = function(url, options) {
-  return new Promise((resolve, reject) => {
-    adapterFor(url)
-      .get(
-        url,
-        // {
-        //   url
-        //   // proxy: 'http://127.0.0.1:3128'
-        // },
-        resp => {
-          let data = '';
-          resp.on('data', chunk => {
-            data += chunk;
-          });
-          resp.on('end', () => {
-            resolve(JSON.parse(data));
-          });
-        }
-      )
-      .on('error', err => {
-        reject(err);
-      });
-  });
-};
-
 const connector = new NgwConnector({ baseUrl });
 
 function generateData(data) {
