@@ -319,8 +319,10 @@ export class SliderControl {
     }
     if (status) {
       this._startAnimation();
+      this.emitter.emit('animatioStarted');
     } else {
       this._stopAnimation();
+      this.emitter.emit('animatioStopped');
     }
   }
 
