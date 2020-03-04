@@ -149,20 +149,20 @@ export class TimeMap {
   }
 
   reOrderGroupsLayers() {
-    this._timeLayersGroups.forEach(x => {
-      // x.forEachTimeLayer(x.currentLayerId, y => {
-      //   // Fix to avoid moving the non-renewable layer down
-      //   y.options.order = 1 + ORDER++ * 0.1;
-      //   if (y.layer) {
-      //     y.layer.forEach(z => {
-      //       const map = this.webMap.mapAdapter.map;
-      //       if (map) {
-      //         map.moveLayer(z);
-      //       }
-      //     });
-      //   }
-      // });
-    });
+    // this._timeLayersGroups.forEach(x => {
+    //   x.forEachTimeLayer(x.currentLayerId, y => {
+    //     // Fix to avoid moving the non-renewable layer down
+    //     y.options.order = 1 + ORDER++ * 0.1;
+    //     if (y.layer) {
+    //       y.layer.forEach(z => {
+    //         const map = this.webMap.mapAdapter.map;
+    //         if (map) {
+    //           map.moveLayer(z);
+    //         }
+    //       });
+    //     }
+    //   });
+    // });
   }
 
   unselect(opt: { exclude?: string[] } = {}) {
