@@ -317,12 +317,13 @@ export class SliderControl {
         'paused'
       );
     }
+
     if (status) {
       this._startAnimation();
-      this.emitter.emit('animatioStarted');
+      this.emitter.emit('animationStarted');
     } else {
       this._stopAnimation();
-      this.emitter.emit('animatioStopped');
+      this.emitter.emit('animationStopped');
     }
   }
 
