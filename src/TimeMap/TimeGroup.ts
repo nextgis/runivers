@@ -26,6 +26,7 @@ export interface TimeLayersGroupOptions {
   opacity?: number;
   order?: number;
   dataLoaded?: boolean;
+  delayOpacitySwitch?: number;
   visible?: boolean;
   selectOnLayerClick?: boolean;
   oldNgwMvtApi?: boolean;
@@ -72,7 +73,7 @@ export class TimeLayersGroup {
     if (options.opacity !== undefined) {
       this.opacity = options.opacity;
     }
-    if (this._waitDataLoaded()) {
+    if (this._isWaitDataLoadedGroup()) {
       webMap.mapAdapter.emitter.on('data-loaded', data => this._onData(data));
       webMap.mapAdapter.emitter.on('data-error', data => this._onData(data));
     }
@@ -158,8 +159,11 @@ export class TimeLayersGroup {
   }
 
   showOnlyCurrentLayer() {
-    this.makeOpacity();
-    this.hideNotCurrentLayers();
+    setTimeout(
+      () => this.hideNotCurrentLayers(),
+      this.options.delayOpacitySwitch
+    );
+    setTimeout(() => this.makeOpacity(), 0);
   }
 
   switchLayer(fromId: string, toId: string) {
@@ -177,7 +181,7 @@ export class TimeLayersGroup {
                 this._removeLayerListeners(fromId);
                 this._setLayerOpacity(id_, 0);
               }
-              if (!this._waitDataLoaded()) {
+              if (!this._isWaitDataLoadedGroup()) {
                 this._onSourceIsLoaded();
               }
             }
@@ -291,14 +295,14 @@ export class TimeLayersGroup {
     ) as VectorLayerAdapter;
   }
 
-  private _waitDataLoaded() {
+  private _isWaitDataLoadedGroup() {
     return this.options.dataLoaded !== undefined
       ? this.options.dataLoaded
       : true;
   }
 
   private _setLayerOpacity(id: string, value: number) {
-    const dataLoaded = this._waitDataLoaded();
+    const dataLoaded = this._isWaitDataLoadedGroup();
     this.forEachTimeLayer(id, dataLayerId => {
       if (dataLoaded) {
         return this.webMap.setLayerOpacity(dataLayerId, value);
@@ -446,7 +450,7 @@ export class TimeLayersGroup {
   }
 
   private _isAllDataLayerLoaded(layer: string) {
-    if (this._waitDataLoaded()) {
+    if (this._isWaitDataLoadedGroup()) {
       const timeLayer = this._timeLayers[layer];
       if (timeLayer) {
         return timeLayer.every(x => {
