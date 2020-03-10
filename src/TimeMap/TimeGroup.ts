@@ -26,7 +26,6 @@ export interface TimeLayersGroupOptions {
   opacity?: number;
   order?: number;
   dataLoaded?: boolean;
-  delayOpacitySwitch?: number;
   visible?: boolean;
   selectOnLayerClick?: boolean;
   oldNgwMvtApi?: boolean;
@@ -159,11 +158,8 @@ export class TimeLayersGroup {
   }
 
   showOnlyCurrentLayer() {
-    setTimeout(
-      () => this.hideNotCurrentLayers(),
-      this.options.delayOpacitySwitch
-    );
-    setTimeout(() => this.makeOpacity(), 0);
+    this.hideNotCurrentLayers();
+    this.makeOpacity();
   }
 
   switchLayer(fromId: string, toId: string) {
