@@ -34,11 +34,18 @@ export class LegendPanelControl extends Panel {
     const element = this.createLegendBlock();
     const buttonBlock = document.createElement('div');
     buttonBlock.className = 'panel-body__legend--button';
-    buttonBlock.innerHTML = `<a
+    buttonBlock.innerHTML = `
+    <div><a
       href="https://www.runivers.ru/granitsy-rossii/charts/index.php"
       target='_blank'
       class="btn panel-button">ГРАФИК ИЗМЕНЕНИЯ ТЕРРИТОРИИ
-    </a>`;
+    </a></div>
+    <div><a
+      href="https://runivers.ru/doc/rusland/zemli-i-knyazhestva/"
+      target='_blank'
+      class="btn panel-button">Схема земель и княжеств <div class="link-button subtitle">средневековой Руси</div>
+    </a></div>
+    `;
     element.appendChild(buttonBlock);
     this.updateBody(element);
     return element;
