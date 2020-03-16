@@ -286,11 +286,13 @@ export class BoundaryLayer extends BaseLayer {
               <div class="popup__property--value status"><p>${alias}</p></div>
             `;
     }
-    if (props.status > 0 && props.status < 6) {
-      const lwdate = this._formatDateStr(props.lwdate);
-      const updtrl = this._formatDateStr(props.updtrl || props.upperdat);
-      if (lwdate && updtrl) {
-        str += `
+    const timeStop = this.app.getTimeStop(this.app.timeMap.currentYear);
+    if (timeStop !== 'principalities') {
+      if (props.status > 0 && props.status < 6) {
+        const lwdate = this._formatDateStr(props.lwdate);
+        const updtrl = this._formatDateStr(props.updtrl || props.upperdat);
+        if (lwdate && updtrl) {
+          str += `
               <div class="popup__property--value dates">
                 <span>
                   <span class="show-date">${lwdate}</span> -
@@ -298,16 +300,17 @@ export class BoundaryLayer extends BaseLayer {
                 </span>
               </div>
             `;
+        }
       }
-    }
-    if (props.Area) {
-      str += `
+      if (props.Area) {
+        str += `
               <div class="popup__property--value area">
                 <span>
                   ${formatArea(props.Area / 1000000)}
                 </span>
               </div>
             `;
+      }
     }
     return str;
   }

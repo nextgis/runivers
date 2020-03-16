@@ -139,7 +139,7 @@ export class YearsStatPanelControl extends Panel {
     return element;
   }
 
-  private _createStateSwitcher(): Node {
+  private _createStateSwitcher(): HTMLElement {
     const sliderBlock = document.createElement('div');
     sliderBlock.className = 'panel-body__period--slider';
     const yearStats = this.yearStats;

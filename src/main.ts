@@ -23,7 +23,7 @@ import './css/style.css';
 const app = new App({
   baseUrl: config.baseUrl,
   target: 'map',
-  // fromYear: 1462,
+  fromYear: 850,
   timeStops: [{ toYear: 1462, name: 'principalities' }],
   currentYear: 1462,
   animationDelay: 100,

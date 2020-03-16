@@ -19,9 +19,9 @@ import { AppOptions, AreaStat, LayersGroup } from './interfaces';
 
 import { Controls } from './Controls';
 import { TimeMap } from './TimeMap/TimeMap';
+import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 
 import { urlParams } from './services/UrlParams';
-import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 import { MarkerLayer } from './layers/MarkerLayer';
 import { CitiesLayer } from './layers/CitiesLayer';
 import { LinesLayer } from './layers/LinesLayer';
