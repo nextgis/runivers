@@ -3,7 +3,7 @@ import { Panel } from './components/Panels/PanelControl';
 import {
   getSocialLinksPanel,
   getSwitcherPanelControl,
-  getHomeBtnControl
+  getHomeBtnControl,
 } from './components/Links/Links';
 import { ControlPositions } from '@nextgis/webmap';
 import { LegendPanelControl } from './components/Panels/LegendPanelControl';
@@ -39,12 +39,12 @@ export class Controls {
   private _mobileTogglePanels: Panel[] = [];
   private _openPanels: Panel[] = [];
   private _eventBindings: { [name: string]: (...args: any[]) => void } = {
-    onMapClick: () => null
+    onMapClick: () => null,
   };
 
   private _mobSizeConst: ScreenSize = {
     height: 700,
-    width: 650
+    width: 650,
   };
 
   private _togglerEvents: Array<[Panel, () => void]> = [];
@@ -70,7 +70,7 @@ export class Controls {
         this._addMobileControls();
         this._addPanelToggleListeners();
       } else {
-        this._mobileTogglePanels.forEach(x => {
+        this._mobileTogglePanels.forEach((x) => {
           if (this._openPanels.indexOf(x) !== -1) {
             x.show();
           }
@@ -83,7 +83,7 @@ export class Controls {
   }
 
   removeControls() {
-    this._installedControls.forEach(x => {
+    this._installedControls.forEach((x) => {
       this.app.webMap.removeControl(x);
     });
     this._installedControls = [];
@@ -91,17 +91,17 @@ export class Controls {
 
   private async initControls() {
     this.periodsPanelControl = new PeriodPanelControl({
-      webMap: this.app.webMap
+      webMap: this.app.webMap,
     });
     this.yearsStatPanelControl = new YearsStatPanelControl({
-      webMap: this.app.webMap
+      webMap: this.app.webMap,
     });
 
     this.legendPanel = new LegendPanelControl({
       // colors: this.options.lineColor,
-      colors: this.app.options.lineColorLegend
+      colors: this.app.options.lineColorLegend,
     });
-    this.legendPanel.emitter.on('change', colors =>
+    this.legendPanel.emitter.on('change', (colors) =>
       this.app.updateLayersColor()
     );
     this._socialLinksPanel = getSocialLinksPanel();
@@ -109,17 +109,17 @@ export class Controls {
     this._homeBtnPanel = getHomeBtnControl(this);
     this._zoomControl = this.app.webMap.getControl('ZOOM', {
       zoomInTitle: 'Приблизить',
-      zoomOutTitle: 'Отдалить'
+      zoomOutTitle: 'Отдалить',
     });
     this._attributions = this.app.webMap.getControl('ATTRIBUTION');
 
     this._mobileTogglePanels = [
       this.periodsPanelControl,
       this.yearsStatPanelControl,
-      this.legendPanel
+      this.legendPanel,
     ];
 
-    this._mobileTogglePanels.forEach(x => x.show());
+    this._mobileTogglePanels.forEach((x) => x.show());
     this._loadingControl = new TimeMapLoadingControl(this.app.timeMap);
   }
 
@@ -214,15 +214,15 @@ export class Controls {
     // no check for second and second last signature, admit that they are always
     hideElements = hideElements.concat([
       labelNodes[0 + 1],
-      labelNodes[labelNodes.length - 2]
+      labelNodes[labelNodes.length - 2],
     ]);
 
     if (window.innerWidth <= this._mobSizeConst.width) {
-      hideElements.forEach(x => {
+      hideElements.forEach((x) => {
         x.style.visibility = 'hidden';
       });
     } else {
-      hideElements.forEach(x => {
+      hideElements.forEach((x) => {
         x.style.visibility = '';
       });
     }
@@ -241,7 +241,7 @@ export class Controls {
   private _addPanelToggleListeners() {
     this._removePanelToggleListener();
     this._togglerEvents = [];
-    this._mobileTogglePanels.forEach(x => {
+    this._mobileTogglePanels.forEach((x) => {
       const toggler = () => this._onPanelToggle(x);
       this._togglerEvents.push([x, toggler]);
       x.emitter.on('toggle', toggler);
@@ -249,8 +249,8 @@ export class Controls {
   }
 
   private _removePanelToggleListener() {
-    this._mobileTogglePanels.forEach(x => {
-      const mem = this._togglerEvents.find(y => y[0] === x);
+    this._mobileTogglePanels.forEach((x) => {
+      const mem = this._togglerEvents.find((y) => y[0] === x);
       if (mem) {
         x.emitter.removeListener('toggle', mem[1]);
       }
@@ -279,7 +279,7 @@ export class Controls {
 
   private _hideAllPanels() {
     this._openPanels = [];
-    this._mobileTogglePanels.forEach(x => {
+    this._mobileTogglePanels.forEach((x) => {
       if (!x.isHide) {
         this._openPanels.push(x);
       }

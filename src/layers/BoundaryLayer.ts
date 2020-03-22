@@ -5,7 +5,7 @@ import { TimeLayer } from '../TimeMap/TimeGroup';
 import {
   GetFillColorOpt,
   HistoryLayerProperties,
-  PopupContentField
+  PopupContentField,
 } from '../interfaces';
 
 import { formatArea, copyText } from '../utils/utils';
@@ -48,15 +48,15 @@ export class BoundaryLayer extends BaseLayer {
       const paint = {
         'fill-opacity': timeGroup.opacity,
         'fill-opacity-transition': {
-          duration: 0
+          duration: 0,
         },
         // 'fill-outline-color': '#8b0000', // darkred
         // 'fill-outline-color': '#8b0000', // darkred
-        'fill-color': this._getFillColor()
+        'fill-color': this._getFillColor(),
       };
       const selectedPaint = {
         ...paint,
-        'fill-color': this._getFillColor({ darken: 0.5 })
+        'fill-color': this._getFillColor({ darken: 0.5 }),
       };
 
       const sourceLayer = id;
@@ -70,7 +70,7 @@ export class BoundaryLayer extends BaseLayer {
         type: 'fill',
         nativePaint: true,
         labelField: 'name',
-        sourceLayer
+        sourceLayer,
       }) as Promise<TimeLayer>;
       // const paintLine = {
       //   'line-opacity': timeGroup.opacity,
@@ -91,7 +91,7 @@ export class BoundaryLayer extends BaseLayer {
       // }) as Promise<TimeLayer>;
 
       return [
-        fillLayer
+        fillLayer,
         // boundLayer
       ];
     }
@@ -103,10 +103,10 @@ export class BoundaryLayer extends BaseLayer {
     if (lineColor && lineColorLegend) {
       const meta: any = ['match', ['get', 'status']];
       // update lineColor by legend colors
-      lineColorLegend.forEach(x => {
+      lineColorLegend.forEach((x) => {
         const linksToLineColors = x[3];
-        linksToLineColors.forEach(y => {
-          const _lineColor = lineColor.find(z => z[0] === y);
+        linksToLineColors.forEach((y) => {
+          const _lineColor = lineColor.find((z) => z[0] === y);
           if (_lineColor) {
             _lineColor[1] = x[1];
           }
@@ -130,10 +130,7 @@ export class BoundaryLayer extends BaseLayer {
   }
 
   private _formatDateStr(str: string): string {
-    const formated = str
-      .split('-')
-      .reverse()
-      .join('.');
+    const formated = str.split('-').reverse().join('.');
     return formated;
   }
 
@@ -149,7 +146,7 @@ export class BoundaryLayer extends BaseLayer {
   private _findPrincipalities01(fid: number, year: number) {
     const princes = this.app.options.principalities01 || [];
 
-    const prince = princes.find(x => {
+    const prince = princes.find((x) => {
       const upperdat = findYearInDateStr(x.upperdat);
       const lwdate = findYearInDateStr(x.lwdate);
       if (upperdat && lwdate) {
@@ -164,7 +161,7 @@ export class BoundaryLayer extends BaseLayer {
   private _findPrincipalities02(fid: number, year: number) {
     const princes = this.app.options.principalities02 || [];
 
-    const prince = princes.find(x => {
+    const prince = princes.find((x) => {
       const upperdat = findYearInDateStr(x.years_to);
       const lwdate = findYearInDateStr(x.years_from);
       if (upperdat && lwdate) {
@@ -200,7 +197,7 @@ export class BoundaryLayer extends BaseLayer {
       );
     }
 
-    _fields.forEach(x => {
+    _fields.forEach((x) => {
       const prop = _props[x.field];
       if (prop) {
         const propBlock = document.createElement('div');

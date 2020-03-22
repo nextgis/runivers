@@ -9,7 +9,7 @@ import {
   AppMarkerMem,
   PointProperties,
   PointMeta,
-  HistoryLayerResource
+  HistoryLayerResource,
 } from '../interfaces';
 import { getPointGeojson } from '../services/GetPointsService';
 
@@ -39,7 +39,7 @@ export class MarkerLayer {
     if (pointId !== this.currentPointId) {
       if (this.currentPointId) {
         // this._removePoint(this.currentPointId);
-        this._markers.forEach(x => {
+        this._markers.forEach((x) => {
           x.marker.remove();
         });
         this._markers = [];
@@ -52,7 +52,7 @@ export class MarkerLayer {
   }
 
   updateActiveMarker(yearsStat: { year: number; numb: number }) {
-    this._markers.forEach(x => {
+    this._markers.forEach((x) => {
       if (
         x.properties.year === yearsStat.year &&
         x.properties.numb === yearsStat.numb
@@ -76,7 +76,7 @@ export class MarkerLayer {
       (data: FeatureCollection<MultiPoint, PointProperties>) => {
         const _many =
           data.features.length > 1 &&
-          data.features.map(x => x.properties.numb).filter(onlyUnique);
+          data.features.map((x) => x.properties.numb).filter(onlyUnique);
         const many = _many && _many.length > 1;
         data.features.forEach(
           (marker: Feature<Point | MultiPoint, PointProperties>, i) => {
@@ -86,7 +86,7 @@ export class MarkerLayer {
                 number,
                 number
               ][];
-              coordinates.forEach(x => {
+              coordinates.forEach((x) => {
                 this._addMarkerToMap(x, marker.properties, many);
               });
             } else if (type === 'Point') {
@@ -140,7 +140,7 @@ export class MarkerLayer {
 
       marker.addTo(map);
 
-      element.addEventListener('click', e => {
+      element.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         this._setMarkerActive(markerMem, properties);
@@ -154,7 +154,7 @@ export class MarkerLayer {
   ) {
     const yearControl = this.app.controls.yearsStatPanelControl;
     if (yearControl && yearControl.yearStats) {
-      const yearStat = yearControl.yearStats.find(x => {
+      const yearStat = yearControl.yearStats.find((x) => {
         return x.year === properties.year && x.numb === properties.numb;
       });
       if (yearStat) {
@@ -166,7 +166,7 @@ export class MarkerLayer {
   }
 
   private _getPointByYear(year: number): PointMeta | undefined {
-    return this._pointsConfig.find(x => x.year === year);
+    return this._pointsConfig.find((x) => x.year === year);
   }
 
   private _processPointsMeta(pointsMeta: HistoryLayerResource[]): PointMeta[] {
@@ -175,7 +175,7 @@ export class MarkerLayer {
       // const [year, month, day] = name.match('(\\d{4})-(\\d{2})-(\\d{2})*$').slice(1).map((x) => Number(x));
       // return { name, year, month, day, id: resource.id };
       const _match = name.match('(\\d{4})*$') as string[];
-      const [year] = _match.slice(1).map(x => Number(x));
+      const [year] = _match.slice(1).map((x) => Number(x));
       return { name, year: year as number, id: resource.id };
     });
   }

@@ -11,7 +11,7 @@ import {
   GroupsMeta,
   LayersGroup,
   LayerMetaRecord,
-  LayerMeta
+  LayerMeta,
 } from '../interfaces';
 
 type TLayer = string[];
@@ -57,17 +57,17 @@ export class TimeMap {
 
   getTimeGroup(groupName = ''): TimeLayersGroup {
     const group = this._timeLayersGroups.find(
-      x => x.name === groupName
+      (x) => x.name === groupName
     ) as TimeLayersGroup;
     return group;
   }
 
   getTimeGroupByAdapterId(id: string) {
-    return this._getTimeGroupBy(timeLayer => timeLayer.id === id);
+    return this._getTimeGroupBy((timeLayer) => timeLayer.id === id);
   }
 
   getTimeGroupByLayerId(id: string) {
-    return this._getTimeGroupBy(timeLayer => !!timeLayer.layer?.includes(id));
+    return this._getTimeGroupBy((timeLayer) => !!timeLayer.layer?.includes(id));
   }
 
   getTimeGroups() {
@@ -104,28 +104,28 @@ export class TimeMap {
     const promises: Promise<any>[] = [];
     this.emitter.emit('loading:start', layerIdRecord);
     const layerIdRecordList = Object.keys(layerIdRecord);
-    layerIdRecordList.forEach(key => {
+    layerIdRecordList.forEach((key) => {
       const value = layerIdRecord[key];
-      const promise = this.updateLayer(value, key).then(x => {
+      const promise = this.updateLayer(value, key).then((x) => {
         return () => {
           if (x) {
             x.showOnlyCurrentLayer();
             this.emitter.emit('loading-layer:finish', {
               layerId: value,
-              layer: x
+              layer: x,
             });
           }
         };
       });
       promises.push(promise);
     });
-    return Promise.all(promises).then(groups => {
-      this._timeLayersGroups.forEach(x => {
+    return Promise.all(promises).then((groups) => {
+      this._timeLayersGroups.forEach((x) => {
         if (!layerIdRecordList.includes(x.name)) {
           x.hideLayer(x.currentLayerId);
         }
       });
-      groups.forEach(x => x());
+      groups.forEach((x) => x());
       this.reOrderGroupsLayers();
       this.emitter.emit('loading:finish', layerIdRecord);
     });
@@ -133,7 +133,7 @@ export class TimeMap {
 
   pushDataLoadEvent(event: (...args: any[]) => void): number {
     const id = EVENTS_IDS++;
-    const promises = this._timeLayersGroups.map(x => {
+    const promises = this._timeLayersGroups.map((x) => {
       return new Promise((resolve, reject) => {
         x.pushDataLoadEvent(resolve);
       });
@@ -166,7 +166,7 @@ export class TimeMap {
   }
 
   unselect(opt: { exclude?: string[] } = {}) {
-    this._timeLayersGroups.forEach(x => {
+    this._timeLayersGroups.forEach((x) => {
       const include = opt.exclude ? opt.exclude.indexOf(x.name) === -1 : true;
       if (include) {
         x.forEachTimeLayer(x.currentLayerId, (y: VectorLayerAdapter) => {
@@ -184,13 +184,13 @@ export class TimeMap {
     if (!this.currentYear && this._minYear) {
       this.currentYear = this._minYear;
     }
-    Object.values(this._groupsConfig).forEach(x => {
+    Object.values(this._groupsConfig).forEach((x) => {
       x.layersMeta.sort((a, b) => (a.from < b.from ? -1 : 1));
     });
   }
 
   _addTimeLayersGroups(config: LayersGroup[]) {
-    config.forEach(x => {
+    config.forEach((x) => {
       const statusLayer = this.options.getStatusLayer(x);
       if (statusLayer) {
         this.addTimeGroup(statusLayer);
@@ -261,11 +261,11 @@ export class TimeMap {
 
   private _getLayersByYear(year: number, previous?: boolean): LayerMetaRecord {
     const layersMeta: LayerMetaRecord = {};
-    this.getTimeGroups().forEach(x => {
+    this.getTimeGroups().forEach((x) => {
       const groupConfig = this._groupsConfig[x.name];
       const layers = groupConfig.layersMeta.filter(
         // if range from 900 to 901, event may be only in 900
-        d => year >= d.from && year < d.to
+        (d) => year >= d.from && year < d.to
       );
       // return previous ? layers[0] : layers[layers.length - 1];
 
@@ -314,9 +314,9 @@ export class TimeMap {
           nextLayer = config.layersMeta
             .slice()
             .reverse()
-            .find(d => d.to <= year);
+            .find((d) => d.to <= year);
         } else {
-          nextLayer = config.layersMeta.find(d => d.from >= year);
+          nextLayer = config.layersMeta.find((d) => d.from >= year);
         }
       }
       if (nextLayer) {
@@ -330,14 +330,14 @@ export class TimeMap {
     layersGroup: LayersGroup[]
   ): Record<string, GroupsMeta> {
     const groupsMeta: Record<string, GroupsMeta> = {};
-    layersGroup.forEach(group => {
+    layersGroup.forEach((group) => {
       const layersMeta: LayerMeta[] = [];
       group.items.forEach(({ resource }) => {
         const name = resource.display_name;
         // const _match = name.match('from_(\\d{3,4})_to_(\\d{3,4}).*$');
         const _match = name.match('(\\d{3,4})_(to_)?(\\d{3,4}).*$');
         if (_match) {
-          const [from, to] = [_match[1], _match[3]].map(x => Number(x));
+          const [from, to] = [_match[1], _match[3]].map((x) => Number(x));
           const allowedYear =
             (this.options.fromYear && from < this.options.fromYear) ||
             (this.options.toYear && to > this.options.toYear)

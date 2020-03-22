@@ -40,7 +40,7 @@ const app = new App({
   lineColor: config.lineColor,
   // @ts-ignore
   lineColorLegend: config.lineColorLegend,
-  statusAliases: config.statusAliases
+  statusAliases: config.statusAliases,
 });
 
 // remove first and last slider pips
@@ -48,7 +48,7 @@ app.emitter.on('build', () => {
   const pips = document.getElementsByClassName('noUi-marker-large');
   if (pips.length) {
     const firstLast = [pips[0], pips[pips.length - 1]] as HTMLElement[];
-    firstLast.forEach(x => {
+    firstLast.forEach((x) => {
       x.style.display = 'none';
     });
   }

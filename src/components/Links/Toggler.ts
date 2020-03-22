@@ -30,7 +30,7 @@ export class Toggler {
     const block = document.createElement('div');
     block.className = 'panel__toggler';
     if (this.options.className) {
-      this.options.className.split(' ').forEach(x => block.classList.add(x));
+      this.options.className.split(' ').forEach((x) => block.classList.add(x));
     }
     const toggleAction = this.options.toggleAction;
     if (toggleAction) {

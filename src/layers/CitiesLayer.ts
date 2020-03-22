@@ -45,7 +45,7 @@ export class CitiesLayer extends BaseLayer {
         paint: {
           'text-color': 'rgba(255, 255, 255, 1)',
           'text-halo-color': 'rgba(49, 67, 90, .9)',
-          'text-halo-width': 1
+          'text-halo-width': 1,
         },
         layout: {
           'icon-image': 'city',
@@ -60,20 +60,20 @@ export class CitiesLayer extends BaseLayer {
           'text-line-height': 1.1,
           'text-letter-spacing': 0.06,
           'text-padding': 0,
-          'text-justify': 'auto'
+          'text-justify': 'auto',
         },
         type: 'icon',
         nativePaint: true,
-        sourceLayer
+        sourceLayer,
       });
-      return layer.then(x => {
+      return layer.then((x) => {
         return x;
       });
     }) as Promise<TimeLayer>;
 
     return [
       // layer,
-      label
+      label,
     ];
   }
 }

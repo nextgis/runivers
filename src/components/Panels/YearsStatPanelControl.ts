@@ -27,7 +27,7 @@ export interface YearStat {
 
 const OPTIONS: PanelOptions = {
   headerText: 'Изменения в территориальном составе',
-  addClass: 'stat-panel'
+  addClass: 'stat-panel',
 };
 
 export class YearsStatPanelControl extends Panel {
@@ -160,7 +160,7 @@ export class YearsStatPanelControl extends Panel {
           (previous ? `panel_slider prev` : `panel_slider next`) +
           (isActive ? '' : ' hidden');
         if (isActive) {
-          flow.onclick = e => {
+          flow.onclick = (e) => {
             e.preventDefault();
             const directStat = yearStats[previous ? index - 1 : index + 1];
             this.updateYearStat(directStat);

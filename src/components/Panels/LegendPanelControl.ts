@@ -6,7 +6,7 @@ export interface LegendPanelOptions extends PanelOptions {
 }
 
 const OPTIONS: LegendPanelOptions = {
-  addClass: 'legend-panel'
+  addClass: 'legend-panel',
 };
 
 export class LegendPanelControl extends Panel {
@@ -22,7 +22,7 @@ export class LegendPanelControl extends Panel {
     element.className = 'panel-body__legend';
     const colors = this.options.colors;
     if (colors) {
-      colors.forEach(c => {
+      colors.forEach((c) => {
         element.appendChild(this._createLegendItem(c, interactive));
       });
     }
@@ -76,7 +76,7 @@ export class LegendPanelControl extends Panel {
       const colors = this.options.colors;
       colorInput.onchange = () => {
         if (colors) {
-          const changedColor = colors.find(x => x[0] === name);
+          const changedColor = colors.find((x) => x[0] === name);
           if (changedColor) {
             changedColor[1] = colorInput.value;
             nameBlock.innerHTML = getName(colorInput.value);

@@ -20,7 +20,7 @@ export interface Period {
 
 const OPTIONS: PanelOptions = {
   headerText: 'Правители',
-  addClass: 'period-panel'
+  addClass: 'period-panel',
 };
 
 export class PeriodPanelControl extends Panel {

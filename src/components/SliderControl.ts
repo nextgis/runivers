@@ -41,7 +41,7 @@ const OPTIONS: SliderOptions = {
   animationDelay: 100,
   filterPips: (value, piptype) => {
     return piptype === 1 ? 1 : value % 100 ? (value % 10 ? -1 : 0) : 1;
-  }
+  },
 };
 
 export class SliderControl {
@@ -93,7 +93,7 @@ export class SliderControl {
     const inputObj = this._createLabeledInput({
       type: 'number',
       // label: 'value',
-      value: this.options.value
+      value: this.options.value,
     });
     const input = inputObj.input;
     input.onchange = () => {
@@ -107,7 +107,7 @@ export class SliderControl {
     const inputObj = this._createLabeledInput({
       type: 'number',
       label: 'animation step',
-      value: this.options.animationStep
+      value: this.options.animationStep,
     });
     const input = inputObj.input;
     const opt = this.options;
@@ -126,7 +126,7 @@ export class SliderControl {
     const inputObj = this._createLabeledInput({
       type: 'number',
       label: 'amimation delay',
-      value: this.options.animationDelay
+      value: this.options.animationDelay,
     });
     const input = inputObj.input;
     input.onchange = () => {
@@ -156,7 +156,7 @@ export class SliderControl {
     const slider = noUiSlider.create(range, {
       range: {
         min,
-        max
+        max,
       },
       step,
       tooltips: [wNumb({ decimals: 0 })],
@@ -167,8 +167,8 @@ export class SliderControl {
           : {
               mode: 'steps',
               density: 3,
-              filter: this.options.filterPips
-            }
+              filter: this.options.filterPips,
+            },
     });
 
     slider.on('change', (values, handle) => {
@@ -232,7 +232,7 @@ export class SliderControl {
       }
       btn.onclick = () => {
         this._stepReady(
-          step => {
+          (step) => {
             if (typeof step !== 'boolean') {
               this._nextStep(step);
             }
@@ -271,7 +271,7 @@ export class SliderControl {
 
     return {
       label: content,
-      input
+      input,
     };
   }
 

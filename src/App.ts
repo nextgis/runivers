@@ -12,7 +12,7 @@ import { getLayers } from './services/GetLayersService';
 import { getPoints } from './services/GetPointsService';
 import {
   getAboutProjectLink,
-  getAffiliatedLinks
+  getAffiliatedLinks,
 } from './components/Links/Links';
 
 import { AppOptions, AreaStat, LayersGroup } from './interfaces';
@@ -33,11 +33,11 @@ export class App {
     style: {
       transition: {
         duration: 0,
-        delay: 0
+        delay: 0,
       },
       glyphs:
-        location.origin + location.pathname + 'font/{fontstack}/{range}.pbf'
-    }
+        location.origin + location.pathname + 'font/{fontstack}/{range}.pbf',
+    },
   } as AppOptions;
   controls!: Controls;
   slider!: SliderControl;
@@ -56,7 +56,7 @@ export class App {
     cities: CitiesLayer,
     lines: LinesLayer,
     status1: BoundaryLayer,
-    status2: BoundaryLayer
+    status2: BoundaryLayer,
   };
 
   private _markers: MarkerLayer;
@@ -83,14 +83,14 @@ export class App {
     const options = { ...this.options };
     const webMap = new WebMap({
       mapAdapter: new MapboxglAdapter(),
-      starterKits: [new QmsKit()]
+      starterKits: [new QmsKit()],
     });
     await webMap.create(options);
     this.timeMap = new TimeMap(webMap, {
       fromYear: this.options.fromYear,
       getStatusLayer: (config: LayersGroup) => this._getStatusLayer(config),
       onStepReady: (year: number) => this.updateDataByYear(year),
-      onLayerUpdate: (year: number) => this.updateDataByYear(year)
+      onLayerUpdate: (year: number) => this.updateDataByYear(year),
     });
     this.timeMap.emitter.once('loading:finish', () => {
       this._setSelectedLayerFromUrl();
@@ -101,7 +101,7 @@ export class App {
     webMap.addBaseLayer('QMS', {
       id: 'baselayer',
       qmsId: 2550,
-      visibility: true
+      visibility: true,
     });
     this.webMap = webMap;
     return webMap;
@@ -121,7 +121,7 @@ export class App {
   }
 
   getTimeStop(year: number): string {
-    const stop = this.options.timeStops.find(x => year < x.toYear);
+    const stop = this.options.timeStops.find((x) => year < x.toYear);
     return stop ? stop.name : '';
   }
 
@@ -140,7 +140,7 @@ export class App {
   }
 
   private _buildApp() {
-    getLayers(data => {
+    getLayers((data) => {
       this.timeMap.buildTimeMap(data);
 
       this.slider = this._createSlider();
@@ -156,7 +156,7 @@ export class App {
       this.emitter.emit('build');
       this._addEventsListeners();
     });
-    getPoints().then(points => {
+    getPoints().then((points) => {
       this._markers.setPoints(points);
     });
   }
@@ -166,7 +166,7 @@ export class App {
       name: config.name,
       baseUrl: this.options.baseUrl,
       manualOpacity: true,
-      filterIdField: 'fid'
+      filterIdField: 'fid',
     };
     const StatusLayer: Type<TimeLayersGroupOptions> | undefined = this
       .statusLayers[config.name];
@@ -192,7 +192,7 @@ export class App {
       animationStep: this.options.animationStep || 1,
       value: this.timeMap.currentYear,
       animationDelay: this.options.animationDelay || 100,
-      stepReady
+      stepReady,
     });
     slider.emitter.on('change', (year: number) => {
       // may be updated in _stepReady method
@@ -250,7 +250,7 @@ export class App {
 
   private _findPeriodByYear(year: number) {
     const periods = this.options.periods || [];
-    const period = periods.find(x => {
+    const period = periods.find((x) => {
       let finded = year >= x.years_from;
       if (finded && x.years_to) {
         finded = year <= x.years_to;
@@ -269,14 +269,14 @@ export class App {
 
   private _findAreaStatByYear(year: number): AreaStat | undefined {
     if (this.options.areaStat) {
-      return this.options.areaStat.find(x => x.year === year);
+      return this.options.areaStat.find((x) => x.year === year);
     }
   }
 
   private _findYearStatsByYear(year: number) {
     year = Number(year);
     const yearsStat = this.options.yearsStat || [];
-    const yearStat = yearsStat.filter(x => {
+    const yearStat = yearsStat.filter((x) => {
       return year === x.year;
     });
 

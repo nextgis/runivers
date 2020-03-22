@@ -8,7 +8,7 @@ export function getPoints() {
   return connector.makeQuery(
     '/api/resource/?parent={id}',
     {
-      id: config.pointsGroupId
+      id: config.pointsGroupId,
     },
     {}
   );
@@ -19,7 +19,7 @@ export function getPointGeojson(id: string) {
   return connector.makeQuery(
     '/api/resource/{id}/geojson',
     {
-      id
+      id,
     },
     {}
   );

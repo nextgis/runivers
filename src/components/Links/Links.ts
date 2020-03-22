@@ -17,13 +17,13 @@ function getBaseLayerToggler(controls: Controls) {
     className: 'baselayer__toggler',
     title: 'Скрыть подложку',
     titleOff: 'Показать подложку',
-    toggleAction: status => {
+    toggleAction: (status) => {
       if (status) {
         controls.app.webMap.showLayer(baseLayer);
       } else {
         controls.app.webMap.hideLayer(baseLayer);
       }
-    }
+    },
   });
   return baseLayerToggler;
 }
@@ -53,7 +53,7 @@ function getYearsToggler(controls: Controls) {
       className: 'years__toggler',
       title: 'Скрыть панель изменения в территориальном составе',
       titleOff: 'Показать панель изменения в территориальном составе',
-      toggleAction: status => {
+      toggleAction: (status) => {
         if (status) {
           yearsStatPanelControl._blocked = false;
           yearsStatPanelControl.show();
@@ -61,9 +61,9 @@ function getYearsToggler(controls: Controls) {
           yearsStatPanelControl.hide();
           yearsStatPanelControl._blocked = true;
         }
-      }
+      },
     });
-    yearsStatPanelControl.emitter.on('toggle', status => {
+    yearsStatPanelControl.emitter.on('toggle', (status) => {
       yearsToggler.toggle(status);
     });
     return yearsToggler;
@@ -77,16 +77,16 @@ function getPeriodToggler(controls: Controls) {
       className: 'period__toggler',
       title: 'Скрыть панель правителей',
       titleOff: 'Показать панель правителей',
-      toggleAction: status => {
+      toggleAction: (status) => {
         if (status) {
           periodsPanelControl.show();
         } else {
           periodsPanelControl.hide();
         }
-      }
+      },
     });
 
-    periodsPanelControl.emitter.on('toggle', status => {
+    periodsPanelControl.emitter.on('toggle', (status) => {
       periodToggler.toggle(status);
     });
     return periodToggler;
@@ -100,16 +100,16 @@ function getLegendToggler(controls: Controls) {
       className: 'legend__toggler',
       title: 'Скрыть легенду',
       titleOff: 'Показать легенду',
-      toggleAction: status => {
+      toggleAction: (status) => {
         if (status) {
           legendPanel.show();
         } else {
           legendPanel.hide();
         }
-      }
+      },
     });
 
-    legendPanel.emitter.on('toggle', status => {
+    legendPanel.emitter.on('toggle', (status) => {
       legendToggler.toggle(status);
     });
     return legendToggler;
@@ -124,13 +124,13 @@ export function getSwitcherPanelControl(controls: Controls) {
     getLegendToggler(controls),
     getPeriodToggler(controls),
     getYearsToggler(controls),
-    getBaseLayerToggler(controls)
+    getBaseLayerToggler(controls),
   ];
 
-  toggles.forEach(t => t && block.appendChild(t.getContainer()));
+  toggles.forEach((t) => t && block.appendChild(t.getContainer()));
 
   const panel = new Panel({
-    addClass: 'panel-links'
+    addClass: 'panel-links',
   });
   panel.updateBody(block);
   return panel;
@@ -148,7 +148,7 @@ export function getSocialLinksPanel() {
   // <a href="http://runivers.livejournal.com/" class="social__logo livejournal"></a>
 
   const panel = new Panel({
-    addClass: 'panel-links'
+    addClass: 'panel-links',
   });
   panel.updateBody(block);
   return panel;
@@ -164,11 +164,11 @@ function getAboutBlock(block: string) {
 export function openAboutDialog(app: App, language = 'ru') {
   const attrs = app.webMap.getAttributions({
     onlyVisible: false,
-    onlyBasemap: true
+    onlyBasemap: true,
   });
   const templates: Record<string, string> = {
     ru: aboutShortRu,
-    en: aboutShortEn
+    en: aboutShortEn,
   };
   let template = templates[language];
   if (attrs.length) {
@@ -176,7 +176,7 @@ export function openAboutDialog(app: App, language = 'ru') {
       language === 'ru'
         ? 'Использована картографическая подложка: '
         : 'The basemap used: ';
-    attrs.forEach(x => {
+    attrs.forEach((x) => {
       str += x;
     });
     template += getAboutBlock(str);
@@ -226,11 +226,11 @@ export function openSettingsDialog(app: App) {
     {
       name: 'animationStep',
       label: 'Шаг изменения года (анимация)',
-      type: 'number'
-    }
+      type: 'number',
+    },
   ];
 
-  settings.forEach(x => {
+  settings.forEach((x) => {
     const id = x.name + '-' + Math.round(Math.random() * 10000);
     const inputBlock = document.createElement('label');
     inputBlock.className = 'settings-dialog__input-block';
@@ -297,7 +297,7 @@ export function getAffiliatedLinks(app: App): HTMLElement {
     'settings__logo__min'
   )[0] as HTMLElement;
   if (settings) {
-    settings.onclick = e => {
+    settings.onclick = (e) => {
       e.preventDefault();
       openSettingsDialog(app);
     };
@@ -309,7 +309,7 @@ export function getAffiliatedPanel(controls: Controls) {
   const block = getAffiliatedLinks(controls.app);
 
   const panel = new Panel({
-    addClass: 'panel-links'
+    addClass: 'panel-links',
   });
   panel.updateBody(block);
   return panel;
@@ -320,7 +320,7 @@ export function getHomeBtnControl(control: Controls) {
     addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
     onClick: () =>
       control.app.options.bounds &&
-      control.app.webMap.fitBounds(control.app.options.bounds)
+      control.app.webMap.fitBounds(control.app.options.bounds),
   });
 
   return _control;

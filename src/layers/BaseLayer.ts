@@ -1,7 +1,7 @@
 import {
   TimeLayersGroupOptions,
   TimeLayer,
-  TimeLayersGroup
+  TimeLayersGroup,
 } from '../TimeMap/TimeGroup';
 
 import { App } from '../App';

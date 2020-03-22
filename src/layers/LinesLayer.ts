@@ -13,7 +13,7 @@ export class LinesLayer extends BaseLayer {
   private _lineTypes: { [linetype: number]: LineTypePaint } = {
     1: { width: 1.06, color: 'rgba(132, 73, 58, 1.00)' },
     2: { width: 1.06, color: 'rgba(132, 73, 58, 0.50)' },
-    3: { width: 2.26, color: 'rgba(132, 73, 58, 0.25)' }
+    3: { width: 2.26, color: 'rgba(132, 73, 58, 0.25)' },
   };
 
   addLayers(url: string, id: string) {
@@ -22,10 +22,10 @@ export class LinesLayer extends BaseLayer {
     const paintLine: LinePaint = {
       'line-opacity': opacity,
       'line-opacity-transition': {
-        duration: 0
+        duration: 0,
       },
       'line-width': 2,
-      ...this._getLinePaint()
+      ...this._getLinePaint(),
     };
     // const sourceLayer = 'ngw:' + id;
     const sourceLayer = id;
@@ -37,7 +37,7 @@ export class LinesLayer extends BaseLayer {
       type: 'line',
       sourceLayer,
       nativePaint: true,
-      visibility: true
+      visibility: true,
       // order: this.name === 'earl' ? 3 : 2
     }) as Promise<TimeLayer>;
     return [boundLayer];
