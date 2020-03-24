@@ -125,6 +125,7 @@ export interface GroupsMeta {
 export interface LayersGroup {
   name: string;
   // resourceId: number;
+  order?: number;
   items: HistoryLayerResource[];
 }
 
