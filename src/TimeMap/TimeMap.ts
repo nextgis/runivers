@@ -220,10 +220,15 @@ export class TimeMap {
               this.options.onStepReady(y);
             }
           },
-          () => {
-            this.updateLayers(
-              this._layerMetaToIdRecord(this._getNextLayers(this.currentYear))
-            );
+          async () => {
+            if (updateLayersPromise && layerIdRecord) {
+              await this.finishLoading(updateLayersPromise, layerIdRecord);
+            }
+            // if (this.options.onStepReady) {
+            //   this.options.onStepReady(y);
+            // }
+            const refreshLayers = this._getLayersByYear(this.currentYear, true);
+            this.updateLayers(this._layerMetaToIdRecord(refreshLayers));
           }
         );
       };
@@ -306,9 +311,8 @@ export class TimeMap {
       let nextLayer: LayerMeta | undefined;
       const config = this._groupsConfig[l];
       if (layerMeta) {
-        if (
-          String(layerMeta.id) === this.getTimeGroup(config.name).currentLayerId
-        ) {
+        const currentLayerId = this.getTimeGroup(config.name).currentLayerId;
+        if (String(layerMeta.id) === currentLayerId) {
           const index = config.layersMeta.indexOf(layerMeta);
           if (index !== -1) {
             nextLayer = config.layersMeta[previous ? index - 1 : index + 1];

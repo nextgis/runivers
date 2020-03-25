@@ -181,6 +181,7 @@ export class TimeLayersGroup {
                 this._onSourceIsLoaded();
               }
             }
+            resolve();
           })
           .catch((er) => {
             reject(er);
