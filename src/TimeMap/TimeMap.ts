@@ -100,7 +100,26 @@ export class TimeMap {
     return Promise.resolve(undefined);
   }
 
-  updateLayers(layerIdRecord: LayerIdRecord): Promise<void> {
+  async updateLayers(layerIdRecord: LayerIdRecord): Promise<void> {
+    const updateLayersPromise = await this.getUpdateLayersPromise(
+      layerIdRecord
+    );
+    return this.finishLoading(updateLayersPromise, layerIdRecord);
+  }
+
+  finishLoading(groups: (() => void)[], layerIdRecord: LayerIdRecord) {
+    const layerIdRecordList = Object.keys(layerIdRecord);
+
+    this._timeLayersGroups.forEach((x) => {
+      if (!layerIdRecordList.includes(x.name)) {
+        x.hideLayer(x.currentLayerId);
+      }
+    });
+    groups.forEach((x: () => void) => x());
+    this.emitter.emit('loading:finish', layerIdRecord);
+  }
+
+  getUpdateLayersPromise(layerIdRecord: LayerIdRecord) {
     const promises: Promise<any>[] = [];
     this.emitter.emit('loading:start', layerIdRecord);
     const layerIdRecordList = Object.keys(layerIdRecord);
@@ -119,16 +138,7 @@ export class TimeMap {
       });
       promises.push(promise);
     });
-    return Promise.all(promises).then((groups) => {
-      this._timeLayersGroups.forEach((x) => {
-        if (!layerIdRecordList.includes(x.name)) {
-          x.hideLayer(x.currentLayerId);
-        }
-      });
-      groups.forEach((x) => x());
-      this.reOrderGroupsLayers();
-      this.emitter.emit('loading:finish', layerIdRecord);
-    });
+    return Promise.all(promises);
   }
 
   pushDataLoadEvent(event: (...args: any[]) => void): number {
@@ -146,23 +156,6 @@ export class TimeMap {
       }
     });
     return id;
-  }
-
-  reOrderGroupsLayers() {
-    // this._timeLayersGroups.forEach(x => {
-    //   x.forEachTimeLayer(x.currentLayerId, y => {
-    //     // Fix to avoid moving the non-renewable layer down
-    //     y.options.order = 1 + ORDER++ * 0.1;
-    //     if (y.layer) {
-    //       y.layer.forEach(z => {
-    //         const map = this.webMap.mapAdapter.map;
-    //         if (map) {
-    //           map.moveLayer(z);
-    //         }
-    //       });
-    //     }
-    //   });
-    // });
   }
 
   unselect(opt: { exclude?: string[] } = {}) {
@@ -198,23 +191,41 @@ export class TimeMap {
     });
   }
 
-  _stepReady(
+  async _stepReady(
     year: number,
-    callback: (year: number) => void,
+    callback: (year: number, nextCb?: () => void, stopCb?: () => void) => void,
     previous?: boolean
   ) {
     let nextLayers: LayerMetaRecord = this._getLayersByYear(year, previous);
     if (!nextLayers) {
       nextLayers = this._getNextLayers(year, previous);
     }
+
     if (nextLayers) {
+      let updateLayersPromise: any[] | undefined;
+      let layerIdRecord: LayerIdRecord | undefined;
       const y = year;
       // const y = previous ? nextLayer.to : nextLayer.from;
       this.nextYear = y;
       const next = () => {
-        this.currentYear = y;
         this.nextYear = undefined;
-        callback(y);
+        callback(
+          y,
+          () => {
+            this.currentYear = y;
+            if (updateLayersPromise && layerIdRecord) {
+              this.finishLoading(updateLayersPromise, layerIdRecord);
+            }
+            if (this.options.onStepReady) {
+              this.options.onStepReady(y);
+            }
+          },
+          () => {
+            this.updateLayers(
+              this._layerMetaToIdRecord(this._getNextLayers(this.currentYear))
+            );
+          }
+        );
       };
       const noChange = Object.entries(nextLayers).every(([groupName, x]) => {
         const timeGroup = this.getTimeGroup(groupName);
@@ -228,12 +239,9 @@ export class TimeMap {
         next();
       } else {
         // this.timeMap.pushDataLoadEvent(next);
-        this.updateLayers(this._layerMetaToIdRecord(nextLayers)).then(() => {
-          next();
-        });
-      }
-      if (this.options.onStepReady) {
-        this.options.onStepReady(y);
+        layerIdRecord = this._layerMetaToIdRecord(nextLayers);
+        updateLayersPromise = await this.getUpdateLayersPromise(layerIdRecord);
+        next();
       }
     } else {
       if (this._minYear && this._maxYear) {

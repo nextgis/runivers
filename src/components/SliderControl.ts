@@ -330,26 +330,36 @@ export class SliderControl {
   _startAnimation() {
     if (this._animationStatus) {
       const timerStart = new Date().getTime();
-      this._stepReady((step: number | boolean) => {
-        const isReady =
-          typeof step !== 'boolean' &&
-          step < this.options.max &&
-          step > this.options.min;
-        if (isReady && this._animationStatus) {
-          const stepDelay = new Date().getTime() - timerStart;
-          let delay = this.options.animationDelay - stepDelay;
-          delay = delay >= 0 ? delay : 0;
-          // this._nextStepTimeoutId = setTimeout(() => {
-          setTimeout(() => {
-            if (this._animationStatus) {
-              this._nextStep(step as number);
-              this._startAnimation();
+      this._stepReady(
+        (step: number | boolean, nextCb?: () => void, stopCb?: () => void) => {
+          const isReady =
+            typeof step !== 'boolean' &&
+            step < this.options.max &&
+            step > this.options.min;
+          if (isReady && this._animationStatus) {
+            const stepDelay = new Date().getTime() - timerStart;
+            let delay = this.options.animationDelay - stepDelay;
+            delay = delay >= 0 ? delay : 0;
+            // this._nextStepTimeoutId = setTimeout(() => {
+            setTimeout(() => {
+              if (this._animationStatus) {
+                if (nextCb) {
+                  nextCb();
+                }
+                this._nextStep(step as number);
+                this._startAnimation();
+              } else if (stopCb) {
+                stopCb();
+              }
+            }, delay);
+          } else {
+            if (stopCb) {
+              stopCb();
             }
-          }, delay);
-        } else {
-          this.stopAnimation();
+            this.stopAnimation();
+          }
         }
-      });
+      );
     } else {
       this.stopAnimation();
     }
