@@ -52,6 +52,8 @@ export class SliderControl {
   _sliderContainer?: HTMLElement;
   _slider?: noUiSlider.noUiSlider;
   protected _playerControl?: HTMLElement;
+  protected _playerControlPrevBtn?: HTMLElement;
+  protected _playerControlNextBtn?: HTMLElement;
   private _container?: HTMLElement;
   private _input?: HTMLInputElement;
   private _animationStatus?: boolean;
@@ -231,20 +233,22 @@ export class SliderControl {
         playerSteps.appendChild(this._createPlayerButton());
       }
       btn.onclick = () => {
-        this._stepReady(
-          (step) => {
-            if (typeof step !== 'boolean') {
-              this._nextStep(step);
-            }
-          },
-          previous,
-          this.options.step
-        );
+        if (!this._animationStatus) {
+          this._stepReady(
+            (step) => {
+              if (typeof step !== 'boolean') {
+                this._nextStep(step);
+              }
+            },
+            previous,
+            this.options.step
+          );
+        }
       };
       return btn;
     };
-    createStepBtn(true);
-    createStepBtn();
+    this._playerControlPrevBtn = createStepBtn(true);
+    this._playerControlNextBtn = createStepBtn();
     // playerControl.innerHTML = this._getPlayerControlLabel();
 
     return playerSteps;
@@ -329,6 +333,7 @@ export class SliderControl {
 
   _startAnimation() {
     if (this._animationStatus) {
+      this._disableControlBtn();
       const timerStart = new Date().getTime();
       this._stepReady(
         (step: number | boolean, nextCb?: () => void, stopCb?: () => void) => {
@@ -416,5 +421,24 @@ export class SliderControl {
 
   _stopAnimation() {
     // clearTimeout(this._nextStepTimeoutId);
+    this._enableControlBtn();
+  }
+
+  protected _disableControlBtn() {
+    [this._playerControlNextBtn, this._playerControlPrevBtn].forEach((x) => {
+      if (x) {
+        x.classList.add('disables');
+        x.setAttribute('disabled', 'true');
+      }
+    });
+  }
+
+  protected _enableControlBtn() {
+    [this._playerControlNextBtn, this._playerControlPrevBtn].forEach((x) => {
+      if (x) {
+        x.classList.remove('disables');
+        x.removeAttribute('disabled');
+      }
+    });
   }
 }
