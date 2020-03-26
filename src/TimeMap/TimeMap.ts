@@ -202,6 +202,7 @@ export class TimeMap {
     }
 
     if (nextLayers) {
+      const yearBefore = this.currentYear;
       let updateLayersPromise: any[] | undefined;
       let layerIdRecord: LayerIdRecord | undefined;
       const y = year;
@@ -209,26 +210,26 @@ export class TimeMap {
       this.nextYear = y;
       const next = () => {
         this.nextYear = undefined;
+        const finish = () => {
+          this.currentYear = y;
+          if (updateLayersPromise && layerIdRecord) {
+            this.finishLoading(updateLayersPromise, layerIdRecord);
+          }
+          if (this.options.onStepReady) {
+            this.options.onStepReady(y);
+          }
+        };
         callback(
           y,
           () => {
-            this.currentYear = y;
-            if (updateLayersPromise && layerIdRecord) {
-              this.finishLoading(updateLayersPromise, layerIdRecord);
-            }
-            if (this.options.onStepReady) {
-              this.options.onStepReady(y);
-            }
+            finish();
           },
-          async () => {
-            if (updateLayersPromise && layerIdRecord) {
-              await this.finishLoading(updateLayersPromise, layerIdRecord);
+          () => {
+            // finish();
+            // this.updateByYear(yearBefore);
+            if (layerIdRecord) {
+              this.emitter.emit('loading:finish', layerIdRecord);
             }
-            // if (this.options.onStepReady) {
-            //   this.options.onStepReady(y);
-            // }
-            const refreshLayers = this._getLayersByYear(this.currentYear, true);
-            this.updateLayers(this._layerMetaToIdRecord(refreshLayers));
           }
         );
       };

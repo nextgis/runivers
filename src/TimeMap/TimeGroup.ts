@@ -180,8 +180,9 @@ export class TimeLayersGroup {
               if (!this._isWaitDataLoadedGroup()) {
                 this._onSourceIsLoaded();
               }
+            } else {
+              reject();
             }
-            resolve();
           })
           .catch((er) => {
             reject(er);
