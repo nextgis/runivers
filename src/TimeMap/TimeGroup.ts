@@ -268,20 +268,20 @@ export class TimeLayersGroup {
     }
   }
 
+  hideNotCurrentLayers() {
+    Object.keys(this._timeLayers).forEach((id) => {
+      if (id !== this.currentLayerId) {
+        this._hideLayer(id);
+      }
+    });
+  }
+
   private _cleanDataLoadEvents() {
     this._onDataLoadEvents = [];
   }
 
   private makeOpacity() {
     this._setLayerOpacity(this.currentLayerId, this.opacity);
-  }
-
-  private hideNotCurrentLayers() {
-    Object.keys(this._timeLayers).forEach((id) => {
-      if (id !== this.currentLayerId) {
-        this._hideLayer(id);
-      }
-    });
   }
 
   private _getWebMapLayerId(id?: string) {

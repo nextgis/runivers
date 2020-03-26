@@ -111,6 +111,7 @@ export class TimeMap {
     this._timeLayersGroups.forEach((x) => {
       if (x.beforeLayerId) {
         x.currentLayerId = x.beforeLayerId;
+        x.hideNotCurrentLayers();
         x.beforeLayerId = undefined;
       }
     });
