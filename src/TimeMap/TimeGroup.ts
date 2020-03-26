@@ -43,6 +43,7 @@ export interface TimeLayersGroupOptions {
 export class TimeLayersGroup {
   name: string;
   currentLayerId!: string;
+  beforeLayerId?: string;
   opacity = 0.8;
   order?: number;
   pointFitMaxZoom = 7;
@@ -93,9 +94,9 @@ export class TimeLayersGroup {
   }
 
   updateLayer(layerId: string) {
-    const fromId = this.currentLayerId;
+    this.beforeLayerId = this.currentLayerId;
     this.currentLayerId = layerId;
-    return this.switchLayer(fromId, layerId);
+    return this.switchLayer(this.beforeLayerId, layerId);
   }
 
   updateLayersColor() {

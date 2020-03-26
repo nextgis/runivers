@@ -27,7 +27,7 @@ export interface LoadingLayerFinishEvent {
 
 interface Events {
   'loading:start': LayerIdRecord;
-  'loading:finish': LayerIdRecord;
+  'loading:finish': LayerIdRecord | false;
   'loading-layer:finish': LoadingLayerFinishEvent;
 }
 
@@ -105,6 +105,16 @@ export class TimeMap {
       layerIdRecord
     );
     return this.finishLoading(updateLayersPromise, layerIdRecord);
+  }
+
+  resetLoading() {
+    this._timeLayersGroups.forEach((x) => {
+      if (x.beforeLayerId) {
+        x.currentLayerId = x.beforeLayerId;
+        x.beforeLayerId = undefined;
+      }
+    });
+    this.emitter.emit('loading:finish', false);
   }
 
   finishLoading(groups: (() => void)[], layerIdRecord: LayerIdRecord) {
@@ -202,7 +212,6 @@ export class TimeMap {
     }
 
     if (nextLayers) {
-      const yearBefore = this.currentYear;
       let updateLayersPromise: any[] | undefined;
       let layerIdRecord: LayerIdRecord | undefined;
       const y = year;
@@ -227,9 +236,7 @@ export class TimeMap {
           () => {
             // finish();
             // this.updateByYear(yearBefore);
-            if (layerIdRecord) {
-              this.emitter.emit('loading:finish', layerIdRecord);
-            }
+            this.resetLoading();
           }
         );
       };
