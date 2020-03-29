@@ -65,6 +65,7 @@ export class BoundaryLayer extends BaseLayer {
         id,
         name: id,
         paint,
+        order: this.order,
         selectedPaint,
         selectable: true,
         type: 'fill',

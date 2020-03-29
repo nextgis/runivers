@@ -33,7 +33,7 @@ export class LinesLayer extends BaseLayer {
     const boundLayer = this.app.webMap.addLayer('MVT', {
       url,
       id,
-      order: 100,
+      order: this.order,
       paint: paintLine,
       type: 'line',
       sourceLayer,

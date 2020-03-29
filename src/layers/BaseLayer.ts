@@ -11,6 +11,7 @@ export abstract class BaseLayer implements TimeLayersGroupOptions {
   baseUrl!: string;
   manualOpacity?: boolean;
   filterIdField?: string;
+  order?: number;
   opacity = 1;
   simplification = 8;
   oldNgwMvtApi = false;

@@ -41,6 +41,7 @@ export class CitiesLayer extends BaseLayer {
       const layer = this.app.webMap.addLayer('MVT', {
         url,
         id,
+        order: this.order,
         // name: id,
         paint: {
           'text-color': 'rgba(255, 255, 255, 1)',
