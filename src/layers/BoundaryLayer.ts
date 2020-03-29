@@ -99,20 +99,17 @@ export class BoundaryLayer extends BaseLayer {
   }
 
   private _getFillColor(opt: GetFillColorOpt = {}) {
-    const { lineColorLegend, lineColor } = this.app.options;
-    if (lineColor && lineColorLegend) {
+    const lineColor: [number, string][] = [];
+    const { lineColorLegend } = this.app.options;
+    const legend = lineColorLegend && lineColorLegend['base'];
+    if (legend && lineColor && legend) {
       const meta: any = ['match', ['get', 'status']];
-      // update lineColor by legend colors
-      lineColorLegend.forEach((x) => {
+      legend.forEach((x) => {
         const linksToLineColors = x[3];
         linksToLineColors.forEach((y) => {
-          const _lineColor = lineColor.find((z) => z[0] === y);
-          if (_lineColor) {
-            _lineColor[1] = x[1];
-          }
+          lineColor.push([y, x[1]]);
         });
       });
-
       const colors = lineColor.reduce<(string | number)[]>((a, b) => {
         const [param, color] = b;
         let c = Color(color);
@@ -125,6 +122,8 @@ export class BoundaryLayer extends BaseLayer {
         a.push(c.hex());
         return a;
       }, []);
+      // default
+      colors.push('#cccccc');
       return meta.concat(colors);
     }
   }

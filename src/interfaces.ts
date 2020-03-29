@@ -18,6 +18,12 @@ export interface TimeStop {
   name: string;
 }
 
+export type LegendColorItem = [number, string, string, number[]];
+
+export type LegendColor = {
+  [layerName: string]: LegendColorItem[];
+};
+
 export interface AppOptions extends MapboxglMapAdapterOptions {
   baseUrl: string;
   target: string;
@@ -35,7 +41,7 @@ export interface AppOptions extends MapboxglMapAdapterOptions {
   version?: string;
   lineColor?: [number | string, string][];
   /** self id, color, label, array of link to lineColor id */
-  lineColorLegend?: [number, string, string, number[]][];
+  lineColorLegend?: LegendColor;
   statusAliases?: { [name: string]: string };
 }
 

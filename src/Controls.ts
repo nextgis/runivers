@@ -101,9 +101,7 @@ export class Controls {
       // colors: this.options.lineColor,
       colors: this.app.options.lineColorLegend,
     });
-    this.legendPanel.emitter.on('change', (colors) =>
-      this.app.updateLayersColor()
-    );
+
     this._socialLinksPanel = getSocialLinksPanel();
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
@@ -116,8 +114,13 @@ export class Controls {
     this._mobileTogglePanels = [
       this.periodsPanelControl,
       this.yearsStatPanelControl,
-      this.legendPanel,
     ];
+    if (this.legendPanel) {
+      this._mobileTogglePanels.push(this.legendPanel);
+      this.legendPanel.emitter.on('change', (colors) =>
+        this.app.updateLayersColor()
+      );
+    }
 
     this._mobileTogglePanels.forEach((x) => x.show());
     this._loadingControl = new TimeMapLoadingControl(this.app.timeMap);

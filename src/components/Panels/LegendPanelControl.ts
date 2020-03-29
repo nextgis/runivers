@@ -1,8 +1,9 @@
+import Color from 'color';
 import { Panel, PanelOptions } from './PanelControl';
 import './LegendPanelControl.css';
-import Color from 'color';
+import { LegendColor, LegendColorItem } from '../../interfaces';
 export interface LegendPanelOptions extends PanelOptions {
-  colors?: Array<[number, string, string, number[]]>;
+  colors?: LegendColor;
 }
 
 const OPTIONS: LegendPanelOptions = {
@@ -22,8 +23,10 @@ export class LegendPanelControl extends Panel {
     element.className = 'panel-body__legend';
     const colors = this.options.colors;
     if (colors) {
-      colors.forEach((c) => {
-        element.appendChild(this._createLegendItem(c, interactive));
+      Object.values(colors).forEach((x) => {
+        x.forEach((c) => {
+          element.appendChild(this._createLegendItem(c, interactive));
+        });
       });
     }
 
@@ -73,9 +76,13 @@ export class LegendPanelControl extends Panel {
       const nameBlock = document.createElement('span');
       nameBlock.className = 'panel-body__legend--name';
       nameBlock.innerHTML = getName(color);
-      const colors = this.options.colors;
+      const allColors = this.options.colors;
       colorInput.onchange = () => {
-        if (colors) {
+        if (allColors) {
+          const colors: LegendColorItem[] = [];
+          Object.values(allColors).forEach((x) =>
+            x.forEach((y) => colors.push(y))
+          );
           const changedColor = colors.find((x) => x[0] === name);
           if (changedColor) {
             changedColor[1] = colorInput.value;

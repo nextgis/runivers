@@ -11,9 +11,9 @@ export class LinesLayer extends BaseLayer {
   oldNgwMvtApi = true;
 
   private _lineTypes: { [linetype: number]: LineTypePaint } = {
-    1: { width: 1.06, color: 'rgba(132, 73, 58, 1.00)' },
-    2: { width: 1.06, color: 'rgba(132, 73, 58, 0.50)' },
-    3: { width: 2.26, color: 'rgba(132, 73, 58, 0.25)' },
+    1: { width: 2.06, color: 'rgba(132, 73, 58, 1.00)' },
+    2: { width: 2.06, color: 'rgba(132, 73, 58, 0.50)' },
+    3: { width: 3.26, color: 'rgba(132, 73, 58, 0.25)' },
   };
 
   addLayers(url: string, id: string) {
@@ -33,6 +33,7 @@ export class LinesLayer extends BaseLayer {
     const boundLayer = this.app.webMap.addLayer('MVT', {
       url,
       id,
+      order: 100,
       paint: paintLine,
       type: 'line',
       sourceLayer,
