@@ -327,7 +327,7 @@ export class SliderControl {
       this.emitter.emit('animationStarted');
     } else {
       this._stopAnimation();
-      this.emitter.emit('animationStopped');
+      // this.emitter.emit('animationStopped');
     }
   }
 
@@ -353,11 +353,15 @@ export class SliderControl {
                 }
                 this._nextStep(step as number);
                 this._startAnimation();
-              } else if (stopCb) {
-                stopCb();
+              } else {
+                this.emitter.emit('animationStopped');
+                if (stopCb) {
+                  stopCb();
+                }
               }
             }, delay);
           } else {
+            this.emitter.emit('animationStopped');
             if (stopCb) {
               stopCb();
             }
