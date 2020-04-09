@@ -18,7 +18,12 @@ export interface TimeStop {
   name: string;
 }
 
-export type LegendColorItem = [number, string, string, number[]];
+export type LegendColorItem = [
+  number,
+  string | { color: string; width?: number; type?: 'line' | 'fill' },
+  string,
+  number[]
+];
 
 export type LegendColor = {
   [layerName: string]: LegendColorItem[];

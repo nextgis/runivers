@@ -40,7 +40,7 @@ const app = new App({
   lineColor: config.lineColor,
   // @ts-ignore
   lineColorLegend: config.lineColorLegend,
-  statusAliases: config.statusAliases,
+  // statusAliases: config.statusAliases,
 });
 
 // remove first and last slider pips

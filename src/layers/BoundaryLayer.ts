@@ -109,7 +109,9 @@ export class BoundaryLayer extends BaseLayer {
       legend.forEach((x) => {
         const linksToLineColors = x[3];
         linksToLineColors.forEach((y) => {
-          lineColor.push([y, x[1]]);
+          const paint = x[1];
+          const color = typeof paint === 'string' ? paint : paint.color;
+          lineColor.push([y, color]);
         });
       });
       const colors = lineColor.reduce<(string | number)[]>((a, b) => {
