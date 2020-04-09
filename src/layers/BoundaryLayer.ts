@@ -10,6 +10,7 @@ import {
 
 import { formatArea, copyText } from '../utils/utils';
 import { Principalities01 } from '../data/Principalities01';
+import { Principalities02 } from '../data/Principalities02';
 import findYearInDateStr from '../utils/findYearInDateStr';
 import { BaseLayer } from './BaseLayer';
 
@@ -134,7 +135,7 @@ export class BoundaryLayer extends BaseLayer {
     return formated;
   }
 
-  private _createPropElement(html: string, addClass: string) {
+  private _createPropElement(html: string, addClass = '') {
     const propBlock = document.createElement('div');
     propBlock.className = 'popup__propertyblock';
     propBlock.innerHTML = `<div class="popup__property--value${
@@ -245,13 +246,16 @@ export class BoundaryLayer extends BaseLayer {
       );
     };
     const getHtml2 = (
-      prop: keyof Principalities01,
-      props: Principalities01
+      prop: keyof Principalities02,
+      props: Principalities02
     ) => {
       return this._createPropElement(
         `Правитель: <a href="${props.desc_link}" target="_blank">${prop}</a>`,
         ''
       );
+    };
+    const getHtmlFromTo = (prop: any, props: any) => {
+      return this._createPropElement(`Даты правления: ${prop}`);
     };
     const fid = props.fid;
     if (fid) {
@@ -269,6 +273,10 @@ export class BoundaryLayer extends BaseLayer {
       }
       if (prince02) {
         addProp(prince02.ruler, { field: 'ruler', getHtml: getHtml2 });
+        addProp(`${prince02.years_from} - ${prince02.years_to}`, {
+          field: 'board_dates',
+          getHtml: getHtmlFromTo,
+        });
       }
     }
   }

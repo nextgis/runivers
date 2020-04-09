@@ -1,5 +1,12 @@
 {
   "baseUrl": "https://gis.runivers.ru",
+  "#sourceGroups": [
+    {
+      "name": "status2",
+      "resourceId": 13819,
+      "order": 40
+    }
+  ],
   "sourceGroups": [
     {
       "name": "base",
@@ -15,11 +22,6 @@
       "name": "status1",
       "resourceId": 13818,
       "order": 30
-    },
-    {
-      "name": "status2",
-      "resourceId": 13819,
-      "order": 40
     },
     {
       "name": "cities",
