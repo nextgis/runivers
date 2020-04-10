@@ -257,7 +257,7 @@ export class BoundaryLayer extends BaseLayer {
       );
     };
     const getHtmlFromTo = (prop: any, props: any) => {
-      return this._createPropElement(`Даты правления: ${prop}`);
+      return this._createPropElement(`Даты правления: ${prop} гг.`);
     };
     const fid = props.fid;
     if (fid) {
