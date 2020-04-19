@@ -17,7 +17,7 @@ import {
 
 import { AppOptions, AreaStat, LayersGroup } from './interfaces';
 
-import { Controls } from './Controls';
+import { Controls } from './controls/Controls';
 import { TimeMap } from './TimeMap/TimeMap';
 import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 

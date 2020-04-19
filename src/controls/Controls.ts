@@ -1,18 +1,18 @@
-import { App } from './App';
-import { Panel } from './components/Panels/PanelControl';
+import { App } from '../App';
+import { Panel } from '../components/Panels/PanelControl';
 import {
   getSocialLinksPanel,
   getSwitcherPanelControl,
   getHomeBtnControl,
-} from './components/Links/Links';
+} from '../components/Links/Links';
 import { ControlPositions } from '@nextgis/webmap';
-import { LegendPanelControl } from './components/Panels/LegendPanelControl';
-import { PeriodPanelControl } from './components/Panels/PeriodPanelControl';
-import { YearsStatPanelControl } from './components/Panels/YearsStatPanelControl';
+import { LegendPanelControl } from '../components/Panels/LegendPanelControl';
+import { PeriodPanelControl } from '../components/Panels/PeriodPanelControl';
+import { YearsStatPanelControl } from '../components/Panels/YearsStatPanelControl';
 import { IControl } from 'mapbox-gl';
 
 import './Controls.css';
-import { TimeMapLoadingControl } from './TimeMap/TimeMapLoadingControl';
+import { TimeMapLoadingControl } from '../TimeMap/TimeMapLoadingControl';
 
 interface ScreenSize {
   height: number;
@@ -154,12 +154,12 @@ export class Controls {
     await this._addControl(this._homeBtnPanel, 'bottom-left');
     await this._addControl(this._zoomControl, 'bottom-left');
 
+    await this._addControl(this._loadingControl, 'bottom-right');
+
     this._manualControlMove();
   }
 
   private async _addMobileControls() {
-    await this._addControl(this._loadingControl, 'top-right');
-
     await this._addControl(this._switchersPanel, 'top-left');
 
     await this._addControl(this.legendPanel, 'bottom-right');

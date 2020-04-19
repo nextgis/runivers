@@ -2,7 +2,7 @@ import './Links.scss';
 import { Panel } from '../Panels/PanelControl';
 import { Toggler } from './Toggler';
 import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
-import { Controls } from '../../Controls';
+import { Controls } from '../../controls/Controls';
 import pkg from '../../../package.json';
 
 import './img/nextgis.png';
