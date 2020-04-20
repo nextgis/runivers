@@ -292,5 +292,8 @@ export class App {
         }
       );
     }
+    this.webMap.emitter.on('preclick', () => {
+      this.timeMap.unselect();
+    });
   }
 }
