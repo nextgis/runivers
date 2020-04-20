@@ -13,14 +13,14 @@
       "resourceId": 5344,
       "order": 10
     },
-    {
-      "name": "lines",
-      "resourceId": 14878,
+        {
+      "name": "status1",
+      "resourceId": 13818,
       "order": 20
     },
     {
-      "name": "status1",
-      "resourceId": 13818,
+      "name": "lines",
+      "resourceId": 14878,
       "order": 30
     },
     {
