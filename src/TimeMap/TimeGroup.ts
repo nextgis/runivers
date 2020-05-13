@@ -42,7 +42,7 @@ export interface TimeLayersGroupOptions {
 
 export class TimeLayersGroup {
   name: string;
-  currentLayerId!: string;
+  currentLayerId?: string;
   beforeLayerId?: string;
   opacity = 0.8;
   order?: number;
@@ -87,7 +87,7 @@ export class TimeLayersGroup {
   }
 
   show() {
-    if (!this._visible) {
+    if (!this._visible && this.currentLayerId) {
       this._visible = true;
       this._showLayer(this.currentLayerId);
     }
@@ -96,7 +96,7 @@ export class TimeLayersGroup {
   updateLayer(layerId: string) {
     this.beforeLayerId = this.currentLayerId;
     this.currentLayerId = layerId;
-    return this.switchLayer(this.beforeLayerId, layerId);
+    return this.switchLayer(this.beforeLayerId || '', layerId);
   }
 
   updateLayersColor() {
@@ -163,6 +163,16 @@ export class TimeLayersGroup {
     this.makeOpacity();
   }
 
+  clean() {
+    this._removePopup();
+    this._cleanDataLoadEvents();
+    if (this.currentLayerId) {
+      this._removeLayerListeners(this.currentLayerId);
+      this._hideLayer(this.currentLayerId);
+    }
+    this.currentLayerId = undefined;
+  }
+
   switchLayer(fromId: string, toId: string) {
     const promise = new Promise((resolve, reject) => {
       this._removePopup();
@@ -203,7 +213,9 @@ export class TimeLayersGroup {
 
   getTimeLayer(layerId?: string) {
     layerId = layerId !== undefined ? layerId : this.currentLayerId;
-    return this._timeLayers[layerId];
+    if (layerId) {
+      return this._timeLayers[layerId];
+    }
   }
 
   forEachTimeLayer(layerId: string, fun: (timeLayer: TimeLayer) => void) {
@@ -229,27 +241,29 @@ export class TimeLayersGroup {
   select(fids: string, id?: string, fit = false) {
     id = id ?? this.currentLayerId;
     // const idsParam = urlParams.get('id') as string;
-    const ids: number[] = fids.split(',').map((x) => Number(x));
-    const layers = this._timeLayers[id];
-    const filterIdField = this.options.filterIdField;
-    const mapLayers: TimeLayer[] = [];
-    layers.forEach((x) => {
-      const mapLayer = x && x.layer && x.layer[0];
-      if (ids && mapLayer && filterIdField) {
-        if (x && x.select) {
-          x.select([[filterIdField, 'in', ids]]);
-          mapLayers.push(x);
+    if (id) {
+      const ids: number[] = fids.split(',').map((x) => Number(x));
+      const layers = this._timeLayers[id];
+      const filterIdField = this.options.filterIdField;
+      const mapLayers: TimeLayer[] = [];
+      layers.forEach((x) => {
+        const mapLayer = x && x.layer && x.layer[0];
+        if (ids && mapLayer && filterIdField) {
+          if (x && x.select) {
+            x.select([[filterIdField, 'in', ids]]);
+            mapLayers.push(x);
+          }
         }
-      }
-    });
-    if (fit) {
-      for (const timeLayer of mapLayers) {
-        const features = this.fitToFilter(
-          ['in', filterIdField, ...ids],
-          timeLayer
-        );
-        if (features && features.length) {
-          return features;
+      });
+      if (fit) {
+        for (const timeLayer of mapLayers) {
+          const features = this.fitToFilter(
+            ['in', filterIdField, ...ids],
+            timeLayer
+          );
+          if (features && features.length) {
+            return features;
+          }
         }
       }
     }
@@ -281,7 +295,9 @@ export class TimeLayersGroup {
   }
 
   private makeOpacity() {
-    this._setLayerOpacity(this.currentLayerId, this.opacity);
+    if (this.currentLayerId) {
+      this._setLayerOpacity(this.currentLayerId, this.opacity);
+    }
   }
 
   private _getWebMapLayerId(id?: string) {
@@ -323,7 +339,9 @@ export class TimeLayersGroup {
   }
 
   private _isCurrentDataLayer(layerId: string): boolean {
-    const currentLayers = this._timeLayers[this.currentLayerId];
+    const currentLayers =
+      this.currentLayerId !== undefined &&
+      this._timeLayers[this.currentLayerId];
     return currentLayers
       ? currentLayers.some((x) => {
           return (
@@ -476,7 +494,10 @@ export class TimeLayersGroup {
   }
 
   private _onSourceIsLoaded() {
-    if (this._isAllDataLayerLoaded(this.currentLayerId)) {
+    if (
+      this.currentLayerId &&
+      this._isAllDataLayerLoaded(this.currentLayerId)
+    ) {
       if (!this.options.manualOpacity) {
         this.showOnlyCurrentLayer();
       }
@@ -598,14 +619,16 @@ export class TimeLayersGroup {
   }
 
   private _updateFilter() {
-    const layers = this._timeLayers[this.currentLayerId];
-    const filterIdField = this.options.filterIdField;
-    layers.forEach((x) => {
-      if (filterIdField) {
-        if (x && x.propertiesFilter) {
-          x.propertiesFilter(this._filter || []);
+    if (this.currentLayerId) {
+      const layers = this._timeLayers[this.currentLayerId];
+      const filterIdField = this.options.filterIdField;
+      layers.forEach((x) => {
+        if (filterIdField) {
+          if (x && x.propertiesFilter) {
+            x.propertiesFilter(this._filter || []);
+          }
         }
-      }
-    });
+      });
+    }
   }
 }

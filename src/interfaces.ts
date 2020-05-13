@@ -144,5 +144,5 @@ export interface LayerMetaRecord {
   [groupName: string]: LayerMeta | false;
 }
 export interface LayerIdRecord {
-  [groupName: string]: string;
+  [groupName: string]: string | false;
 }

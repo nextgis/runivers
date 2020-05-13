@@ -21,7 +21,7 @@ let EVENTS_IDS = 0;
 // const ORDER = 0;
 
 export interface LoadingLayerFinishEvent {
-  layerId: string;
+  layerId: string | false;
   layer: TimeLayersGroup;
 }
 
@@ -90,12 +90,17 @@ export class TimeMap {
   }
 
   updateLayer(
-    layerId: string,
+    layerId: string | false,
     groupName = ''
   ): Promise<TimeLayersGroup | undefined> {
     const group = this.getTimeGroup(groupName);
     if (group) {
-      return group.updateLayer(layerId).then(() => group);
+      if (layerId) {
+        return group.updateLayer(layerId).then(() => group);
+      } else {
+        group.clean();
+        return Promise.resolve(undefined);
+      }
     }
     return Promise.resolve(undefined);
   }
@@ -123,7 +128,9 @@ export class TimeMap {
 
     this._timeLayersGroups.forEach((x) => {
       if (!layerIdRecordList.includes(x.name)) {
-        x.hideLayer(x.currentLayerId);
+        if (x.currentLayerId) {
+          x.hideLayer(x.currentLayerId);
+        }
       }
     });
     groups.forEach((x: () => void) => x());
@@ -172,7 +179,7 @@ export class TimeMap {
   unselect(opt: { exclude?: string[] } = {}) {
     this._timeLayersGroups.forEach((x) => {
       const include = opt.exclude ? opt.exclude.indexOf(x.name) === -1 : true;
-      if (include) {
+      if (include && x.currentLayerId) {
         x.forEachTimeLayer(x.currentLayerId, (y: VectorLayerAdapter) => {
           if (y.unselect && y.selected) {
             y.unselect();
@@ -308,6 +315,8 @@ export class TimeMap {
     Object.entries(metaRecord).forEach(([key, value]) => {
       if (value) {
         layersId[key] = String(value.id);
+      } else {
+        layersId[key] = false;
       }
     });
     return layersId;
