@@ -35,14 +35,17 @@ export class MarkerLayer {
     }
   }
 
+  remove() {
+    this._markers.forEach((x) => {
+      x.marker.remove();
+    });
+    this._markers = [];
+  }
+
   updatePoint(pointId?: string) {
     if (pointId !== this.currentPointId) {
       if (this.currentPointId) {
-        // this._removePoint(this.currentPointId);
-        this._markers.forEach((x) => {
-          x.marker.remove();
-        });
-        this._markers = [];
+        this.remove();
       }
       this.currentPointId = pointId;
       if (pointId) {
@@ -52,16 +55,18 @@ export class MarkerLayer {
   }
 
   updateActiveMarker(yearsStat: { year: number; numb: number }) {
-    this._markers.forEach((x) => {
-      if (
-        x.properties.year === yearsStat.year &&
-        x.properties.numb === yearsStat.numb
-      ) {
-        x.element.classList.add('active');
-      } else {
-        x.element.classList.remove('active');
-      }
-    });
+    if (yearsStat) {
+      this._markers.forEach((x) => {
+        if (
+          x.properties.year === yearsStat.year &&
+          x.properties.numb === yearsStat.numb
+        ) {
+          x.element.classList.add('active');
+        } else {
+          x.element.classList.remove('active');
+        }
+      });
+    }
   }
 
   _getPointIdByYear(year: number): string | undefined {

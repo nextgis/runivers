@@ -37,8 +37,8 @@
   "devDependencies": {
     "@nextgis/eslint-config": "^0.31.0",
     "@types/geojson": "^7946.0.7",
-    "@types/mapbox-gl": "^1.9.1",
-    "@types/nouislider": "^9.0.6",
+    "@types/mapbox-gl": "^1.10.1",
+    "@types/nouislider": "^9.0.7",
     "autoprefixer": "^9.7.6",
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^5.1.1",

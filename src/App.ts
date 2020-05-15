@@ -91,6 +91,7 @@ export class App {
       getStatusLayer: (config: LayersGroup) => this._getStatusLayer(config),
       onStepReady: (year: number) => this.updateDataByYear(year),
       onLayerUpdate: (year: number) => this.updateDataByYear(year),
+      onReset: () => this.onReset(),
     });
     this.timeMap.emitter.once('loading:finish', () => {
       this._setSelectedLayerFromUrl();
@@ -107,13 +108,18 @@ export class App {
     return webMap;
   }
 
+  onReset() {
+    if (this._markers) {
+      this.updateDataByYear(this.timeMap.currentYear);
+    }
+  }
+
   updateDataByYear(year: number) {
     const pointId = this._markers._getPointIdByYear(year);
 
     this._markers.updatePoint(pointId);
 
     const areaStat = this._findAreaStatByYear(year);
-
     this._updatePeriodBlockByYear(year, areaStat);
     this._updateYearStatBlockByYear(year, areaStat);
 

@@ -35,9 +35,10 @@ export interface TimeMapOptions {
   timeLayersGroups?: TimeLayersGroupOptions[];
   fromYear?: number;
   toYear?: number;
+  getStatusLayer: (config: LayersGroup) => TimeLayersGroupOptions | undefined;
   onLayerUpdate?: (year: number) => void;
   onStepReady?: (year: number) => void;
-  getStatusLayer: (config: LayersGroup) => TimeLayersGroupOptions | undefined;
+  onReset?: () => void;
 }
 
 export class TimeMap {
@@ -120,6 +121,9 @@ export class TimeMap {
         x.beforeLayerId = undefined;
       }
     });
+    if (this.options.onReset) {
+      this.options.onReset();
+    }
     this.emitter.emit('loading:finish', false);
   }
 
