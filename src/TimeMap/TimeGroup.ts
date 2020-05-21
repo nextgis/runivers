@@ -534,6 +534,7 @@ export class TimeLayersGroup {
       this.forEachTimeLayer(id, (l) => {
         this.webMap.removeLayer(l);
       });
+      this._timeLayers[id] = [];
     }
   }
 
