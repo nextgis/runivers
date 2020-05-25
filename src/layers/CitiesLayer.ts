@@ -63,7 +63,8 @@ export class CitiesLayer extends BaseLayer {
           'text-padding': 0,
           'text-justify': 'auto',
         },
-        type: 'icon',
+        type: 'point',
+        nativeOptions: { type: 'symbol' },
         nativePaint: true,
         sourceLayer,
       });

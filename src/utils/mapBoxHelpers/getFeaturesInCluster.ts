@@ -6,7 +6,7 @@ export default function getFeaturesInCluster(
   feature: MapboxGeoJSONFeature | Feature,
   _features: Array<Feature | MapboxGeoJSONFeature> = []
 ): Promise<Feature[]> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const props = feature.properties && feature.properties;
     if (props) {
       const isCluster = props.cluster;

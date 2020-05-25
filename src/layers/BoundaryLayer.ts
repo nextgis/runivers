@@ -69,7 +69,7 @@ export class BoundaryLayer extends BaseLayer {
         order: this.order,
         selectedPaint,
         selectable: true,
-        type: 'fill',
+        type: 'polygon',
         nativePaint: true,
         labelField: 'name',
         sourceLayer,
