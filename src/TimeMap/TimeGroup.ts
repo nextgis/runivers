@@ -192,7 +192,7 @@ export class TimeLayersGroup {
                 this._onSourceIsLoaded();
               }
             } else {
-              reject();
+              reject(`Not current id`);
             }
           })
           .catch((er) => {

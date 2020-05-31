@@ -6,6 +6,7 @@ import { EventEmitter } from 'events';
 import WebMap, { Type } from '@nextgis/webmap';
 import QmsKit from '@nextgis/qms-kit';
 import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
+import { debounce } from '@nextgis/utils';
 
 import { SliderControl } from './components/SliderControl';
 import { getLayers } from './services/GetLayersService';
@@ -49,6 +50,8 @@ export class App {
 
   timeMap!: TimeMap;
 
+  updateDataByYear: (year: number) => void;
+
   private statusLayers: {
     [groupName: string]: Type<TimeLayersGroupOptions>;
   } = {
@@ -74,6 +77,10 @@ export class App {
     if (fromYear && currentYear && currentYear < fromYear) {
       this.options.currentYear = fromYear;
     }
+    this.updateDataByYear = debounce(
+      (year: number) => this._updateDataByYear(year),
+      300
+    );
     this.createWebMap().then(() => {
       this._buildApp();
     });
@@ -114,7 +121,16 @@ export class App {
     }
   }
 
-  updateDataByYear(year: number) {
+  getTimeStop(year: number): string {
+    const stop = this.options.timeStops.find((x) => year < x.toYear);
+    return stop ? stop.name : '';
+  }
+
+  updateLayersColor() {
+    // ignore
+  }
+
+  private _updateDataByYear(year: number) {
     const pointId = this._markers._getPointIdByYear(year);
 
     this._markers.updatePoint(pointId);
@@ -124,15 +140,6 @@ export class App {
     this._updateYearStatBlockByYear(year, areaStat);
 
     this.urlParams.set('year', String(year));
-  }
-
-  getTimeStop(year: number): string {
-    const stop = this.options.timeStops.find((x) => year < x.toYear);
-    return stop ? stop.name : '';
-  }
-
-  updateLayersColor() {
-    // ignore
   }
 
   private _setSelectedLayerFromUrl() {
