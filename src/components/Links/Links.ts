@@ -10,6 +10,7 @@ import { App } from '../../App';
 import { SliderOptions } from '../SliderControl';
 import { aboutShortRu } from './aboutRu';
 import { aboutShortEn } from './aboutEn';
+import { Control } from 'mapbox-gl';
 
 function getBaseLayerToggler(controls: Controls) {
   const baseLayer = 'baselayer';
@@ -116,7 +117,7 @@ function getLegendToggler(controls: Controls) {
   }
 }
 
-export function getSwitcherPanelControl(controls: Controls) {
+export function getSwitcherPanelControl(controls: Controls): Panel {
   const block = document.createElement('div');
   block.className = 'switcher-panel-control';
 
@@ -136,7 +137,7 @@ export function getSwitcherPanelControl(controls: Controls) {
   return panel;
 }
 
-export function getSocialLinksPanel() {
+export function getSocialLinksPanel(): Panel {
   const block = document.createElement('div');
   block.innerHTML = `
     <div class="social-links">
@@ -161,7 +162,7 @@ function getAboutBlock(block: string) {
     </P>`;
 }
 
-export function openAboutDialog(app: App, language = 'ru') {
+export function openAboutDialog(app: App, language = 'ru'): void {
   const attrs = app.webMap.getAttributions({
     onlyVisible: false,
     onlyBasemap: true,
@@ -195,7 +196,7 @@ export function openAboutDialog(app: App, language = 'ru') {
   openDialog({ template: html });
 }
 
-export function getAboutProjectLink(app: App) {
+export function getAboutProjectLink(app: App): HTMLElement {
   const block = document.createElement('a');
   block.className = 'about_icon';
   block.setAttribute('href', '#');
@@ -207,7 +208,7 @@ export function getAboutProjectLink(app: App) {
   return block;
 }
 
-export function openSettingsDialog(app: App) {
+export function openSettingsDialog(app: App): void {
   const template = document.createElement('div');
 
   // link to blog
@@ -305,7 +306,7 @@ export function getAffiliatedLinks(app: App): HTMLElement {
   return block;
 }
 
-export function getAffiliatedPanel(controls: Controls) {
+export function getAffiliatedPanel(controls: Controls): Panel {
   const block = getAffiliatedLinks(controls.app);
 
   const panel = new Panel({
@@ -315,7 +316,7 @@ export function getAffiliatedPanel(controls: Controls) {
   return panel;
 }
 
-export function getHomeBtnControl(control: Controls) {
+export function getHomeBtnControl(control: Controls): Promise<Control> {
   const _control = control.app.webMap.createButtonControl({
     addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
     onClick: () =>
@@ -326,7 +327,7 @@ export function getHomeBtnControl(control: Controls) {
   return _control;
 }
 
-export function getTimelineButton() {
+export function getTimelineButton(): HTMLElement {
   const link = document.createElement('a');
   link.className = 'panel__toggler graph_logo';
   link.setAttribute(

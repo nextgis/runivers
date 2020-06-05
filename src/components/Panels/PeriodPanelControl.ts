@@ -31,7 +31,7 @@ export class PeriodPanelControl extends Panel {
     super(Object.assign({}, OPTIONS, options));
   }
 
-  hide() {
+  hide(): void {
     super.hide();
     if (this.webMap) {
       const container = this.webMap.getContainer();
@@ -41,7 +41,7 @@ export class PeriodPanelControl extends Panel {
     }
   }
 
-  show() {
+  show(): void {
     super.show();
     if (!this.isHide && this.webMap) {
       const container = this.webMap.getContainer();
@@ -51,7 +51,7 @@ export class PeriodPanelControl extends Panel {
     }
   }
 
-  updatePeriod(period: Period, areaStat?: AreaStat) {
+  updatePeriod(period: Period, areaStat?: AreaStat): void {
     this.closeDialog();
     if (period) {
       const exist = this.period;

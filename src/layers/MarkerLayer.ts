@@ -1,8 +1,7 @@
 import proj4 from 'proj4';
-import { Feature, MultiPoint, Point, FeatureCollection } from 'geojson';
+import { Feature, MultiPoint, Point } from 'geojson';
 import { Map, Marker } from 'mapbox-gl';
-
-import { onlyUnique } from '../utils/utils';
+import { arrayUnique } from '@nextgis/utils';
 
 import { App } from '../App';
 import {
@@ -27,7 +26,7 @@ export class MarkerLayer {
 
   constructor(protected app: App) {}
 
-  setPoints(points: HistoryLayerResource[]) {
+  setPoints(points: HistoryLayerResource[]): void {
     this._pointsConfig = this._processPointsMeta(points);
     const pointId = this._getPointIdByYear(this.app.timeMap.currentYear);
     if (pointId) {
@@ -35,14 +34,14 @@ export class MarkerLayer {
     }
   }
 
-  remove() {
+  remove(): void {
     this._markers.forEach((x) => {
       x.marker.remove();
     });
     this._markers = [];
   }
 
-  updatePoint(pointId?: string) {
+  updatePoint(pointId?: string): void {
     if (pointId !== this.currentPointId) {
       if (this.currentPointId) {
         this.remove();
@@ -54,7 +53,7 @@ export class MarkerLayer {
     }
   }
 
-  updateActiveMarker(yearsStat: { year: number; numb: number }) {
+  updateActiveMarker(yearsStat: { year: number; numb: number }): void {
     if (yearsStat) {
       this._markers.forEach((x) => {
         if (
@@ -77,34 +76,32 @@ export class MarkerLayer {
   }
 
   private _addPoint(id: string) {
-    getPointGeojson(id).then(
-      (data: FeatureCollection<MultiPoint, PointProperties>) => {
-        const _many =
-          data.features.length > 1 &&
-          data.features.map((x) => x.properties.numb).filter(onlyUnique);
-        const many = _many && _many.length > 1;
-        data.features.forEach(
-          (marker: Feature<Point | MultiPoint, PointProperties>, i) => {
-            const type = marker && marker.geometry && marker.geometry.type;
-            if (type === 'MultiPoint') {
-              const coordinates = marker.geometry.coordinates as [
-                number,
-                number
-              ][];
-              coordinates.forEach((x) => {
-                this._addMarkerToMap(x, marker.properties, many);
-              });
-            } else if (type === 'Point') {
-              this._addMarkerToMap(
-                marker.geometry.coordinates as [number, number],
-                marker.properties,
-                many
-              );
-            }
+    getPointGeojson(id).then((data) => {
+      const _many =
+        data.features.length > 1 &&
+        arrayUnique(data.features.map((x) => x.properties.numb));
+      const many = _many && _many.length > 1;
+      data.features.forEach(
+        (marker: Feature<Point | MultiPoint, PointProperties>, i) => {
+          const type = marker && marker.geometry && marker.geometry.type;
+          if (type === 'MultiPoint') {
+            const coordinates = marker.geometry.coordinates as [
+              number,
+              number
+            ][];
+            coordinates.forEach((x) => {
+              this._addMarkerToMap(x, marker.properties, many);
+            });
+          } else if (type === 'Point') {
+            this._addMarkerToMap(
+              marker.geometry.coordinates as [number, number],
+              marker.properties,
+              many
+            );
           }
-        );
-      }
-    );
+        }
+      );
+    });
   }
 
   // TODO: Mapboxgl specific method

@@ -1,16 +1,22 @@
-import { EventEmitter } from 'events';
 import './SliderControl.css';
+import 'nouislider/distribute/nouislider.css';
+
+import { EventEmitter } from 'events';
 import WebMap from '@nextgis/webmap';
 
 import noUiSlider, { PipsOptions } from 'nouislider';
 // @ts-ignore
 import wNumb from 'wnumb';
-import 'nouislider/distribute/nouislider.css';
 
 import './Links/img/rewind_next.svg';
 import './Links/img/rewind_previous.svg';
 
 type SliderValue = number | Array<number | null>;
+
+interface LabelInputElementOptions {
+  label: HTMLDivElement | HTMLLabelElement;
+  input: HTMLInputElement;
+}
 
 export interface SliderOptions {
   type: string;
@@ -65,17 +71,17 @@ export class SliderControl {
       this.options.animationStep || this.options.step;
   }
 
-  onAdd(map: any) {
+  onAdd(map: WebMap): HTMLElement {
     this.map = map;
     this._container = this._createContainer();
     return this._container;
   }
 
-  onRemove() {
+  onRemove(): void {
     // ignore
   }
 
-  _createContainer() {
+  _createContainer(): HTMLElement {
     const element = document.createElement('div');
     element.className = 'mapboxgl-ctrl slider-control';
     element.appendChild(this._createSliderContainer());
@@ -91,7 +97,7 @@ export class SliderControl {
     return element;
   }
 
-  _createValueInput() {
+  _createValueInput(): HTMLElement {
     const inputObj = this._createLabeledInput({
       type: 'number',
       // label: 'value',
@@ -105,7 +111,7 @@ export class SliderControl {
     return inputObj.label;
   }
 
-  _createAnimationStepInput() {
+  _createAnimationStepInput(): HTMLElement {
     const inputObj = this._createLabeledInput({
       type: 'number',
       label: 'animation step',
@@ -124,7 +130,7 @@ export class SliderControl {
     return inputObj.label;
   }
 
-  _createAnimationDelayInput() {
+  _createAnimationDelayInput(): HTMLElement {
     const inputObj = this._createLabeledInput({
       type: 'number',
       label: 'amimation delay',
@@ -139,7 +145,7 @@ export class SliderControl {
     return inputObj.label;
   }
 
-  _createSliderContainer() {
+  _createSliderContainer(): HTMLElement {
     const span = document.createElement('span');
     span.className = 'slider-control-range';
     const range = document.createElement('div');
@@ -191,7 +197,7 @@ export class SliderControl {
     return span;
   }
 
-  _createPlayerContainer() {
+  _createPlayerContainer(): HTMLElement {
     const player = document.createElement('div');
     player.className = 'slider-control-block slider-control-player';
     const playerControl = document.createElement('button');
@@ -205,7 +211,7 @@ export class SliderControl {
     return player;
   }
 
-  _createPlayerButton() {
+  _createPlayerButton(): HTMLElement {
     const playerControl = document.createElement('button');
     playerControl.className = 'player-button';
     // playerControl.innerHTML = this._getPlayerControlLabel();
@@ -216,7 +222,7 @@ export class SliderControl {
     return playerControl;
   }
 
-  _createNavigationContainer() {
+  _createNavigationContainer(): HTMLElement {
     const playerSteps = document.createElement('div');
     playerSteps.className = 'slider-control-block slider-control-steps';
 
@@ -254,7 +260,11 @@ export class SliderControl {
     return playerSteps;
   }
 
-  _createLabeledInput(opt: { type: string; value: any; label?: string }) {
+  _createLabeledInput(opt: {
+    type: string;
+    value: any;
+    label?: string;
+  }): LabelInputElementOptions {
     opt = opt || {};
 
     const input = document.createElement('input');
@@ -279,15 +289,15 @@ export class SliderControl {
     };
   }
 
-  startAnimathin() {
+  startAnimathin(): void {
     this._toggleAnimation(true);
   }
 
-  stopAnimation() {
+  stopAnimation(): void {
     this._toggleAnimation(false);
   }
 
-  _onSliderClick(value: number) {
+  _onSliderClick(value: number): void {
     const isAnimation = this._animationStatus;
     if (isAnimation) {
       this.stopAnimation();
@@ -298,7 +308,7 @@ export class SliderControl {
     // }
   }
 
-  _onChange(value: SliderValue) {
+  _onChange(value: SliderValue): void {
     if (this._slider) {
       this._slider.set(value);
     }
@@ -312,7 +322,7 @@ export class SliderControl {
   //   return this._animationStatus ? 'stop' : 'start';
   // }
 
-  _toggleAnimation(status?: boolean) {
+  _toggleAnimation(status?: boolean): void {
     status = status !== undefined ? status : !this._animationStatus;
     this._animationStatus = status;
     // this._playerControl.innerHTML = this._getPlayerControlLabel();
@@ -331,7 +341,7 @@ export class SliderControl {
     }
   }
 
-  _startAnimation() {
+  _startAnimation(): void {
     if (this._animationStatus) {
       this._disableControlBtn();
       const timerStart = new Date().getTime();
@@ -374,7 +384,7 @@ export class SliderControl {
     }
   }
 
-  _nextStep(step: SliderValue) {
+  _nextStep(step: SliderValue): void {
     if (this._slider) {
       this._slider.set(step);
     }
@@ -385,7 +395,7 @@ export class SliderControl {
     callback: (val: number | boolean) => void,
     previous?: boolean,
     stepLength?: number
-  ) {
+  ): void {
     const nextValue = this._getNextValue(previous, stepLength);
     const inRange =
       this.options.value <= this.options.max &&
@@ -402,7 +412,7 @@ export class SliderControl {
     }
   }
 
-  _getAllowedValue(value: number) {
+  _getAllowedValue(value: number): number {
     if (value <= this.options.min) {
       return this.options.min;
     } else if (value > this.options.max) {
@@ -411,7 +421,7 @@ export class SliderControl {
     return value;
   }
 
-  _getNextValue(previous?: boolean, stepLength?: number) {
+  _getNextValue(previous?: boolean, stepLength?: number): number | undefined {
     if (this._slider) {
       const val = this._slider.get();
       if (typeof val === 'string') {
@@ -423,12 +433,12 @@ export class SliderControl {
     }
   }
 
-  _stopAnimation() {
+  _stopAnimation(): void {
     // clearTimeout(this._nextStepTimeoutId);
     this._enableControlBtn();
   }
 
-  protected _disableControlBtn() {
+  protected _disableControlBtn(): void {
     [this._playerControlNextBtn, this._playerControlPrevBtn].forEach((x) => {
       if (x) {
         x.classList.add('disables');
@@ -437,7 +447,7 @@ export class SliderControl {
     });
   }
 
-  protected _enableControlBtn() {
+  protected _enableControlBtn(): void {
     [this._playerControlNextBtn, this._playerControlPrevBtn].forEach((x) => {
       if (x) {
         x.classList.remove('disables');

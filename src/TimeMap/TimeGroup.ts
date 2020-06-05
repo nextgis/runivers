@@ -79,27 +79,27 @@ export class TimeLayersGroup {
     }
   }
 
-  hide() {
+  hide(): void {
     if (this._visible) {
       Object.keys(this._timeLayers).forEach((x) => this._hideLayer(x));
       this._visible = false;
     }
   }
 
-  show() {
+  show(): void {
     if (!this._visible && this.currentLayerId) {
       this._visible = true;
       this._showLayer(this.currentLayerId);
     }
   }
 
-  updateLayer(layerId: string) {
+  updateLayer(layerId: string): Promise<string> {
     this.beforeLayerId = this.currentLayerId;
     this.currentLayerId = layerId;
     return this.switchLayer(this.beforeLayerId || '', layerId);
   }
 
-  updateLayersColor() {
+  updateLayersColor(): void {
     const map = this.webMap.mapAdapter.map;
     if (map) {
       if (this.options.getFillColor) {
@@ -116,11 +116,11 @@ export class TimeLayersGroup {
     }
   }
 
-  pushDataLoadEvent(event: (...args: any[]) => void) {
+  pushDataLoadEvent(event: (...args: any[]) => void): void {
     this._onDataLoadEvents.push(event);
   }
 
-  fitToFilter(filter: any[], timeLayer: TimeLayer) {
+  fitToFilter(filter: any[], timeLayer: TimeLayer): Feature[] | undefined {
     const map = this.webMap.mapAdapter.map;
     if (map && typeof timeLayer.source === 'string') {
       const isNgwGeoJson = timeLayer.source.startsWith('ngw:');
@@ -158,12 +158,12 @@ export class TimeLayersGroup {
     }
   }
 
-  showOnlyCurrentLayer() {
+  showOnlyCurrentLayer(): void {
     this.hideNotCurrentLayers();
     this.makeOpacity();
   }
 
-  clean() {
+  clean(): void {
     this._removePopup();
     this._cleanDataLoadEvents();
     if (this.currentLayerId) {
@@ -173,7 +173,7 @@ export class TimeLayersGroup {
     this.currentLayerId = undefined;
   }
 
-  switchLayer(fromId: string, toId: string) {
+  switchLayer(fromId: string, toId: string): Promise<string> {
     const promise = new Promise((resolve, reject) => {
       this._removePopup();
       this._cleanDataLoadEvents();
@@ -207,25 +207,25 @@ export class TimeLayersGroup {
     });
   }
 
-  hideLayer(layerId: string) {
+  hideLayer(layerId: string): void {
     this._hideLayer(layerId);
   }
 
-  getTimeLayer(layerId?: string) {
+  getTimeLayer(layerId?: string): TimeLayer[] | undefined {
     layerId = layerId !== undefined ? layerId : this.currentLayerId;
     if (layerId) {
       return this._timeLayers[layerId];
     }
   }
 
-  forEachTimeLayer(layerId: string, fun: (timeLayer: TimeLayer) => void) {
+  forEachTimeLayer(layerId: string, fun: (timeLayer: TimeLayer) => void): void {
     const timeLayer = this._timeLayers[layerId];
     if (timeLayer) {
       timeLayer.forEach((x) => fun(x));
     }
   }
 
-  selectLayerFeature(feature: Feature, adapterId: string) {
+  selectLayerFeature(feature: Feature, adapterId: string): void {
     const prop = feature.properties;
     if (prop && this.options.filterIdField) {
       const filterIdField = this.options.filterIdField;
@@ -238,7 +238,7 @@ export class TimeLayersGroup {
     }
   }
 
-  select(fids: string, id?: string, fit = false) {
+  select(fids: string, id?: string, fit = false): Feature[] | undefined {
     id = id ?? this.currentLayerId;
     // const idsParam = urlParams.get('id') as string;
     if (id) {
@@ -269,7 +269,7 @@ export class TimeLayersGroup {
     }
   }
 
-  setFilter(filter: PropertiesFilter) {
+  setFilter(filter: PropertiesFilter): void {
     if (filter && filter.length) {
       this._filter = filter;
     } else {
@@ -282,7 +282,7 @@ export class TimeLayersGroup {
     }
   }
 
-  hideNotCurrentLayers() {
+  hideNotCurrentLayers(): void {
     Object.keys(this._timeLayers).forEach((id) => {
       if (id !== this.currentLayerId) {
         this._hideLayer(id);

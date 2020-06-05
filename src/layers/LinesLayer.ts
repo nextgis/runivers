@@ -16,7 +16,7 @@ export class LinesLayer extends BaseLayer {
   //   3: { width: 3.26, color: 'rgba(132, 73, 58, 0.25)' },
   // };
 
-  addLayers(url: string, id: string) {
+  addLayers(url: string, id: string): Promise<TimeLayer>[] {
     const opacity = this.groupLayer ? this.groupLayer.opacity : 1;
 
     const paintLine: LinePaint = {

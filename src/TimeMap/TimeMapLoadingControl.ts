@@ -12,7 +12,7 @@ export class TimeMapLoadingControl implements MapControl {
     this.__onLoadingStop = () => this._onLoadingStop();
   }
 
-  onAdd() {
+  onAdd(): HTMLElement {
     const container = document.createElement('div');
     this._container = container;
     if (this.timeMap) {
@@ -22,7 +22,7 @@ export class TimeMapLoadingControl implements MapControl {
     return container;
   }
 
-  onRemove() {
+  onRemove(): void {
     if (this.timeMap) {
       this.timeMap.emitter.off('loading:start', this.__onLoadingStart);
       this.timeMap.emitter.off('loading:finish', this.__onLoadingStop);

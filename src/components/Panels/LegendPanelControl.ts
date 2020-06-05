@@ -18,7 +18,7 @@ export class LegendPanelControl extends Panel {
     this._addEventsListener();
   }
 
-  createLegendBlock(interactive = false) {
+  createLegendBlock(interactive = false): HTMLElement {
     const element = document.createElement('div');
     element.className = 'panel-body__legend';
     const colors = this.options.colors;

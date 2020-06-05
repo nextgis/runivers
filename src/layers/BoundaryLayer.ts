@@ -18,11 +18,11 @@ export class BoundaryLayer extends BaseLayer {
   oldNgwMvtApi = true;
   filterIdField = 'fid';
 
-  addLayers(url: string, id: string) {
+  addLayers(url: string, id: string): Promise<TimeLayer>[] {
     return this._createTimeLayers(url, id);
   }
 
-  getFillColor(opt: GetFillColorOpt) {
+  getFillColor(opt: GetFillColorOpt): any[] | undefined {
     return this._getFillColor(opt);
   }
 
@@ -105,7 +105,7 @@ export class BoundaryLayer extends BaseLayer {
     const { lineColorLegend } = this.app.options;
     const legend = lineColorLegend && lineColorLegend['base'];
     if (legend && lineColor && legend) {
-      const meta: any = ['match', ['get', 'status']];
+      const meta: any[] = ['match', ['get', 'status']];
       legend.forEach((x) => {
         const linksToLineColors = x[3];
         linksToLineColors.forEach((y) => {

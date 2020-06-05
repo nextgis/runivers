@@ -86,7 +86,7 @@ export class App {
     });
   }
 
-  async createWebMap() {
+  async createWebMap(): Promise<WebMap> {
     const options = { ...this.options };
     const webMap = new WebMap({
       mapAdapter: new MapboxglAdapter(),
@@ -115,7 +115,7 @@ export class App {
     return webMap;
   }
 
-  onReset() {
+  onReset(): void {
     if (this._markers) {
       this.updateDataByYear(this.timeMap.currentYear);
     }
@@ -126,7 +126,7 @@ export class App {
     return stop ? stop.name : '';
   }
 
-  updateLayersColor() {
+  updateLayersColor(): void {
     // ignore
   }
 

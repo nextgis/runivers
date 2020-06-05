@@ -59,7 +59,7 @@ export class Controls {
     this._addEventsListeners();
   }
 
-  updateControls() {
+  updateControls(): void {
     this.removeControls();
 
     const mapContainer = this.app.webMap.getContainer();
@@ -82,7 +82,7 @@ export class Controls {
     }
   }
 
-  removeControls() {
+  removeControls(): void {
     this._installedControls.forEach((x) => {
       this.app.webMap.removeControl(x);
     });

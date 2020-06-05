@@ -39,7 +39,7 @@ export class YearsStatPanelControl extends Panel {
     super({ ...OPTIONS, ...options });
   }
 
-  hide() {
+  hide(): void {
     super.hide();
     if (this.webMap) {
       const container = this.webMap.getContainer();
@@ -49,7 +49,7 @@ export class YearsStatPanelControl extends Panel {
     }
   }
 
-  show() {
+  show(): void {
     super.show();
     if (!this.isHide && this.webMap) {
       const container = this.webMap.getContainer();
@@ -59,13 +59,13 @@ export class YearsStatPanelControl extends Panel {
     }
   }
 
-  updateYearStats(yearStats: YearStat[], areaStat?: AreaStat) {
+  updateYearStats(yearStats: YearStat[], areaStat?: AreaStat): void {
     this.yearStats = yearStats;
     this.areaStat = areaStat;
     this.updateYearStat(this.yearStats[0]);
   }
 
-  updateYearStat(yearStat: YearStat) {
+  updateYearStat(yearStat: YearStat): void {
     const exist = this.yearStat;
     const container = this.getContainer();
     if (container) {

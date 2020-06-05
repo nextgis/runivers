@@ -20,7 +20,7 @@ export class CitiesLayer extends BaseLayer {
     this.app.webMap.onLoad().then(() => this._registerMapboxImages());
   }
 
-  addLayers(url: string, id: string) {
+  addLayers(url: string, id: string): Promise<TimeLayer>[] {
     return this._createTimeLayers(url, id);
   }
 

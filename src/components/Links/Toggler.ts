@@ -17,11 +17,11 @@ export class Toggler {
     this._updateContainer();
   }
 
-  getContainer() {
+  getContainer(): HTMLElement {
     return this._container;
   }
 
-  toggle(status = !this._status) {
+  toggle(status = !this._status): void {
     this._status = status;
     this._updateContainer();
   }

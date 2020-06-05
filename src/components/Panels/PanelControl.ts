@@ -26,16 +26,16 @@ export class Panel {
     this._container = this._createContainer();
   }
 
-  getContainer() {
+  getContainer(): HTMLElement | undefined {
     return this._container;
   }
 
-  onAdd(map: WebMap) {
+  onAdd(map: WebMap): HTMLElement | undefined {
     this.webMap = map;
     return this._container;
   }
 
-  onRemove() {
+  onRemove(): void {
     if (this._container) {
       const parentNode = this._container.parentNode;
       if (parentNode) {
@@ -44,7 +44,7 @@ export class Panel {
     }
   }
 
-  updateBody(content: HTMLElement | string) {
+  updateBody(content: HTMLElement | string): void {
     this._cleanBody();
     if (this._body) {
       if (typeof content === 'string') {
@@ -55,7 +55,7 @@ export class Panel {
     }
   }
 
-  hide() {
+  hide(): void {
     this.isHide = true;
     if (this._container) {
       this._container.classList.add('panel-hide');
@@ -63,7 +63,7 @@ export class Panel {
     this.emitter.emit('toggle', false);
   }
 
-  show() {
+  show(): void {
     if (!this._blocked) {
       this.isHide = false;
       if (this._container) {
@@ -73,15 +73,15 @@ export class Panel {
     }
   }
 
-  block() {
+  block(): void {
     this._blocked = true;
   }
 
-  unBlock() {
+  unBlock(): void {
     this._blocked = false;
   }
 
-  createControlButton(onclick: () => void, text = 'Подробнее') {
+  createControlButton(onclick: () => void, text = 'Подробнее'): HTMLElement {
     const element = document.createElement('button');
     element.className = 'btn panel-button';
     element.innerHTML = text;
@@ -89,11 +89,11 @@ export class Panel {
     return element;
   }
 
-  createRefButton(url: string, text?: string) {
+  createRefButton(url: string, text?: string): HTMLElement {
     return this.createControlButton(() => window.open(url, '_blank'), text);
   }
 
-  openDialog(options?: DialogAdapterOptions) {
+  openDialog(options?: DialogAdapterOptions): void {
     if (!this._dialog) {
       this._dialog = new Dialog(options);
     }
@@ -107,7 +107,7 @@ export class Panel {
     this._dialog.show();
   }
 
-  closeDialog() {
+  closeDialog(): void {
     if (this._dialog) {
       this._dialog.close();
     }

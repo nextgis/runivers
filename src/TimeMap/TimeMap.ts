@@ -17,6 +17,11 @@ import {
 type TLayer = string[];
 export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
 
+export interface TimeGroupDefinition {
+  timeGroup: TimeLayersGroup;
+  timeLayer: TimeLayer;
+}
+
 let EVENTS_IDS = 0;
 // const ORDER = 0;
 
@@ -63,24 +68,24 @@ export class TimeMap {
     return group;
   }
 
-  getTimeGroupByAdapterId(id: string) {
+  getTimeGroupByAdapterId(id: string): TimeGroupDefinition | undefined {
     return this._getTimeGroupBy((timeLayer) => timeLayer.id === id);
   }
 
-  getTimeGroupByLayerId(id: string) {
+  getTimeGroupByLayerId(id: string): TimeGroupDefinition | undefined {
     return this._getTimeGroupBy((timeLayer) => !!timeLayer.layer?.includes(id));
   }
 
-  getTimeGroups() {
+  getTimeGroups(): TimeLayersGroup[] {
     return this._timeLayersGroups;
   }
 
-  addTimeGroup(options: TimeLayersGroupOptions) {
+  addTimeGroup(options: TimeLayersGroupOptions): void {
     const timeLayersGroup = new TimeLayersGroup(this.webMap, options);
     this._timeLayersGroups.push(timeLayersGroup);
   }
 
-  updateByYear(year: number, previous?: boolean) {
+  updateByYear(year: number, previous?: boolean): void {
     const layersId = this._getLayerIdsByYear(year, previous);
     if (layersId) {
       this.updateLayers(layersId);
@@ -113,7 +118,7 @@ export class TimeMap {
     return this.finishLoading(updateLayersPromise, layerIdRecord);
   }
 
-  resetLoading() {
+  resetLoading(): void {
     this._timeLayersGroups.forEach((x) => {
       if (x.beforeLayerId) {
         x.currentLayerId = x.beforeLayerId;
@@ -127,7 +132,7 @@ export class TimeMap {
     this.emitter.emit('loading:finish', false);
   }
 
-  finishLoading(groups: (() => void)[], layerIdRecord: LayerIdRecord) {
+  finishLoading(groups: (() => void)[], layerIdRecord: LayerIdRecord): void {
     const layerIdRecordList = Object.keys(layerIdRecord);
 
     this._timeLayersGroups.forEach((x) => {
@@ -141,7 +146,7 @@ export class TimeMap {
     this.emitter.emit('loading:finish', layerIdRecord);
   }
 
-  getUpdateLayersPromise(layerIdRecord: LayerIdRecord) {
+  getUpdateLayersPromise(layerIdRecord: LayerIdRecord): Promise<any[]> {
     const promises: Promise<any>[] = [];
     this.emitter.emit('loading:start', layerIdRecord);
     const layerIdRecordList = Object.keys(layerIdRecord);
@@ -180,7 +185,7 @@ export class TimeMap {
     return id;
   }
 
-  unselect(opt: { exclude?: string[] } = {}) {
+  unselect(opt: { exclude?: string[] } = {}): void {
     this._timeLayersGroups.forEach((x) => {
       const include = opt.exclude ? opt.exclude.indexOf(x.name) === -1 : true;
       if (include && x.currentLayerId) {
@@ -193,7 +198,7 @@ export class TimeMap {
     });
   }
 
-  buildTimeMap(data: LayersGroup[]) {
+  buildTimeMap(data: LayersGroup[]): void {
     this._groupsConfig = this._processGroupsMeta(data);
     this._addTimeLayersGroups(data);
     if (!this.currentYear && this._minYear) {
@@ -204,7 +209,7 @@ export class TimeMap {
     });
   }
 
-  _addTimeLayersGroups(config: LayersGroup[]) {
+  _addTimeLayersGroups(config: LayersGroup[]): void {
     config.forEach((x) => {
       const statusLayer = this.options.getStatusLayer(x);
       if (statusLayer) {
@@ -217,7 +222,7 @@ export class TimeMap {
     year: number,
     callback: (year: number, nextCb?: () => void, stopCb?: () => void) => void,
     previous?: boolean
-  ) {
+  ): Promise<void> {
     let nextLayers: LayerMetaRecord = this._getLayersByYear(year, previous);
     if (!nextLayers) {
       nextLayers = this._getNextLayers(year, previous);
@@ -277,7 +282,7 @@ export class TimeMap {
 
   private _getTimeGroupBy(
     fun: (timeLayer: TimeLayer) => boolean
-  ): { timeGroup: TimeLayersGroup; timeLayer: TimeLayer } | undefined {
+  ): TimeGroupDefinition | undefined {
     for (let fry = 0; fry < this._timeLayersGroups.length; fry++) {
       const layerGroup = this._timeLayersGroups[fry];
       const timeLayer = layerGroup.getTimeLayer();
