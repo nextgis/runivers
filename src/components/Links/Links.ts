@@ -165,7 +165,7 @@ function getAboutBlock(block: string) {
 export function openAboutDialog(app: App, language = 'ru'): void {
   const attrs = app.webMap.getAttributions({
     onlyVisible: false,
-    onlyBasemap: true,
+    onlyBaselayer: true,
   });
   const templates: Record<string, string> = {
     ru: aboutShortRu,

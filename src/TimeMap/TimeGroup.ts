@@ -233,14 +233,13 @@ export class TimeLayersGroup {
       const adapter = this._getWebMapLayer(adapterId);
       if (adapter && adapter.select) {
         adapter.select([[filterIdField, 'eq', Number(fid)]]);
-        // urlParams.set('id', String(fid));
       }
     }
   }
 
   select(fids: string, id?: string, fit = false): Feature[] | undefined {
     id = id ?? this.currentLayerId;
-    // const idsParam = urlParams.get('id') as string;
+
     if (id) {
       const ids: number[] = fids.split(',').map((x) => Number(x));
       const layers = this._timeLayers[id];

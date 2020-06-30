@@ -136,6 +136,7 @@ export class TimeMap {
     const layerIdRecordList = Object.keys(layerIdRecord);
 
     this._timeLayersGroups.forEach((x) => {
+      x.beforeLayerId = undefined;
       if (!layerIdRecordList.includes(x.name)) {
         if (x.currentLayerId) {
           x.hideLayer(x.currentLayerId);
@@ -232,7 +233,6 @@ export class TimeMap {
       let updateLayersPromise: any[] | undefined;
       let layerIdRecord: LayerIdRecord | undefined;
       const y = year;
-      // const y = previous ? nextLayer.to : nextLayer.from;
       this.nextYear = y;
       const next = () => {
         this.nextYear = undefined;
@@ -247,14 +247,8 @@ export class TimeMap {
         };
         callback(
           y,
-          () => {
-            finish();
-          },
-          () => {
-            // finish();
-            // this.updateByYear(yearBefore);
-            this.resetLoading();
-          }
+          () => finish(),
+          () => this.resetLoading()
         );
       };
       const noChange = Object.entries(nextLayers).every(([groupName, x]) => {
@@ -268,7 +262,6 @@ export class TimeMap {
       if (noChange) {
         next();
       } else {
-        // this.timeMap.pushDataLoadEvent(next);
         layerIdRecord = this._layerMetaToIdRecord(nextLayers);
         updateLayersPromise = await this.getUpdateLayersPromise(layerIdRecord);
         next();
