@@ -1,3 +1,4 @@
+import { defined } from '@nextgis/utils';
 import { Panel, PanelOptions } from './PanelControl';
 import './YearsStatPanelControl.css';
 import { formatArea } from '../../utils/utils';
@@ -144,39 +145,47 @@ export class YearsStatPanelControl extends Panel {
     sliderBlock.className = 'panel-body__period--slider';
     const yearStats = this.yearStats;
     const yearStat = this.yearStat;
+
     if (yearStat && yearStats) {
-      const index = yearStats.indexOf(yearStat);
-      const isFirst = index === 0;
-      const length = yearStats.length;
-      const isLast = index === length - 1;
+      const numb = yearStat.numb;
+      const count = defined(yearStat.count) ? yearStat.count : yearStats.length;
+      if (count && numb && count > 1 && count >= numb) {
+        const index = yearStats.indexOf(yearStat);
+        const isFirst = index === 0;
+        const length = yearStats.length;
+        const isLast = index === length - 1;
 
-      const createDirectionFlow = (previous?: boolean, isActive?: boolean) => {
-        const flow = document.createElement('a');
-        flow.setAttribute('href', '#');
-        // flow.className = '' +
-        //   (previous ? 'back' : 'forward') +
-        //   (isActive ? '' : ' hiden');
-        flow.className =
-          (previous ? `panel_slider prev` : `panel_slider next`) +
-          (isActive ? '' : ' hidden');
-        if (isActive) {
-          flow.onclick = (e) => {
-            e.preventDefault();
-            const directStat = yearStats[previous ? index - 1 : index + 1];
-            this.updateYearStat(directStat);
-          };
-        }
-        return flow;
-      };
+        const createDirectionFlow = (
+          previous?: boolean,
+          isActive?: boolean
+        ) => {
+          const flow = document.createElement('a');
+          flow.setAttribute('href', '#');
+          // flow.className = '' +
+          //   (previous ? 'back' : 'forward') +
+          //   (isActive ? '' : ' hiden');
+          flow.className =
+            (previous ? `panel_slider prev` : `panel_slider next`) +
+            (isActive ? '' : ' hidden');
+          if (isActive) {
+            flow.onclick = (e) => {
+              e.preventDefault();
+              const directStat = yearStats[previous ? index - 1 : index + 1];
+              this.updateYearStat(directStat);
+            };
+          }
+          return flow;
+        };
 
-      sliderBlock.appendChild(createDirectionFlow(true, !isFirst));
+        sliderBlock.appendChild(createDirectionFlow(true, !isFirst));
 
-      const flowCounter = document.createElement('div');
-      flowCounter.className = 'panel_slider-counter';
-      flowCounter.innerHTML = `${yearStat.numb} из ${yearStat.count}`;
-      sliderBlock.appendChild(flowCounter);
+        const flowCounter = document.createElement('div');
+        flowCounter.className = 'panel_slider-counter';
 
-      sliderBlock.appendChild(createDirectionFlow(false, !isLast));
+        flowCounter.innerHTML = `${numb} из ${count}`;
+        sliderBlock.appendChild(flowCounter);
+        sliderBlock.appendChild(createDirectionFlow(false, !isLast));
+      }
     }
     return sliderBlock;
   }

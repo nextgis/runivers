@@ -4,6 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
+import { defined } from '@nextgis/utils';
 import { App } from './App';
 import config from '../config.json';
 import { version } from '../package.json';
@@ -19,6 +20,26 @@ import principalities01 from './data/principalities_01.csv';
 import principalities02 from './data/principalities_02.csv';
 
 import './css/style.css';
+import { YearStat } from './components/Panels/YearsStatPanelControl';
+
+function prepareYearStat(): YearStat[] {
+  const cacheByYear: { [year: string]: YearStat[] } = {};
+  (yearsStat as YearStat[]).forEach((s) => {
+    cacheByYear[s.year] = cacheByYear[s.year] || [];
+    cacheByYear[s.year].push(s);
+  });
+  for (const s in cacheByYear) {
+    const stat = cacheByYear[s];
+    if (stat.length > 1) {
+      stat.forEach((x, i) => {
+        if (!defined(x.count)) {
+          x.numb = i + 1;
+        }
+      });
+    }
+  }
+  return yearsStat;
+}
 
 const app = new App({
   baseUrl: config.baseUrl,
@@ -31,7 +52,7 @@ const app = new App({
   bounds: [2, 27, 203, 82],
   minZoom: 3,
   periods,
-  yearsStat,
+  yearsStat: prepareYearStat(),
   areaStat,
   principalities01,
   principalities02,
