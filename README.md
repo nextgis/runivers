@@ -20,8 +20,8 @@ Add submodule to simplify the development process
 
 ```bash
 git submodule update --init
-# get latest version on nextgisweb_frontend submodule
-cd ./nextgisweb_frontend
+# get latest version on nextgis_frontend submodule
+cd ./nextgis_frontend
 git checkout master
 git pull origin master
 ```

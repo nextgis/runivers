@@ -55,6 +55,9 @@ export class TimeMap {
   private readonly _timeLayersGroups: TimeLayersGroup[] = [];
   private _onGroupsLoadEvents: Record<number, (...args: any[]) => void> = [];
   private _groupsConfig: Record<string, GroupsMeta> = {};
+  private _loadLayerPromises: {
+    [layerName: string]: { id: string; promise: Promise<any> };
+  } = {};
 
   constructor(
     private webMap: WebMap<Map, TLayer>,
@@ -129,6 +132,7 @@ export class TimeMap {
     if (this.options.onReset) {
       this.options.onReset();
     }
+    this._loadLayerPromises = {};
     this.emitter.emit('loading:finish', false);
   }
 
@@ -144,6 +148,7 @@ export class TimeMap {
       }
     });
     groups.forEach((x: () => void) => x());
+    this._loadLayerPromises = {};
     this.emitter.emit('loading:finish', layerIdRecord);
   }
 
@@ -153,18 +158,24 @@ export class TimeMap {
     const layerIdRecordList = Object.keys(layerIdRecord);
     layerIdRecordList.forEach((key) => {
       const value = layerIdRecord[key];
-      const promise = this.updateLayer(value, key).then((x) => {
-        return () => {
-          if (x) {
-            x.showOnlyCurrentLayer();
-            this.emitter.emit('loading-layer:finish', {
-              layerId: value,
-              layer: x,
-            });
-          }
-        };
-      });
-      promises.push(promise);
+      const exist = this._loadLayerPromises[key];
+      if (exist && exist.promise) {
+        promises.push(exist.promise);
+      } else {
+        const promise = this.updateLayer(value, key).then((x) => {
+          delete this._loadLayerPromises[key];
+          return () => {
+            if (x) {
+              x.showOnlyCurrentLayer();
+              this.emitter.emit('loading-layer:finish', {
+                layerId: value,
+                layer: x,
+              });
+            }
+          };
+        });
+        promises.push(promise);
+      }
     });
     return Promise.all(promises);
   }
@@ -235,8 +246,8 @@ export class TimeMap {
       const y = year;
       this.nextYear = y;
       const next = () => {
-        this.nextYear = undefined;
         const finish = () => {
+          this.nextYear = undefined;
           this.currentYear = y;
           if (updateLayersPromise && layerIdRecord) {
             this.finishLoading(updateLayersPromise, layerIdRecord);
@@ -245,10 +256,14 @@ export class TimeMap {
             this.options.onStepReady(y);
           }
         };
+        const resetLoading = () => {
+          this.nextYear = undefined;
+          this.resetLoading();
+        };
         callback(
           y,
           () => finish(),
-          () => this.resetLoading()
+          () => resetLoading()
         );
       };
       const noChange = Object.entries(nextLayers).every(([groupName, x]) => {

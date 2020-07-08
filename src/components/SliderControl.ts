@@ -241,9 +241,16 @@ export class SliderControl {
       btn.onclick = () => {
         if (!this._animationStatus) {
           this._stepReady(
-            (step) => {
+            (step, nextCb, stopCb) => {
               if (typeof step !== 'boolean') {
+                if (nextCb) {
+                  nextCb();
+                }
                 this._nextStep(step);
+              } else {
+                if (stopCb) {
+                  stopCb();
+                }
               }
             },
             previous,
@@ -392,7 +399,11 @@ export class SliderControl {
   }
 
   _stepReady(
-    callback: (val: number | boolean) => void,
+    callback: (
+      step: number | boolean,
+      nextCb?: () => void,
+      stopCb?: () => void
+    ) => void,
     previous?: boolean,
     stepLength?: number
   ): void {

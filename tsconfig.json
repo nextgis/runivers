@@ -24,7 +24,7 @@
     "baseUrl": ".",
     "paths": {
       "@nextgis/*": [
-        "./nextgisweb_frontend/packages/*/src/"
+        "./nextgis_frontend/packages/*/src/"
       ]
     }
   },

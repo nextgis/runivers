@@ -190,12 +190,13 @@ export class App {
   }
 
   private _createSlider() {
+    // used for animation to wait full layer loading
     const stepReady = (
       year: number,
       callback: (value: number) => void,
       previous: boolean
     ) => {
-      this.timeMap._stepReady(year, callback, previous);
+      this.timeMap._stepReady(year, callback);
     };
     const slider = new SliderControl({
       type: 'range',
@@ -209,7 +210,7 @@ export class App {
     });
     slider.emitter.on('change', (year: number) => {
       // may be updated in _stepReady method
-      if (year !== this.timeMap.currentYear) {
+      if (year !== this.timeMap.currentYear && year !== this.timeMap.nextYear) {
         this.timeMap.currentYear = year;
         this.timeMap.updateByYear(year);
       }

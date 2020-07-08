@@ -1,13 +1,12 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 let alias = {};
 try {
-  const { getAliases } = require('./nextgisweb_frontend/build/aliases');
+  const { getAliases } = require('./nextgis_frontend/build/aliases');
   alias = getAliases();
 } catch (er) {
   // ignore
@@ -55,10 +54,6 @@ module.exports = (env, argv) => {
           use: [
             {
               loader: 'ts-loader',
-              options: {
-                // disable type checker - we will use it in fork plugin
-                transpileOnly: true,
-              },
             },
           ],
         },
@@ -129,7 +124,6 @@ module.exports = (env, argv) => {
     },
 
     plugins: [
-      new ForkTsCheckerWebpackPlugin({ vue: true }),
       new MiniCssExtractPlugin({
         filename: '[name][hash:7].css',
         allChunks: true,

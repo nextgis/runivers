@@ -67,7 +67,7 @@ export class TimeLayersGroup {
   ) {
     this.name = this.options.name;
     this._visible = this.options.visible ?? true;
-    // @ts-ignore TODO: update webmap version
+
     options.order = options.order ?? this.webMap.reserveOrder();
     this.order = options.order;
     if (options.opacity !== undefined) {
@@ -186,6 +186,7 @@ export class TimeLayersGroup {
               // do not hide unloaded layer if it first
               if (fromId) {
                 this._removeLayerListeners(fromId);
+                // not all tiles for this layer is loaded, hide until full loading
                 this._setLayerOpacity(id_, 0);
               }
               if (!this._isWaitDataLoadedGroup()) {
