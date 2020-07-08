@@ -1,16 +1,17 @@
 import './Links.scss';
-import { Panel } from '../Panels/PanelControl';
-import { Toggler } from './Toggler';
-import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
-import { Controls } from '../../controls/Controls';
-import pkg from '../../../package.json';
-
 import './img/nextgis.png';
+
+import { Control } from 'mapbox-gl';
+import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
+import pkg from '../../../package.json';
+import { Controls } from '../../controls/Controls';
+
 import { App } from '../../App';
+import { Panel } from '../Panels/PanelControl';
 import { SliderOptions } from '../SliderControl';
+import { Toggler } from './Toggler';
 import { aboutShortRu } from './aboutRu';
 import { aboutShortEn } from './aboutEn';
-import { Control } from 'mapbox-gl';
 
 function getBaseLayerToggler(controls: Controls) {
   const baseLayer = 'baselayer';
