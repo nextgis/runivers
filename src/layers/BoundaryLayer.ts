@@ -190,10 +190,11 @@ export class BoundaryLayer extends BaseLayer {
     }
 
     if (_props[headerField]) {
+      const showLink = false;
       block.appendChild(
         this._createPropElement(
           `<h2>${_props[headerField]}
-            <a class="feature-link">&#x1f517;</a>
+            ${showLink ? '<a class="feature-link">&#x1f517;</a>' : ''}
           </h2>`,
           'prop header'
         )
@@ -270,7 +271,7 @@ export class BoundaryLayer extends BaseLayer {
         this.app.timeMap.currentYear
       );
       if (prince01) {
-        props.desc_link = prince01.desc_link;
+        props['desc_link'] = prince01.desc_link;
         addProp(prince01.name, { field: 'name_prince', getHtml });
       }
       if (prince02) {

@@ -178,6 +178,7 @@ export class App {
     const options: Partial<TimeLayersGroupOptions> = {
       name: config.name,
       baseUrl: this.options.baseUrl,
+      opacity: config.opacity,
       manualOpacity: true,
       filterIdField: 'fid',
     };

@@ -11,6 +11,7 @@
     {
       "name": "base",
       "resourceId": 5344,
+      "opacity": 0.5,
       "order": 10
     },
         {
