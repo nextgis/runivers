@@ -3,7 +3,7 @@ import { Map } from 'mapbox-gl';
 import StrictEventEmitter from 'strict-event-emitter-types';
 import { EventEmitter } from 'events';
 
-import WebMap, { MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
+import { WebMap, MvtAdapterOptions, VectorLayerAdapter } from '@nextgis/webmap';
 
 import { TimeLayersGroupOptions, TimeLayersGroup } from './TimeGroup';
 import {

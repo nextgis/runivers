@@ -3,8 +3,8 @@ import './App.css';
 import { Map } from 'mapbox-gl';
 import { EventEmitter } from 'events';
 
-import WebMap, { Type } from '@nextgis/webmap';
-import QmsKit from '@nextgis/qms-kit';
+import { WebMap, Type } from '@nextgis/webmap';
+import { QmsKit } from '@nextgis/qms-kit';
 import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
 import { debounce } from '@nextgis/utils';
 

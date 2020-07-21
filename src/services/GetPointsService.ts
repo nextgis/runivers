@@ -1,4 +1,5 @@
-import { CancelablePromise, ResourceItem } from '@nextgis/ngw-connector';
+import { ResourceItem } from '@nextgis/ngw-connector';
+import CancelablePromise from '@nextgis/cancelable-promise';
 import { connector } from './NgwConnectorService';
 import config from '../../config.json';
 import { FeatureCollection, MultiPoint } from 'geojson';

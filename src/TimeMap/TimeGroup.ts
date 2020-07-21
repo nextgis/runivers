@@ -7,7 +7,8 @@ import {
   GeoJSONSource,
 } from 'mapbox-gl';
 
-import WebMap, {
+import {
+  WebMap,
   MvtAdapterOptions,
   VectorLayerAdapter,
   PropertiesFilter,

@@ -30,7 +30,8 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.json"
+    "src/**/*.json",
+    "./nextgis_frontend/packages/global.d.ts"
   ],
   "exclude": [
     "node_modules"

@@ -2,7 +2,7 @@ import './SliderControl.css';
 import 'nouislider/distribute/nouislider.css';
 
 import { EventEmitter } from 'events';
-import WebMap from '@nextgis/webmap';
+import { WebMap } from '@nextgis/webmap';
 
 import noUiSlider, { PipsOptions } from 'nouislider';
 // @ts-ignore
