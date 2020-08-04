@@ -15,12 +15,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nextgis/dialog": "^0.32.0",
-    "@nextgis/mapboxgl-map-adapter": "^0.32.0",
-    "@nextgis/ngw-connector": "^0.32.0",
-    "@nextgis/qms-kit": "^0.32.0",
-    "@nextgis/url-runtime-params": "^0.32.0",
-    "@nextgis/webmap": "^0.32.0",
+    "@nextgis/dialog": "^1.0.0-alpha.2",
+    "@nextgis/mapboxgl-map-adapter": "^1.0.0-alpha.2",
+    "@nextgis/ngw-connector": "^1.0.0-alpha.2",
+    "@nextgis/qms-kit": "^1.0.0-alpha.2",
+    "@nextgis/url-runtime-params": "^1.0.0-alpha.2",
+    "@nextgis/webmap": "^1.0.0-alpha.2",
     "@types/color": "^3.0.1",
     "@types/node": "^14.0.19",
     "@types/proj4": "^2.5.0",
@@ -35,7 +35,7 @@
     "wnumb": "^1.2.0"
   },
   "devDependencies": {
-    "@nextgis/eslint-config": "^0.32.0",
+    "@nextgis/eslint-config": "^1.0.0-alpha.2",
     "@types/geojson": "^7946.0.7",
     "@types/mapbox-gl": "^1.11.1",
     "@types/nouislider": "^9.0.7",

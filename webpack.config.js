@@ -7,10 +7,10 @@ const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 let alias = {};
 try {
-  const { getAliases } = require('./nextgis_frontend/build/aliases');
+  const { getAliases } = require('./nextgis_frontend/scripts/aliases');
   alias = getAliases();
 } catch (er) {
-  // ignore
+  console.log(er);
 }
 
 module.exports = (env, argv) => {
