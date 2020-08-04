@@ -33,7 +33,7 @@ export interface TimeLayersGroupOptions {
   addLayers: (
     url: string,
     id: string
-  ) => Promise<TimeLayer>[] | Promise<Promise<TimeLayer>[]>;
+  ) => Promise<TimeLayer>[] | Promise<Promise<TimeLayer>[]> | undefined;
   setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
   getFillColor?: (...args: any[]) => any;
   createPopupContent?: (props: any) => HTMLElement | undefined;
@@ -514,14 +514,19 @@ export class TimeLayersGroup {
     this._onDataLoadEvents = [];
   }
 
-  private async _addLayer(url: string, id: string): Promise<TimeLayer[]> {
+  private async _addLayer(
+    url: string,
+    id: string
+  ): Promise<TimeLayer[] | undefined> {
     const layers = await this.options.addLayers(url, id);
-    this._timeLayers[id] = [];
-    for (const l of layers) {
-      const layer = await l;
-      this._timeLayers[id].push(layer);
+    if (layers) {
+      this._timeLayers[id] = [];
+      for (const l of layers) {
+        const layer = await l;
+        this._timeLayers[id].push(layer);
+      }
+      return this._timeLayers[id];
     }
-    return this._timeLayers[id];
   }
 
   private _toggleLayer(id: string, status: boolean) {
