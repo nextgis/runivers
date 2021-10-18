@@ -108,7 +108,7 @@ export class App {
     }
     webMap.addBaseLayer('QMS', {
       id: 'baselayer',
-      qmsId: 2550,
+      qmsId: 448,
       visibility: true,
     });
     this.webMap = webMap;
@@ -182,8 +182,8 @@ export class App {
       manualOpacity: true,
       filterIdField: 'fid',
     };
-    const StatusLayer: Type<TimeLayersGroupOptions> | undefined = this
-      .statusLayers[config.name];
+    const StatusLayer: Type<TimeLayersGroupOptions> | undefined =
+      this.statusLayers[config.name];
     if (StatusLayer) {
       const statusLayer = new StatusLayer(this, options);
       return statusLayer;

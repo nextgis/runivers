@@ -75,8 +75,12 @@ export class TimeLayersGroup {
       this.opacity = options.opacity;
     }
     if (this._isWaitDataLoadedGroup()) {
-      webMap.mapAdapter.emitter.on('data-loaded', (data) => this._onData(data));
-      webMap.mapAdapter.emitter.on('data-error', (data) => this._onData(data));
+      webMap.mapAdapter.emitter.on('data-loaded', (data: any) =>
+        this._onData(data)
+      );
+      webMap.mapAdapter.emitter.on('data-error', (data: any) =>
+        this._onData(data)
+      );
     }
   }
 

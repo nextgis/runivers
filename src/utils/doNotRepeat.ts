@@ -13,7 +13,7 @@ function _start(f: (...args: any[]) => void, name: string, timer: number) {
 export function doNotRepeat(
   name: string,
   func: (...args: any[]) => void,
-  timer: number
+  timer: number,
 ) {
   timer = timer || 100;
   _stop(name);

@@ -22,7 +22,7 @@ export type LegendColorItem = [
   number,
   string | { color: string; width?: number; type?: 'line' | 'fill' },
   string,
-  number[]
+  number[],
 ];
 
 export type LegendColor = {

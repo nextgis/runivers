@@ -40,7 +40,7 @@ module.exports = (env, argv) => {
         {
           test: /\.ts$/,
           enforce: 'pre',
-          exclude: /node_modules/,
+          exclude: /node_modules|nextgis_frontend/,
           include: [path.resolve(__dirname, 'src')],
           use: [
             {
@@ -55,6 +55,9 @@ module.exports = (env, argv) => {
           use: [
             {
               loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
             },
           ],
         },
