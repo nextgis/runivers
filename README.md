@@ -31,8 +31,8 @@ In this case, the @nextgis libraries will be used from the submodule, not from t
 ## Docker
 
 ```bash
-docker build -t registry.nextgis.com/runivers:0.0.0 .
-docker build -t registry.nextgis.com/runivers:latest .
+docker build -t registry.nextgis.com/runivers:4.0.3 .
+docker build -t registry.nextgis.com/runivers:4.0.3 .
 docker run -it -p 8080:8080 --rm --name code-nextgis-1 registry.nextgis.com/runivers:latest
 
 docker push registry.nextgis.com/runivers:0.0.0

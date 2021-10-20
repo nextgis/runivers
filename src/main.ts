@@ -47,7 +47,7 @@ const app = new App({
   fromYear: 850,
   timeStops: [{ toYear: 1462, name: 'principalities' }],
   currentYear: 1462,
-  animationDelay: 100,
+  animationDelay: 200,
   animationStep: 1,
   bounds: [2, 27, 203, 82],
   minZoom: 3,

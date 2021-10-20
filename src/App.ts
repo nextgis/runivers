@@ -206,7 +206,7 @@ export class App {
       step: 1,
       animationStep: this.options.animationStep || 1,
       value: this.timeMap.currentYear,
-      animationDelay: this.options.animationDelay || 100,
+      animationDelay: this.options.animationDelay || 200,
       stepReady,
     });
     slider.emitter.on('change', (year: number) => {

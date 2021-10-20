@@ -44,7 +44,7 @@ const OPTIONS: SliderOptions = {
   step: 1,
   animationStep: 1,
   value: 50,
-  animationDelay: 100,
+  animationDelay: 200,
   filterPips: (value, piptype) => {
     return piptype === 1 ? 1 : value % 100 ? (value % 10 ? -1 : 0) : 1;
   },
