@@ -92,7 +92,7 @@
   color: #b9b9b9;
 }
 
-.mapboxgl-popup-close-button {
+.maplibregl-popup-close-button {
   font-size: 30px;
   line-height: 20px;
   margin: 3px 5px 0 0;
@@ -100,11 +100,11 @@
   font-weight: lighter;
 }
 
-.mapboxgl-popup-close-button:hover {
+.maplibregl-popup-close-button:hover {
   background-color: unset;
 }
 
-.mapboxgl-popup-content {
+.maplibregl-popup-content {
   padding: 10px;
   width: 300px;
 }

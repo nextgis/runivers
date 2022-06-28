@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
     "allowJs": true,
     /* Basic Options */
     "target": "es5", /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
-    "module": "es2015", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
+    "module": "esNext", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
     "declaration": false, /* Generates corresponding '.d.ts' file. */
-    /* "declarationDir": "lib", */
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -14,7 +14,7 @@
       "es6",
       "dom"
     ],
-    /* Strict Type-Checking Opstions */
+    /* Strict Type-Checking Options */
     "strict": true, /* Enable all strict type-checking options. */
     /* Module Resolution Options */
     "esModuleInterop": true, /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
@@ -24,16 +24,17 @@
     "baseUrl": ".",
     "paths": {
       "@nextgis/*": [
-        "./nextgis_frontend/packages/*/src/"
+        "./@nextgis/packages/*/src/"
       ]
     }
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.json",
-    "./nextgis_frontend/packages/global.d.ts"
+    "src/",
+    "@nextgis/packages/global.d.ts",
+    "@nextgis/packages/mapboxgl-map-adapter/src/maplibregl.d.ts",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

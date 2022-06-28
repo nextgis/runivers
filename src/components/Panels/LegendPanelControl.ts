@@ -86,7 +86,7 @@ export class LegendPanelControl extends Panel {
     block: HTMLElement,
     id: number,
     color: string,
-    text: string
+    text: string,
   ) {
     const colorInput = document.createElement('input');
     colorInput.setAttribute('type', 'color');
@@ -105,7 +105,7 @@ export class LegendPanelControl extends Panel {
       if (allColors) {
         const colors: LegendColorItem[] = [];
         Object.values(allColors).forEach((x) =>
-          x.forEach((y) => colors.push(y))
+          x.forEach((y) => colors.push(y)),
         );
         const changedColor = colors.find((x) => x[0] === id);
         if (changedColor) {

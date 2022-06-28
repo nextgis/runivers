@@ -1,17 +1,19 @@
 import './Links.scss';
 import './img/nextgis.png';
 
-import { Control } from 'mapbox-gl';
-import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
+import Dialog from '@nextgis/dialog';
 import pkg from '../../../package.json';
-import { Controls } from '../../controls/Controls';
 
 import { App } from '../../App';
 import { Panel } from '../Panels/PanelControl';
-import { SliderOptions } from '../SliderControl';
 import { Toggler } from './Toggler';
 import { aboutShortRu } from './aboutRu';
 import { aboutShortEn } from './aboutEn';
+
+import type { IControl } from 'maplibre-gl';
+import type { DialogAdapterOptions } from '@nextgis/dialog';
+import type { SliderOptions } from '../SliderControl';
+import type { Controls } from '../../controls/Controls';
 
 function getBaseLayerToggler(controls: Controls) {
   const baseLayer = 'baselayer';
@@ -186,7 +188,7 @@ export function openAboutDialog(app: App, language = 'ru'): void {
   const html = document.createElement('div');
   html.innerHTML = template;
   const languageSwitcher = html.getElementsByClassName(
-    'switch-about-language-btn'
+    'switch-about-language-btn',
   )[0] as HTMLAnchorElement;
   if (languageSwitcher) {
     languageSwitcher.onclick = () => {
@@ -296,7 +298,7 @@ export function getAffiliatedLinks(app: App): HTMLElement {
   `;
 
   const settings = block.getElementsByClassName(
-    'settings__logo__min'
+    'settings__logo__min',
   )[0] as HTMLElement;
   if (settings) {
     settings.onclick = (e) => {
@@ -317,9 +319,9 @@ export function getAffiliatedPanel(controls: Controls): Panel {
   return panel;
 }
 
-export function getHomeBtnControl(control: Controls): Promise<Control> {
+export function getHomeBtnControl(control: Controls): Promise<IControl> {
   const _control = control.app.webMap.createButtonControl({
-    addClass: 'mapboxgl-ctrl-icon mapboxgl-ctrl-home',
+    addClass: 'maplibregl-ctrl-icon maplibregl-ctrl-home',
     onClick: () =>
       control.app.options.bounds &&
       control.app.webMap.fitBounds(control.app.options.bounds),
@@ -333,7 +335,7 @@ export function getTimelineButton(): HTMLElement {
   link.className = 'panel__toggler graph_logo';
   link.setAttribute(
     'href',
-    'https://www.runivers.ru/granitsy-rossii/charts/index.php'
+    'https://www.runivers.ru/granitsy-rossii/charts/index.php',
   );
   link.setAttribute('title', 'График изменения территории России');
   link.setAttribute('target', '_blank');

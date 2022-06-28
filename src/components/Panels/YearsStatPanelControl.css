@@ -32,33 +32,33 @@
   font-size: 0.6rem;
 }
 
-.mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
+.maplibregl-control-container .maplibregl-ctrl.stat-panel {
   margin-top: 0;
   color: #fff;
   background-color: #7ccf78;
   border-radius: 6px;
 }
 
-.mapboxgl-control-container .mapboxgl-ctrl.stat-panel.gain {
+.maplibregl-control-container .maplibregl-ctrl.stat-panel.gain {
   color: #fff;
   background-color: #7ccf78;
 }
-.mapboxgl-control-container .mapboxgl-ctrl.stat-panel.lost {
+.maplibregl-control-container .maplibregl-ctrl.stat-panel.lost {
   color: #fff;
   background-color: #d16847;
 }
 
-.mapboxgl-control-container .mapboxgl-ctrl.period-panel {
+.maplibregl-control-container .maplibregl-ctrl.period-panel {
   margin-top: 0;
   background-color: #fff;
   border-radius: 6px;
 }
 
-.years-panel .mapboxgl-control-container .mapboxgl-ctrl.period-panel {
+.years-panel .maplibregl-control-container .maplibregl-ctrl.period-panel {
   border-radius: 6px 6px 0 0;
 }
 
-.period-panel .mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
+.period-panel .maplibregl-control-container .maplibregl-ctrl.stat-panel {
   border-radius: 0px 0px 6px 6px;
 }
 
@@ -123,11 +123,11 @@ a.panel_slider.next {
 
 /* MOBILE */
 
-.mobile .mapboxgl-control-container .mapboxgl-ctrl.stat-panel {
+.mobile .maplibregl-control-container .maplibregl-ctrl.stat-panel {
   border-radius: 6px;
 }
 
-.mobile .mapboxgl-control-container .mapboxgl-ctrl.period-panel {
+.mobile .maplibregl-control-container .maplibregl-ctrl.period-panel {
   border-radius: 6px;
 }
 

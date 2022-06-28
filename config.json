@@ -1,5 +1,5 @@
 {
-  "baseUrl": "https://gis.runivers.ru",
+  "baseUrl": "https://runivers.staging.nextgis.com",
   "#sourceGroups": [
     {
       "name": "status2",

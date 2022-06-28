@@ -82,7 +82,7 @@ export class YearsStatPanelControl extends Panel {
     } else {
       // this.hide();
       this.updateBody(
-        '<div class="panel-body__period empty">В этом году изменений территории не было</div>'
+        '<div class="panel-body__period empty">В этом году изменений территории не было</div>',
       );
       this.yearStat = undefined;
     }
@@ -131,7 +131,7 @@ export class YearsStatPanelControl extends Panel {
 
       buttonWrap.className = 'button-wrap';
       buttonWrap.appendChild(
-        this.createControlButton(() => this.openDialog({ template }))
+        this.createControlButton(() => this.openDialog({ template })),
       );
 
       element.appendChild(buttonWrap);
@@ -157,7 +157,7 @@ export class YearsStatPanelControl extends Panel {
 
         const createDirectionFlow = (
           previous?: boolean,
-          isActive?: boolean
+          isActive?: boolean,
         ) => {
           const flow = document.createElement('a');
           flow.setAttribute('href', '#');

@@ -1,10 +1,11 @@
-import { Marker } from 'mapbox-gl';
-import { LngLatBoundsArray } from '@nextgis/webmap';
-import { MapboxglMapAdapterOptions } from '@nextgis/mapboxgl-map-adapter';
 import { Period } from './components/Panels/PeriodPanelControl';
-import { YearStat } from './components/Panels/YearsStatPanelControl';
 import { Principalities01 } from './data/Principalities01';
 import { Principalities02 } from './data/Principalities02';
+
+import type { Marker } from 'maplibre-gl';
+import type { LngLatBoundsArray } from '@nextgis/utils';
+import type { MapboxglMapAdapterOptions } from '@nextgis/mapboxgl-map-adapter';
+import type { YearStat } from './components/Panels/YearsStatPanelControl';
 
 export interface AreaStat {
   year: number;

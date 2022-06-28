@@ -9,7 +9,7 @@ export class Toggler {
       titleOff?: string;
       className?: string;
       toggleAction?: (status: boolean) => void;
-    }
+    },
   ) {
     this._status =
       this.options.status !== undefined ? this.options.status : this._status;

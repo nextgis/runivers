@@ -64,7 +64,7 @@ export class PeriodPanelControl extends Panel {
       }
     } else {
       this.updateBody(
-        '<div class="panel-body__period empty">В этом году изменений территории не было</div>'
+        '<div class="panel-body__period empty">В этом году изменений территории не было</div>',
       );
       this.period = undefined;
     }

@@ -121,7 +121,7 @@ export class Panel {
 
   private _createContainer() {
     const element = document.createElement('div');
-    element.className = 'mapboxgl-ctrl panel';
+    element.className = 'maplibregl-ctrl panel';
     if (this.options.addClass) {
       this.options.addClass.split(' ').forEach((x) => element.classList.add(x));
     }

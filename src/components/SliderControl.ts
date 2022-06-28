@@ -1,17 +1,18 @@
 import './SliderControl.css';
-import 'nouislider/distribute/nouislider.css';
+import 'nouislider/dist/nouislider.css';
 
 import { EventEmitter } from 'events';
-import { WebMap } from '@nextgis/webmap';
 
-import noUiSlider, { PipsOptions } from 'nouislider';
-// @ts-ignore
+import noUiSlider, { API } from 'nouislider';
+
 import wNumb from 'wnumb';
 
-import './Links/img/rewind_next.svg';
-import './Links/img/rewind_previous.svg';
+import RewindNextImg from './Links/img/rewind_next.svg';
+import RewindPreviousImg from './Links/img/rewind_previous.svg';
 
-type SliderValue = number | Array<number | null>;
+import type { WebMap } from '@nextgis/webmap';
+
+type SliderValue = number | string | (number | string)[];
 
 interface LabelInputElementOptions {
   label: HTMLDivElement | HTMLLabelElement;
@@ -27,12 +28,12 @@ export interface SliderOptions {
   value: number;
   animationDelay: number;
   playerControl?: boolean;
-  pips?: PipsOptions;
+  pips?: any;
 
   stepReady?(
     nextValue: number,
     callback: (value: number) => void,
-    previous?: boolean
+    previous?: boolean,
   ): void;
   filterPips?(value: any, type: number): -1 | 0 | 1 | 2; // -1 (no pip at all) 0 (no value) 1 (large value) 2 (small value)
 }
@@ -56,7 +57,7 @@ export class SliderControl {
 
   _animationStepInput?: HTMLInputElement;
   _sliderContainer?: HTMLElement;
-  _slider?: noUiSlider.noUiSlider;
+  _slider?: API;
   protected _playerControl?: HTMLElement;
   protected _playerControlPrevBtn?: HTMLElement;
   protected _playerControlNextBtn?: HTMLElement;
@@ -83,7 +84,7 @@ export class SliderControl {
 
   _createContainer(): HTMLElement {
     const element = document.createElement('div');
-    element.className = 'mapboxgl-ctrl slider-control';
+    element.className = 'maplibregl-ctrl slider-control';
     element.appendChild(this._createSliderContainer());
 
     const playerControl =
@@ -180,16 +181,20 @@ export class SliderControl {
     });
 
     slider.on('change', (values, handle) => {
-      this._onSliderClick(parseInt(values[0], 10));
+      if (Array.isArray(values)) {
+        const v = values[0];
+        const vInt = typeof v === 'string' ? parseInt(v, 10) : v;
+        this._onSliderClick(vInt);
+      }
     });
-    // @ts-ignore
+
     const sliderElement = slider.target as HTMLElement;
     sliderElement.addEventListener(
       'click',
       () => {
         this.stopAnimation();
       },
-      true
+      true,
     );
 
     this._sliderContainer = span;
@@ -230,9 +235,9 @@ export class SliderControl {
       const btn = document.createElement('button');
       btn.className = 'slider-control-steps-btn'; // + (previous ? 'previous' : 'next');
       btn.innerHTML = `
-        <img src="images/rewind_${
-          previous ? 'previous' : 'next'
-        }.svg" width="24" height="24"/>
+        <img src="${
+          previous ? RewindPreviousImg : RewindNextImg
+        }" width="24" height="24"/>
       `;
       playerSteps.appendChild(btn);
       if (previous) {
@@ -254,7 +259,7 @@ export class SliderControl {
               }
             },
             previous,
-            this.options.step
+            this.options.step,
           );
         }
       };
@@ -335,7 +340,7 @@ export class SliderControl {
     // this._playerControl.innerHTML = this._getPlayerControlLabel();
     if (this._playerControl) {
       this._playerControl.classList[this._animationStatus ? 'add' : 'remove'](
-        'paused'
+        'paused',
       );
     }
 
@@ -384,7 +389,7 @@ export class SliderControl {
             }
             this.stopAnimation();
           }
-        }
+        },
       );
     } else {
       this.stopAnimation();
@@ -402,10 +407,10 @@ export class SliderControl {
     callback: (
       step: number | boolean,
       nextCb?: () => void,
-      stopCb?: () => void
+      stopCb?: () => void,
     ) => void,
     previous?: boolean,
-    stepLength?: number
+    stepLength?: number,
   ): void {
     const nextValue = this._getNextValue(previous, stepLength);
     const inRange =

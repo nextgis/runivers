@@ -1,6 +1,6 @@
 import proj4 from 'proj4';
 import { Feature, MultiPoint, Point } from 'geojson';
-import { Map, Marker } from 'mapbox-gl';
+import { Map, Marker } from 'maplibre-gl';
 import { arrayUnique } from '@nextgis/utils';
 
 import { App } from '../App';
@@ -87,7 +87,7 @@ export class MarkerLayer {
           if (type === 'MultiPoint') {
             const coordinates = marker.geometry.coordinates as [
               number,
-              number
+              number,
             ][];
             coordinates.forEach((x) => {
               this._addMarkerToMap(x, marker.properties, many);
@@ -96,10 +96,10 @@ export class MarkerLayer {
             this._addMarkerToMap(
               marker.geometry.coordinates as [number, number],
               marker.properties,
-              many
+              many,
             );
           }
-        }
+        },
       );
     });
   }
@@ -108,7 +108,7 @@ export class MarkerLayer {
   private _addMarkerToMap(
     coordinates: [number, number],
     properties: PointProperties,
-    many: boolean
+    many: boolean,
   ) {
     const map: Map | undefined = this.app.webMap.mapAdapter.map;
     if (map) {
@@ -152,7 +152,7 @@ export class MarkerLayer {
 
   private _setMarkerActive(
     markerMem: AppMarkerMem,
-    properties: PointProperties
+    properties: PointProperties,
   ) {
     const yearControl = this.app.controls.yearsStatPanelControl;
     if (yearControl && yearControl.yearStats) {

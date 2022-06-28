@@ -5,14 +5,15 @@ import {
   getSwitcherPanelControl,
   getHomeBtnControl,
 } from '../components/Links/Links';
-import { ControlPositions } from '@nextgis/webmap';
 import { LegendPanelControl } from '../components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from '../components/Panels/PeriodPanelControl';
 import { YearsStatPanelControl } from '../components/Panels/YearsStatPanelControl';
-import { IControl } from 'mapbox-gl';
 
 import './Controls.css';
 import { TimeMapLoadingControl } from '../TimeMap/TimeMapLoadingControl';
+
+import type { IControl } from 'maplibre-gl';
+import type { ControlPosition } from '@nextgis/webmap';
 
 interface ScreenSize {
   height: number;
@@ -118,7 +119,7 @@ export class Controls {
     if (this.legendPanel) {
       this._mobileTogglePanels.push(this.legendPanel);
       this.legendPanel.emitter.on('change', (colors) =>
-        this.app.updateLayersColor()
+        this.app.updateLayersColor(),
       );
     }
 
@@ -128,13 +129,13 @@ export class Controls {
 
   private async _addControl(
     control: any,
-    position: ControlPositions,
-    options?: any
+    position: ControlPosition,
+    options?: any,
   ) {
     const addedControl = await this.app.webMap.addControl(
       control,
       position,
-      options
+      options,
     );
     if (addedControl) {
       this._installedControls.push(addedControl);
@@ -179,7 +180,7 @@ export class Controls {
     const container = this.app.webMap.getContainer();
     if (container) {
       const attrContainer = container.querySelector(
-        '.mapboxgl-ctrl.mapboxgl-ctrl-attrib'
+        '.maplibregl-ctrl.maplibregl-ctrl-attrib',
       );
       if (attrContainer && attrContainer.parentNode) {
         attrContainer.parentNode.removeChild(attrContainer);
@@ -206,12 +207,12 @@ export class Controls {
   private _updateTimeSlider() {
     // remove intermediate pips from slider on mobile
     const pipsNodes = document.querySelectorAll<HTMLElement>(
-      '.noUi-marker.noUi-marker-horizontal.noUi-marker-normal'
+      '.noUi-marker.noUi-marker-horizontal.noUi-marker-normal',
     );
     let hideElements: HTMLElement[] = Array.from(pipsNodes);
 
     const labelNodes = document.querySelectorAll<HTMLElement>(
-      '.noUi-value.noUi-value-horizontal.noUi-value-large'
+      '.noUi-value.noUi-value-horizontal.noUi-value-large',
     );
     // leave labels for minimum and maximum
     // no check for second and second last signature, admit that they are always
@@ -297,7 +298,7 @@ export class Controls {
   private _removeMapClickEvent() {
     this.app.webMap.emitter.removeListener(
       'click',
-      this._eventBindings.onMapClick
+      this._eventBindings.onMapClick,
     );
   }
 }

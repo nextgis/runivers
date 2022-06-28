@@ -14,19 +14,19 @@ export function getPoints(): CancelablePromise<ResourceItem[]> {
     {
       id: config.pointsGroupId,
     },
-    {}
+    {},
   );
   // }
 }
 
 export function getPointGeojson(
-  id: string
+  id: string,
 ): CancelablePromise<FeatureCollection<MultiPoint, PointProperties>> {
   return connector.makeQuery(
     '/api/resource/{id}/geojson',
     {
       id,
     },
-    {}
+    {},
   );
 }

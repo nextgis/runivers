@@ -1,16 +1,17 @@
-import '../img/city.png';
+import CityImg from '../img/city.png';
 
-import { Map } from 'mapbox-gl';
 import { EventEmitter } from 'events';
 import { Events } from '@nextgis/utils';
 
 import { App } from '../App';
 
-import { TimeLayer, TimeLayersGroupOptions } from '../TimeMap/TimeGroup';
+import { TimeLayer } from '../TimeMap/TimeGroup';
 import { BaseLayer } from './BaseLayer';
 
+import type { Map } from 'maplibre-gl';
+import type { TimeLayersGroupOptions } from '../TimeMap/TimeGroup';
+
 export class CitiesLayer extends BaseLayer {
-  oldNgwMvtApi = true;
   emitter = new EventEmitter();
   private events: Events;
 
@@ -27,16 +28,17 @@ export class CitiesLayer extends BaseLayer {
   private _registerMapboxImages() {
     const map: Map | undefined = this.app.webMap.mapAdapter.map;
     if (map) {
-      map.loadImage('images/city.png', (er: Error, image: ImageData) => {
-        map.addImage('city', image);
-        this.emitter.emit('load-images');
+      map.loadImage(CityImg, (er, image) => {
+        if (image) {
+          map.addImage('city', image);
+          this.emitter.emit('load-images');
+        }
       });
     }
   }
 
   private _createTimeLayers(url: string, id: string): Promise<TimeLayer>[] {
-    // const sourceLayer = 'ngw:' + id;
-    const sourceLayer = id;
+    const sourceLayer = 'ngw:' + id;
     const label = this.events.onLoad('load-images').then(() => {
       const layer = this.app.webMap.addLayer('MVT', {
         url,
@@ -53,9 +55,11 @@ export class CitiesLayer extends BaseLayer {
           'icon-allow-overlap': true,
           'icon-optional': true,
           'text-field': ['to-string', ['get', 'toponym']],
+          // 'text-field': ['format', '123'],
           'text-anchor': 'top',
           'text-size': 10,
-          'text-font': ['Open Sans Semibold'],
+          'text-font': ['Open Sans Bold'],
+
           'text-variable-anchor': ['top'],
           'text-radial-offset': 0.95,
           'text-line-height': 1.1,
@@ -63,9 +67,9 @@ export class CitiesLayer extends BaseLayer {
           'text-padding': 0,
           'text-justify': 'auto',
         },
-        type: 'point',
         nativeOptions: { type: 'symbol' },
         nativePaint: true,
+        type: 'point',
         sourceLayer,
       });
       return layer.then((x) => {

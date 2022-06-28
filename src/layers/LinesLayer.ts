@@ -1,15 +1,20 @@
-import { LinePaint } from 'mapbox-gl';
 import { TimeLayer } from '../TimeMap/TimeGroup';
 import { BaseLayer } from './BaseLayer';
+
+import type {
+  FilterSpecificationInputType,
+  LineLayerSpecification,
+  FilterSpecification,
+} from 'maplibre-gl';
 
 export interface LineTypePaint {
   width: number;
   color: string;
 }
 
-export class LinesLayer extends BaseLayer {
-  oldNgwMvtApi = true;
+type LinePaint = LineLayerSpecification['paint'];
 
+export class LinesLayer extends BaseLayer {
   // private _lineTypes: { [linetype: number]: LineTypePaint } = {
   //   1: { width: 2.06, color: 'rgba(132, 73, 58, 1.00)' },
   //   2: { width: 2.06, color: 'rgba(132, 73, 58, 0.50)' },
@@ -20,15 +25,11 @@ export class LinesLayer extends BaseLayer {
     const opacity = this.groupLayer ? this.groupLayer.opacity : 1;
 
     const paintLine: LinePaint = {
-      'line-opacity': opacity,
-      'line-opacity-transition': {
-        duration: 0,
-      },
-      'line-width': 2,
       ...this._getLinePaint(),
+      'line-opacity': opacity,
+      'line-width': 2,
     };
-    // const sourceLayer = 'ngw:' + id;
-    const sourceLayer = id;
+    const sourceLayer = 'ngw:' + id;
 
     const boundLayer = this.app.webMap.addLayer('MVT', {
       url,
@@ -65,15 +66,16 @@ export class LinesLayer extends BaseLayer {
     return lineTypes;
   }
 
-  private _getLinePaint(): LinePaint {
-    const color: LinePaint['line-color'] = ['match', ['get', 'linetype']];
+  private _getLinePaint(): Partial<LinePaint> {
+    const color: FilterSpecification = ['match', ['get', 'linetype']];
+    const colorSpec: FilterSpecificationInputType[] = [];
     const lineTypes = this._getLineTypes();
     Object.entries(lineTypes).forEach(([linetype, value]) => {
-      color.push(Number(linetype));
-      color.push(value.color);
+      colorSpec.push(Number(linetype));
+      colorSpec.push(value.color);
     });
     // default
-    color.push('#000000');
-    return { 'line-color': color };
+    colorSpec.push('#000000');
+    return { 'line-color': [...color, ...colorSpec] };
   }
 }

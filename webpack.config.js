@@ -1,25 +1,58 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 let alias = {};
 try {
-  const { getAliases } = require('./nextgis_frontend/scripts/aliases');
+  const { getAliases } = require('./@nextgis/scripts/aliases');
   alias = getAliases();
 } catch (er) {
-  console.log(er);
+  // ignore
 }
 
 module.exports = (env, argv) => {
   const isProd = argv.mode === 'production';
 
+  const plugins = [
+    new CopyPlugin({ patterns: [{ from: 'font', to: 'font' }] }),
+    new FaviconsWebpackPlugin('./src/img/favicon.png'),
+    new HtmlWebpackPlugin({
+      template: 'src/index.html',
+      // favicon: 'src/images/favicon.ico',
+    }),
+    new ForkTsCheckerWebpackPlugin({
+      async: false,
+    }),
+    new ESLintPlugin({
+      extensions: ['js', 'jsx', 'ts', 'tsx'],
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(argv.mode || 'development'),
+      __BROWSER__: true,
+      __DEV__: !isProd,
+    }),
+  ];
+
+  if (isProd) {
+    plugins.push(
+      ...[
+        // new BundleAnalyzerPlugin(),
+        new MiniCssExtractPlugin(),
+        new CompressionPlugin(),
+      ],
+    );
+  }
+
   const config = {
     mode: 'development',
 
-    devtool: isProd ? 'none' : 'inline-source-map',
+    devtool: isProd ? 'source-map' : 'inline-source-map',
 
     entry: {
       main: ['./src/main.ts'],
@@ -38,40 +71,23 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.ts$/,
-          enforce: 'pre',
-          exclude: /node_modules|nextgis_frontend/,
-          include: [path.resolve(__dirname, 'src')],
-          use: [
-            {
-              loader: 'eslint-loader',
-              options: { fix: true },
-            },
-          ],
-        },
-        {
-          test: /\.tsx?$/,
+          test: /\.(ts|js)x?$/i,
           exclude: /node_modules/,
-          use: [
-            {
-              loader: 'ts-loader',
-              options: {
-                transpileOnly: true,
-              },
-            },
-          ],
+          use: {
+            loader: 'babel-loader',
+          },
         },
         {
-          test: /\.css$/,
+          test: /\.css$/i,
           use: [
-            MiniCssExtractPlugin.loader,
-            { loader: 'css-loader', options: { sourceMap: true } },
+            isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+            'css-loader',
           ],
         },
         {
           test: /\.(scss)$/,
           use: [
-            MiniCssExtractPlugin.loader,
+            isProd ? MiniCssExtractPlugin.loader : 'style-loader',
             {
               loader: 'css-loader',
               options: { sourceMap: true }, // translates CSS into CommonJS modules
@@ -80,9 +96,11 @@ module.exports = (env, argv) => {
               loader: 'postcss-loader', // Run post css actions
               options: {
                 sourceMap: true,
-                plugins: function () {
-                  // post css plugins, can be exported to postcss.config.js
-                  return [require('precss'), require('autoprefixer')];
+                postcssOptions: {
+                  plugins: function () {
+                    // post css plugins, can be exported to postcss.config.js
+                    return [require('precss'), require('autoprefixer')];
+                  },
                 },
               },
             },
@@ -93,27 +111,13 @@ module.exports = (env, argv) => {
           ],
         },
         {
-          test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-          use: [
-            'url-loader?limit=10000&mimetype=application/font-woff&name=fonts/[name]-[hash:7].[ext]',
-          ],
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
         },
+
         {
-          test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-          use: [
-            'url-loader?limit=10000&mimetype=application/octet-stream&name=fonts/[name]-[hash:7].[ext]',
-          ],
-        },
-        {
-          test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-          use: ['file-loader?name=fonts/[name]-[hash:7].[ext]'],
-        },
-        {
-          test: /\.(jpe?g|png|gif|svg)$/i,
-          use: [
-            'file-loader?name=images/[name].[ext]',
-            'image-webpack-loader?bypassOnDebug',
-          ],
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          type: 'asset/resource',
         },
         {
           test: /\.csv$/,
@@ -127,18 +131,7 @@ module.exports = (env, argv) => {
       ],
     },
 
-    plugins: [
-      new webpack.DefinePlugin({
-        __BROWSER__: true,
-      }),
-      new MiniCssExtractPlugin({
-        filename: '[name][hash:7].css',
-        allChunks: true,
-      }),
-      new HtmlWebpackPlugin({ template: 'src/index.html' }),
-      new CopyPlugin({ patterns: [{ from: 'font', to: 'font' }] }),
-      new FaviconsWebpackPlugin('./src/img/favicon.png'),
-    ],
+    plugins,
 
     optimization: {
       runtimeChunk: 'single',

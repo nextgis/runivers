@@ -1,11 +1,9 @@
 import './App.css';
 
-import { Map } from 'mapbox-gl';
 import { EventEmitter } from 'events';
-
-import { WebMap, Type } from '@nextgis/webmap';
+import MapAdapter from '@nextgis/mapboxgl-map-adapter';
+import { WebMap } from '@nextgis/webmap';
 import { QmsKit } from '@nextgis/qms-kit';
-import MapboxglAdapter from '@nextgis/mapboxgl-map-adapter';
 import { debounce } from '@nextgis/utils';
 
 import { SliderControl } from './components/SliderControl';
@@ -15,18 +13,19 @@ import {
   getAboutProjectLink,
   getAffiliatedLinks,
 } from './components/Links/Links';
-
-import { AppOptions, AreaStat, LayersGroup } from './interfaces';
-
 import { Controls } from './controls/Controls';
 import { TimeMap } from './TimeMap/TimeMap';
-import { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 
 import { urlParams } from './services/UrlParams';
 import { MarkerLayer } from './layers/MarkerLayer';
 import { CitiesLayer } from './layers/CitiesLayer';
 import { LinesLayer } from './layers/LinesLayer';
 import { BoundaryLayer } from './layers/BoundaryLayer';
+
+import type { Map } from 'maplibre-gl';
+import type { Type } from '@nextgis/utils';
+import type { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
+import type { AppOptions, AreaStat, LayersGroup } from './interfaces';
 
 export class App {
   options: AppOptions = {
@@ -79,7 +78,7 @@ export class App {
     }
     this.updateDataByYear = debounce(
       (year: number) => this._updateDataByYear(year),
-      300
+      300,
     );
     this.createWebMap().then(() => {
       this._buildApp();
@@ -88,11 +87,16 @@ export class App {
 
   async createWebMap(): Promise<WebMap> {
     const options = { ...this.options };
+    const { bounds, target } = options;
     const webMap = new WebMap({
-      mapAdapter: new MapboxglAdapter(),
+      mapAdapter: new MapAdapter(),
       starterKits: [new QmsKit()],
+      bounds,
+      target,
+      // ...options,
     });
-    await webMap.create(options);
+    await webMap.onLoad();
+
     this.timeMap = new TimeMap(webMap, {
       fromYear: this.options.fromYear,
       getStatusLayer: (config: LayersGroup) => this._getStatusLayer(config),
@@ -106,11 +110,14 @@ export class App {
     if (this.options.currentYear) {
       this.timeMap.currentYear = this.options.currentYear;
     }
-    webMap.addBaseLayer('QMS', {
+    webMap.addBaseLayer('OSM', {
       id: 'baselayer',
-      qmsId: 448,
-      visibility: true,
     });
+    // webMap.addBaseLayer('QMS', {
+    //   id: 'baselayer',
+    //   qmsId: 448,
+    //   visibility: true,
+    // });
     this.webMap = webMap;
     return webMap;
   }
@@ -195,7 +202,7 @@ export class App {
     const stepReady = (
       year: number,
       callback: (value: number) => void,
-      previous: boolean
+      previous: boolean,
     ) => {
       this.timeMap._stepReady(year, callback);
     };
@@ -304,7 +311,7 @@ export class App {
         'update',
         ({ yearStat }) => {
           this._markers.updateActiveMarker(yearStat);
-        }
+        },
       );
     }
     this.webMap.emitter.on('preclick', () => {

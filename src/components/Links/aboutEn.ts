@@ -1,10 +1,15 @@
+import LogoColorImg from './img/Runivers-Logo-color.svg';
+import TransneftLogo1Img from './img/Transneft_logo1.png';
+import GeolabImg from './img/geolab.png';
+import NextgisImg from './img/nextgis.png';
+
 export const aboutShortEn = `
 <div style="margin-top: 40px;"></div>
 <div class="partner_logos">
-<a href="https://www.runivers.ru" target="_blank"><img src="images/Runivers-Logo-color.svg" /></a>
-<a href="https://www.transneft.ru" target="_blank"><img src="images/Transneft_logo1.png" /></a>
-<a href="https://histgeo.ru/laboratory.html" target="_blank"><img src="images/geolab.png" /></a>
-<a href="https://nextgis.com" target="_blank"><img src="images/nextgis.png" /></a>
+<a href="https://www.runivers.ru" target="_blank"><img src="${LogoColorImg}" /></a>
+<a href="https://www.transneft.ru" target="_blank"><img src="${TransneftLogo1Img}" /></a>
+<a href="https://histgeo.ru/laboratory.html" target="_blank"><img src="${GeolabImg}" /></a>
+<a href="https://nextgis.com" target="_blank"><img src="${NextgisImg}" /></a>
 </div>
 <div style="margin-top: 40px;"></div>
 <P LANG="en-GB" CLASS="western" ALIGN=JUSTIFY STYLE="margin-bottom: 0.17in">
