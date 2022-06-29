@@ -8,8 +8,12 @@ export class TimeMapLoadingControl implements MapControl {
   private __onLoadingStop: () => void;
 
   constructor(private timeMap: TimeMap) {
-    this.__onLoadingStart = () => this._onLoadingStart();
-    this.__onLoadingStop = () => this._onLoadingStop();
+    this.__onLoadingStart = () => {
+      this._onLoadingStart();
+    };
+    this.__onLoadingStop = () => {
+      this._onLoadingStop();
+    };
   }
 
   onAdd(): HTMLElement {

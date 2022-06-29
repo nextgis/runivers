@@ -166,6 +166,7 @@ export class Controls {
     await this._addControl(this.legendPanel, 'bottom-right');
     await this._addControl(this.yearsStatPanelControl, 'bottom-right');
     await this._addControl(this.periodsPanelControl, 'bottom-right');
+    await this._addControl(this._loadingControl, 'bottom-right');
 
     await this._addControl(this._zoomControl, 'top-left');
     await this._addControl(this._homeBtnPanel, 'top-left');
