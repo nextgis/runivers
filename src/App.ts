@@ -22,7 +22,7 @@ import { CitiesLayer } from './layers/CitiesLayer';
 import { LinesLayer } from './layers/LinesLayer';
 import { BoundaryLayer } from './layers/BoundaryLayer';
 
-import type { Map } from 'maplibre-gl';
+import type { Map, StyleSpecification } from 'maplibre-gl';
 import type { Type } from '@nextgis/utils';
 import type { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 import type { AppOptions, AreaStat, LayersGroup } from './interfaces';
@@ -87,13 +87,16 @@ export class App {
 
   async createWebMap(): Promise<WebMap> {
     const options = { ...this.options };
-    const { bounds, target } = options;
-    const webMap = new WebMap({
+    const style: Partial<StyleSpecification> = {
+      // glyphs: '/fonts/{fontstack}/{range}.pbf',
+    };
+    const webMap = new WebMap<Map>({
       mapAdapter: new MapAdapter(),
       starterKits: [new QmsKit()],
-      bounds,
-      target,
-      // ...options,
+      mapAdapterOptions: {
+        style,
+      },
+      ...options,
     });
     await webMap.onLoad();
 

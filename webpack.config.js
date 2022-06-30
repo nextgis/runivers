@@ -60,6 +60,7 @@ module.exports = (env, argv) => {
 
     output: {
       filename: '[name][hash:7].js',
+      publicPath: '/',
     },
 
     resolve: {

@@ -55,7 +55,6 @@ export class CitiesLayer extends BaseLayer {
           'icon-allow-overlap': true,
           'icon-optional': true,
           'text-field': ['to-string', ['get', 'toponym']],
-          // 'text-field': ['format', '123'],
           'text-anchor': 'top',
           'text-size': 10,
           'text-font': ['Open Sans Bold'],
