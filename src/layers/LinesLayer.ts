@@ -1,11 +1,7 @@
 import { TimeLayer } from '../TimeMap/TimeGroup';
 import { BaseLayer } from './BaseLayer';
 
-import type {
-  FilterSpecificationInputType,
-  LineLayerSpecification,
-  FilterSpecification,
-} from 'maplibre-gl';
+import type { LineLayerSpecification } from 'maplibre-gl';
 
 export interface LineTypePaint {
   width: number;
@@ -66,9 +62,11 @@ export class LinesLayer extends BaseLayer {
     return lineTypes;
   }
 
-  private _getLinePaint(): Partial<LinePaint> {
-    const color: FilterSpecification = ['match', ['get', 'linetype']];
-    const colorSpec: FilterSpecificationInputType[] = [];
+  // types of returned value, color, colorSpec changed to any / (number | string)[] because of Maplibre questionable update
+  // more info: https://github.com/maplibre/maplibre-gl-js/issues/1380#issuecomment-1189041642
+  private _getLinePaint(): any {
+    const color: any = ['match', ['get', 'linetype']];
+    const colorSpec: (number | string)[] = [];
     const lineTypes = this._getLineTypes();
     Object.entries(lineTypes).forEach(([linetype, value]) => {
       colorSpec.push(Number(linetype));

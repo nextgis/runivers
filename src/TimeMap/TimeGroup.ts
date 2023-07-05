@@ -127,7 +127,9 @@ export class TimeLayersGroup {
     this._onDataLoadEvents.push(event);
   }
 
-  fitToFilter(filter: any[], timeLayer: TimeLayer): Feature[] | undefined {
+  fitToFilter(filter: any, timeLayer: TimeLayer): Feature[] | undefined {
+    // type of filter changed to any because of Maplibre questionable update.
+    // more info https://github.com/maplibre/maplibre-gl-js/issues/1380#issuecomment-1189041642
     const map = this.webMap.mapAdapter.map;
     if (map && typeof timeLayer.source === 'string') {
       const isNgwGeoJson = timeLayer.source.startsWith('ngw:');
