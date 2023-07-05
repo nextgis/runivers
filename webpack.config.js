@@ -8,6 +8,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
+const { baseUrl } = require('./config.json');
+
 let alias = {};
 try {
   const { getAliases } = require('./@nextgis/scripts/aliases');
@@ -133,6 +135,17 @@ module.exports = (env, argv) => {
     },
 
     plugins,
+
+    devServer: {
+      historyApiFallback: true,
+      open: true,
+      hot: true,
+      proxy: {
+        '/api': {
+          target: baseUrl,
+        },
+      },
+    },
 
     optimization: {
       runtimeChunk: 'single',
