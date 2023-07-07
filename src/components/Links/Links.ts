@@ -279,6 +279,10 @@ export function openSettingsDialog(app: App): void {
 export function getAffiliatedLinks(app: App): HTMLElement {
   const block = document.createElement('div');
   block.innerHTML = `
+  <a href="mailto:gorokhov.sv@yandex.ru"
+    title="Карту подготовил: Горохов Сергей Валерьевич, археолог, к.и.н., н.с. Новосибирского государственного университета, gorokhov.sv@yandex.ru"
+    class="affiliated-logo author_name" target="_blank"
+  >Горохов С.В.</a>
   <a href="https://www.runivers.ru"
     title="Электронная  энциклопедия и библиотека Руниверс"
     class="affiliated-logo runiver__logo__min" target="_blank"
