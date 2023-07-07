@@ -71,6 +71,14 @@ export class App {
       this.options.currentYear = parseInt(urlYear, 10);
     }
 
+    const urlCenter = this.urlParams.get('center');
+    const urlZoom = this.urlParams.get('zoom');
+    if (urlCenter && urlZoom) {
+      const center = urlCenter.split(',').map(Number);
+      this.options.center = center;
+      this.options.zoom = Number(urlZoom);
+    }
+
     const { fromYear, currentYear } = this.options;
 
     if (fromYear && currentYear && currentYear < fromYear) {
@@ -136,6 +144,12 @@ export class App {
     return stop ? stop.name : '';
   }
 
+  getMapParams() {
+    const { zoom, center } = this.webMap.getState();
+    const year = this.options.currentYear;
+    return { zoom, center, year };
+  }
+
   updateLayersColor(): void {
     // ignore
   }
@@ -150,6 +164,7 @@ export class App {
     this._updateYearStatBlockByYear(year, areaStat);
 
     this.urlParams.set('year', String(year));
+    this.options.currentYear = year;
   }
 
   private _setSelectedLayerFromUrl() {
@@ -175,6 +190,8 @@ export class App {
 
       this.webMap.onMapLoad(() => {
         this.timeMap.updateByYear(this.timeMap.currentYear);
+        const { zoom, center } = this.options;
+        this.webMap.setView({ zoom, center });
       });
       this.emitter.emit('build');
       this._addEventsListeners();
