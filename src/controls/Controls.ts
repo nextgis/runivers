@@ -4,6 +4,7 @@ import {
   getSocialLinksPanel,
   getSwitcherPanelControl,
   getHomeBtnControl,
+  getLinkBtnControl,
 } from '../components/Links/Links';
 import { LegendPanelControl } from '../components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from '../components/Panels/PeriodPanelControl';
@@ -30,6 +31,7 @@ export class Controls {
   private _socialLinksPanel?: Panel;
   private _switchersPanel?: Panel;
   private _homeBtnPanel: any | Promise<any>;
+  private _linkBtnPanel: any | Promise<any>;
   private _zoomControl?: IControl;
   private _loadingControl?: TimeMapLoadingControl;
 
@@ -106,6 +108,7 @@ export class Controls {
     this._socialLinksPanel = getSocialLinksPanel();
     this._switchersPanel = getSwitcherPanelControl(this);
     this._homeBtnPanel = getHomeBtnControl(this);
+    this._linkBtnPanel = getLinkBtnControl(this);
     this._zoomControl = this.app.webMap.getControl('ZOOM', {
       zoomInTitle: 'Приблизить',
       zoomOutTitle: 'Отдалить',
@@ -152,6 +155,7 @@ export class Controls {
 
     await this._addControl(this._attributions, 'bottom-left');
     await this._addControl(this._socialLinksPanel, 'bottom-left');
+    await this._addControl(this._linkBtnPanel, 'bottom-left');
     await this._addControl(this._homeBtnPanel, 'bottom-left');
     await this._addControl(this._zoomControl, 'bottom-left');
 
@@ -170,6 +174,7 @@ export class Controls {
 
     await this._addControl(this._zoomControl, 'top-left');
     await this._addControl(this._homeBtnPanel, 'top-left');
+    await this._addControl(this._linkBtnPanel, 'top-left');
 
     await this._addControl(this._attributions, 'bottom-left');
     await this._addControl(this._socialLinksPanel, 'bottom-left');
@@ -263,6 +268,9 @@ export class Controls {
   }
 
   private _onMapClick() {
+    // @ts-ignore
+    console.log(window.app.getMapParams()); // TEST
+    //
     if (this.isMobile) {
       this._hideAllPanels();
     }

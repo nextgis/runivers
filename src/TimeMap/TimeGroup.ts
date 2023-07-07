@@ -390,6 +390,7 @@ export class TimeLayersGroup {
     }
   }
 
+  // TODO get selected feature from here for link building //////////////////
   private _onLayerClick(
     e: MapMouseEvent & MapLayerMouseEvent,
     layerId: string,
@@ -420,6 +421,7 @@ export class TimeLayersGroup {
             .addTo(map);
         }
       }
+      console.log('>>>>>>', feature, adapterId); ////////////////////////////////
       const selectOnLayerClick = this.options.selectOnLayerClick ?? true;
       if (selectOnLayerClick) {
         this.selectLayerFeature(feature, adapterId);

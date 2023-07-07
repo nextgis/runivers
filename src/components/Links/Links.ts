@@ -2,6 +2,7 @@ import './Links.scss';
 import './img/nextgis.png';
 
 import Dialog from '@nextgis/dialog';
+import { Clipboard } from '@nextgis/utils';
 import pkg from '../../../package.json';
 
 import { App } from '../../App';
@@ -325,6 +326,50 @@ export function getHomeBtnControl(control: Controls): Promise<IControl> {
     onClick: () =>
       control.app.options.bounds &&
       control.app.webMap.fitBounds(control.app.options.bounds),
+  });
+
+  return _control;
+}
+
+export function getLinkBtnControl(control: Controls): Promise<IControl> {
+  const linkElement = document.createElement('div');
+  linkElement.classList.add('share_link__box');
+  linkElement.innerHTML = `
+          <input 
+            class="share_link__input" 
+            name="link" 
+            type="text" 
+            value="" 
+            readonly
+          >`;
+  const input = linkElement.getElementsByClassName(
+    'share_link__input',
+  )[0] as HTMLInputElement;
+
+  const copyButton = document.createElement('button');
+  copyButton.innerText = 'Скопировать';
+  copyButton.classList.add('share_link__button');
+  linkElement.appendChild(copyButton);
+  copyButton.onclick = () => Clipboard.copy(input.value);
+
+  const _control = control.app.webMap.createButtonControl({
+    addClass: 'maplibregl-ctrl-icon share_link__menu_button', // what is right way?
+    onClick: () => {
+      const { zoom, center, year } = control.app.getMapParams();
+      const urlParamsObj = {
+        year: String(year),
+        zoom: String(zoom),
+        center: center.join(','),
+      };
+      const linkUrlParams = new URLSearchParams(urlParamsObj);
+      const linkUrl = new URL(
+        `?${linkUrlParams.toString()}`,
+        window.location.href, // ???
+        // control.app.options.baseUrl, - will not work in some real situations
+      );
+      input.value = linkUrl.toString();
+      openDialog({ template: linkElement });
+    },
   });
 
   return _control;

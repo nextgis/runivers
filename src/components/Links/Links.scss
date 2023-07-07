@@ -134,6 +134,37 @@
 //   margin-left: 10px;
 // }
 
+.share_link__box {
+  margin: 80px 20px;
+}
+
+.share_link__input {
+  padding: 5px;
+  width: 400px;
+  border: 0;
+  border-radius: 5px;
+  background-color: #e9e9e9;
+}
+
+.share_link__button {
+  padding: 5px;
+  margin-left: 5px;
+  border: 0;
+  border-radius: 5px;
+  background-color: #e9e9e9;
+}
+
+.share_link__button:active {
+  background-color: #bebebe;
+
+}
+
+.share_link__menu_button {
+  // background: url(./img/years.png) no-repeat;
+  background: url(./img/share-2.svg) no-repeat !important; 
+  border-radius: 0 !important;
+}
+
 .social__logo {
 	display: block;
   height: 20px;
@@ -230,6 +261,3 @@
 	width: 220px;
 	display: inline-block;
 }
-
-
-
