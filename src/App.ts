@@ -3,7 +3,6 @@ import './App.css';
 import { EventEmitter } from 'events';
 import MapAdapter from '@nextgis/mapboxgl-map-adapter';
 import { WebMap } from '@nextgis/webmap';
-import { QmsKit } from '@nextgis/qms-kit';
 import { debounce } from '@nextgis/utils';
 
 import { SliderControl } from './components/SliderControl';
@@ -100,7 +99,6 @@ export class App {
     };
     const webMap = new WebMap<Map>({
       mapAdapter: new MapAdapter(),
-      starterKits: [new QmsKit()],
       mapAdapterOptions: {
         style,
       },
@@ -124,11 +122,6 @@ export class App {
     webMap.addBaseLayer('OSM', {
       id: 'baselayer',
     });
-    // webMap.addBaseLayer('QMS', {
-    //   id: 'baselayer',
-    //   qmsId: 448,
-    //   visibility: true,
-    // });
     this.webMap = webMap;
     return webMap;
   }
@@ -190,8 +183,6 @@ export class App {
 
       this.webMap.onMapLoad(() => {
         this.timeMap.updateByYear(this.timeMap.currentYear);
-        const { zoom, center } = this.options;
-        this.webMap.setView({ zoom, center });
       });
       this.emitter.emit('build');
       this._addEventsListeners();
