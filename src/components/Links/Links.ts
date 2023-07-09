@@ -353,11 +353,20 @@ export function getLinkBtnControl(control: Controls): Promise<IControl> {
   const copyButton = document.createElement('button');
   copyButton.innerText = 'Скопировать';
   copyButton.classList.add('share_link__button');
+
+  const successMessage = document.createElement('div');
+  successMessage.innerText = 'Ссылка скопирована';
+
   linkElement.appendChild(copyButton);
-  copyButton.onclick = () => Clipboard.copy(input.value);
+  copyButton.onclick = () => {
+    Clipboard.copy(input.value);
+    linkElement.appendChild(successMessage);
+    // because I didn't find onClose method or something like that
+    setTimeout(() => successMessage.remove(), 3000);
+  };
 
   const _control = control.app.webMap.createButtonControl({
-    addClass: 'maplibregl-ctrl-icon share_link__menu_button', // what is right way?
+    addClass: 'maplibregl-ctrl-icon share_link__menu_button',
     onClick: () => {
       const { zoom, center, year } = control.app.getMapParams();
       const urlParamsObj = {
