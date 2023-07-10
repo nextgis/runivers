@@ -49,6 +49,7 @@ export interface AppOptions extends MapboxglMapAdapterOptions {
   /** self id, color, label, array of link to lineColor id */
   lineColorLegend?: LegendColor;
   statusAliases?: { [name: string]: string };
+  selectedFeatures: any[]; // TODO specify type
 }
 
 export interface HistoryLayerProperties {

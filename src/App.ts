@@ -78,6 +78,13 @@ export class App {
       this.options.zoom = Number(urlZoom);
     }
 
+    this.options.selectedFeatures = [];
+    const urlSelectedFeatures = this.urlParams.get('selectedFeatures');
+    if (urlSelectedFeatures) {
+      const selectedFeatures = JSON.parse(urlSelectedFeatures);
+      this.options.selectedFeatures = selectedFeatures;
+    }
+
     const { fromYear, currentYear } = this.options;
 
     if (fromYear && currentYear && currentYear < fromYear) {
@@ -140,7 +147,12 @@ export class App {
   getMapParams() {
     const { zoom, center } = this.webMap.getState();
     const year = this.options.currentYear;
-    return { zoom, center, year };
+    const selectedFeatures = this.options.selectedFeatures;
+    return { zoom, center, year, selectedFeatures };
+  }
+
+  clearSelecredFeatures() {
+    this.options.selectedFeatures = [];
   }
 
   updateLayersColor(): void {
@@ -161,12 +173,10 @@ export class App {
   }
 
   private _setSelectedLayerFromUrl() {
-    const id = urlParams.get('id');
-    if (id) {
+    if (this.options.selectedFeatures?.length !== 0) {
+      const selectedFeature = this.options.selectedFeatures[0];
       const group = this.timeMap.getTimeGroup('base');
-      if (group) {
-        group.select(id);
-      }
+      group.select(String(selectedFeature.fid));
     }
   }
 
@@ -327,6 +337,19 @@ export class App {
     }
     this.webMap.emitter.on('preclick', () => {
       this.timeMap.unselect();
+    });
+    this.webMap.emitter.on('click', () => {
+      this.clearSelecredFeatures();
+    });
+    this.webMap.emitter.on('layer:click', (e) => {
+      if (e.feature) {
+        const feature = e.feature;
+        const selectedFeatureIdenifier = {
+          id: feature.id,
+          fid: feature.properties?.fid,
+        };
+        this.options.selectedFeatures.push(selectedFeatureIdenifier); // make special App method???
+      }
     });
   }
 }

@@ -421,7 +421,6 @@ export class TimeLayersGroup {
             .addTo(map);
         }
       }
-      console.log('>>>>>>', feature, adapterId); ////////////////////////////////
       const selectOnLayerClick = this.options.selectOnLayerClick ?? true;
       if (selectOnLayerClick) {
         this.selectLayerFeature(feature, adapterId);

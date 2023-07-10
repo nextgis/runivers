@@ -268,9 +268,6 @@ export class Controls {
   }
 
   private _onMapClick() {
-    // @ts-ignore
-    console.log(window.app.getMapParams()); // TEST
-    //
     if (this.isMobile) {
       this._hideAllPanels();
     }
