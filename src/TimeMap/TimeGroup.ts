@@ -390,6 +390,7 @@ export class TimeLayersGroup {
     }
   }
 
+  // TODO get selected feature from here for link building //////////////////
   private _onLayerClick(
     e: MapMouseEvent & MapLayerMouseEvent,
     layerId: string,

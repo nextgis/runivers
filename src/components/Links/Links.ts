@@ -2,6 +2,7 @@ import './Links.scss';
 import './img/nextgis.png';
 
 import Dialog from '@nextgis/dialog';
+import { Clipboard } from '@nextgis/utils';
 import pkg from '../../../package.json';
 
 import { App } from '../../App';
@@ -278,6 +279,10 @@ export function openSettingsDialog(app: App): void {
 export function getAffiliatedLinks(app: App): HTMLElement {
   const block = document.createElement('div');
   block.innerHTML = `
+  <a href="mailto:gorokhov.sv@yandex.ru"
+    title="Карту подготовил: Горохов Сергей Валерьевич, археолог, к.и.н., н.с. Новосибирского государственного университета, gorokhov.sv@yandex.ru"
+    class="affiliated-logo author_name" target="_blank"
+  >Горохов С.В.</a>
   <a href="https://www.runivers.ru"
     title="Электронная  энциклопедия и библиотека Руниверс"
     class="affiliated-logo runiver__logo__min" target="_blank"
@@ -325,6 +330,64 @@ export function getHomeBtnControl(control: Controls): Promise<IControl> {
     onClick: () =>
       control.app.options.bounds &&
       control.app.webMap.fitBounds(control.app.options.bounds),
+  });
+
+  return _control;
+}
+
+export function getLinkBtnControl(control: Controls): Promise<IControl> {
+  const linkElement = document.createElement('div');
+  linkElement.classList.add('share_link__box');
+  linkElement.innerHTML = `
+          <input 
+            class="share_link__input" 
+            name="link" 
+            type="text" 
+            value="" 
+            readonly
+          >`;
+  const input = linkElement.getElementsByClassName(
+    'share_link__input',
+  )[0] as HTMLInputElement;
+
+  const copyButton = document.createElement('button');
+  copyButton.innerText = 'Скопировать';
+  copyButton.classList.add('share_link__button');
+
+  const successMessage = document.createElement('div');
+  successMessage.innerText = 'Ссылка скопирована';
+
+  linkElement.appendChild(copyButton);
+  copyButton.onclick = () => {
+    Clipboard.copy(input.value);
+    linkElement.appendChild(successMessage);
+    // because I didn't find onClose method or something like that
+    setTimeout(() => successMessage.remove(), 3000);
+  };
+
+  const _control = control.app.webMap.createButtonControl({
+    addClass: 'maplibregl-ctrl-icon share_link__menu_button',
+    onClick: () => {
+      const { zoom, center, year, selectedFeatures } =
+        control.app.getMapParams();
+      const urlParamsObj = {
+        year: String(year),
+        zoom: String(zoom),
+        center: center.join(','),
+        selectedFeatures: selectedFeatures
+          ? `[${selectedFeatures.map((f) => JSON.stringify(f)).join(',')}]`
+          : '',
+      };
+
+      const linkUrlParams = new URLSearchParams(urlParamsObj);
+      const linkUrl = new URL(
+        `?${linkUrlParams.toString()}`,
+        window.location.href, // ???
+        // control.app.options.baseUrl, - will not work in some real situations
+      );
+      input.value = linkUrl.toString();
+      openDialog({ template: linkElement });
+    },
   });
 
   return _control;

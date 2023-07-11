@@ -3,7 +3,6 @@ import './App.css';
 import { EventEmitter } from 'events';
 import MapAdapter from '@nextgis/mapboxgl-map-adapter';
 import { WebMap } from '@nextgis/webmap';
-import { QmsKit } from '@nextgis/qms-kit';
 import { debounce } from '@nextgis/utils';
 
 import { SliderControl } from './components/SliderControl';
@@ -71,6 +70,21 @@ export class App {
       this.options.currentYear = parseInt(urlYear, 10);
     }
 
+    const urlCenter = this.urlParams.get('center');
+    const urlZoom = this.urlParams.get('zoom');
+    if (urlCenter && urlZoom) {
+      const center = urlCenter.split(',').map(Number);
+      this.options.center = center;
+      this.options.zoom = Number(urlZoom);
+    }
+
+    this.options.selectedFeatures = [];
+    const urlSelectedFeatures = this.urlParams.get('selectedFeatures');
+    if (urlSelectedFeatures) {
+      const selectedFeatures = JSON.parse(urlSelectedFeatures);
+      this.options.selectedFeatures = selectedFeatures;
+    }
+
     const { fromYear, currentYear } = this.options;
 
     if (fromYear && currentYear && currentYear < fromYear) {
@@ -92,7 +106,6 @@ export class App {
     };
     const webMap = new WebMap<Map>({
       mapAdapter: new MapAdapter(),
-      starterKits: [new QmsKit()],
       mapAdapterOptions: {
         style,
       },
@@ -116,11 +129,6 @@ export class App {
     webMap.addBaseLayer('OSM', {
       id: 'baselayer',
     });
-    // webMap.addBaseLayer('QMS', {
-    //   id: 'baselayer',
-    //   qmsId: 448,
-    //   visibility: true,
-    // });
     this.webMap = webMap;
     return webMap;
   }
@@ -134,6 +142,17 @@ export class App {
   getTimeStop(year: number): string {
     const stop = this.options.timeStops.find((x) => year < x.toYear);
     return stop ? stop.name : '';
+  }
+
+  getMapParams() {
+    const { zoom, center } = this.webMap.getState();
+    const year = this.options.currentYear;
+    const selectedFeatures = this.options.selectedFeatures;
+    return { zoom, center, year, selectedFeatures };
+  }
+
+  clearSelecredFeatures() {
+    this.options.selectedFeatures = [];
   }
 
   updateLayersColor(): void {
@@ -150,15 +169,14 @@ export class App {
     this._updateYearStatBlockByYear(year, areaStat);
 
     this.urlParams.set('year', String(year));
+    this.options.currentYear = year;
   }
 
   private _setSelectedLayerFromUrl() {
-    const id = urlParams.get('id');
-    if (id) {
+    if (this.options.selectedFeatures?.length !== 0) {
+      const selectedFeature = this.options.selectedFeatures[0];
       const group = this.timeMap.getTimeGroup('base');
-      if (group) {
-        group.select(id);
-      }
+      group.select(String(selectedFeature.fid));
     }
   }
 
@@ -317,8 +335,20 @@ export class App {
         },
       );
     }
-    this.webMap.emitter.on('preclick', () => {
+    this.webMap.emitter.on('preclick', (e) => {
+      this.clearSelecredFeatures();
       this.timeMap.unselect();
+    });
+    this.webMap.emitter.on('layer:click', (e) => {
+      this.clearSelecredFeatures();
+      if (e.feature) {
+        const feature = e.feature;
+        const selectedFeatureIdenifier = {
+          id: feature.id,
+          fid: feature.properties?.fid,
+        };
+        this.options.selectedFeatures.push(selectedFeatureIdenifier);
+      }
     });
   }
 }

@@ -44,7 +44,7 @@ export class LegendPanelControl extends Panel {
       class="btn panel-button">ГРАФИК ИЗМЕНЕНИЯ ТЕРРИТОРИИ
     </a></div>
     <div><a
-      href="https://runivers.ru/doc/rusland/zemli-i-knyazhestva/"
+      href="https://runivers.ru/schemes/zemli-i-knyazhestva-srednevekovoy-rusi/"
       target='_blank'
       class="btn panel-button">Схема земель и княжеств <div class="link-button subtitle">средневековой Руси</div>
     </a></div>
