@@ -335,20 +335,19 @@ export class App {
         },
       );
     }
-    this.webMap.emitter.on('preclick', () => {
+    this.webMap.emitter.on('preclick', (e) => {
+      this.clearSelecredFeatures();
       this.timeMap.unselect();
     });
-    this.webMap.emitter.on('click', () => {
-      this.clearSelecredFeatures();
-    });
     this.webMap.emitter.on('layer:click', (e) => {
+      this.clearSelecredFeatures();
       if (e.feature) {
         const feature = e.feature;
         const selectedFeatureIdenifier = {
           id: feature.id,
           fid: feature.properties?.fid,
         };
-        this.options.selectedFeatures.push(selectedFeatureIdenifier); // make special App method???
+        this.options.selectedFeatures.push(selectedFeatureIdenifier);
       }
     });
   }
