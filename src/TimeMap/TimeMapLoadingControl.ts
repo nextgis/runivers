@@ -1,5 +1,5 @@
-import { MapControl } from '@nextgis/webmap';
-import { TimeMap } from '../TimeMap/TimeMap';
+import type { TimeMap } from '../TimeMap/TimeMap';
+import type { MapControl } from '@nextgis/webmap';
 
 export class TimeMapLoadingControl implements MapControl {
   private _container?: HTMLElement;

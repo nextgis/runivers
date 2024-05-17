@@ -1,7 +1,11 @@
-import { Panel, PanelOptions } from './PanelControl';
-import './PeriodPanelControl.css';
 import { formatArea } from '../../utils/utils';
-import { AreaStat } from '../../interfaces';
+
+import { Panel } from './PanelControl';
+
+import type { PanelOptions } from './PanelControl';
+import type { AreaStat } from '../../interfaces';
+
+import './PeriodPanelControl.css';
 
 /**
  * Information about the ruler in the time interval
@@ -88,8 +92,8 @@ export class PeriodPanelControl extends Panel {
       ${imageHtml ? imageHtml : ''}
       <div class="panel-body__period--name">${period.name}</div>
       <div class="panel-body__period--period">${period.years_from} – ${
-      period.years_to
-    } гг.</div>
+        period.years_to
+      } гг.</div>
       <div class="panel-body__period--description">${period.description}</div>
       ${
         areaStat

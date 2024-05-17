@@ -1,9 +1,11 @@
-import { ResourceItem } from '@nextgis/ngw-connector';
-import CancelablePromise from '@nextgis/cancelable-promise';
-import { connector } from './NgwConnectorService';
 import config from '../../config.json';
-import { FeatureCollection, MultiPoint } from 'geojson';
-import { PointProperties } from 'src/interfaces';
+
+import { connector } from './NgwConnectorService';
+
+import type CancelablePromise from '@nextgis/cancelable-promise';
+import type { ResourceItem } from '@nextgis/ngw-connector';
+import type { FeatureCollection, MultiPoint } from 'geojson';
+import type { PointProperties } from 'src/interfaces';
 
 export function getPoints(): CancelablePromise<ResourceItem[]> {
   // if (points) {

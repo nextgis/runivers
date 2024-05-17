@@ -1,18 +1,18 @@
 import { LngLatBounds, Popup } from 'maplibre-gl';
 
-import type { Feature, FeatureCollection, Point, Polygon } from 'geojson';
-import type {
-  Map,
-  GeoJSONSource,
-  MapMouseEvent,
-  MapLayerMouseEvent,
-} from 'maplibre-gl';
 import type { PropertiesFilter } from '@nextgis/properties-filter';
 import type {
-  VectorLayerAdapter,
   MvtAdapterOptions,
+  VectorLayerAdapter,
   WebMap,
 } from '@nextgis/webmap';
+import type { Feature, FeatureCollection, Point, Polygon } from 'geojson';
+import type {
+  GeoJSONSource,
+  Map,
+  MapLayerMouseEvent,
+  MapMouseEvent,
+} from 'maplibre-gl';
 
 type UsedMapEvents = 'click' | 'mouseenter' | 'mouseleave';
 type TLayer = string[];
@@ -573,11 +573,11 @@ export class TimeLayersGroup {
               resourceId: id,
             })
           : this.options.oldNgwMvtApi
-          ? this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt'
-          : this.newNgwMvtUrl({
-              baseUrl: this.options.baseUrl,
-              resourceId: id,
-            });
+            ? this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt'
+            : this.newNgwMvtUrl({
+                baseUrl: this.options.baseUrl,
+                resourceId: id,
+              });
 
         return this._addLayer(url, id).then(() => {
           return toggle();

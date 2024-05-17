@@ -1,16 +1,18 @@
-import proj4 from 'proj4';
-import { Feature, MultiPoint, Point } from 'geojson';
-import { Map, Marker } from 'maplibre-gl';
 import { arrayUnique } from '@nextgis/utils';
+import { Marker } from 'maplibre-gl';
+import proj4 from 'proj4';
 
-import { App } from '../App';
-import {
-  AppMarkerMem,
-  PointProperties,
-  PointMeta,
-  HistoryLayerResource,
-} from '../interfaces';
 import { getPointGeojson } from '../services/GetPointsService';
+
+import type { App } from '../App';
+import type {
+  AppMarkerMem,
+  HistoryLayerResource,
+  PointMeta,
+  PointProperties,
+} from '../interfaces';
+import type { Feature, MultiPoint, Point } from 'geojson';
+import type { Map } from 'maplibre-gl';
 
 export class MarkerLayer {
   name!: string;

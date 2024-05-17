@@ -1,6 +1,6 @@
-import { TimeLayer } from '../TimeMap/TimeGroup';
 import { BaseLayer } from './BaseLayer';
 
+import type { TimeLayer } from '../TimeMap/TimeGroup';
 import type { LineLayerSpecification } from 'maplibre-gl';
 
 export interface LineTypePaint {

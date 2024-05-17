@@ -1,21 +1,24 @@
-import CityImg from '../img/city.png';
-
 import { EventEmitter } from 'events';
+
 import { Events } from '@nextgis/utils';
 
-import { App } from '../App';
+import CityImg from '../img/city.png';
 
-import { TimeLayer } from '../TimeMap/TimeGroup';
 import { BaseLayer } from './BaseLayer';
 
-import type { Map } from 'maplibre-gl';
+import type { App } from '../App';
+import type { TimeLayer } from '../TimeMap/TimeGroup';
 import type { TimeLayersGroupOptions } from '../TimeMap/TimeGroup';
+import type { Map } from 'maplibre-gl';
 
 export class CitiesLayer extends BaseLayer {
   emitter = new EventEmitter();
   private events: Events;
 
-  constructor(protected app: App, options: Partial<TimeLayersGroupOptions>) {
+  constructor(
+    protected app: App,
+    options: Partial<TimeLayersGroupOptions>,
+  ) {
     super(app, options);
     this.events = new Events(this.emitter);
     this.app.webMap.onLoad().then(() => this._registerMapboxImages());
@@ -28,9 +31,9 @@ export class CitiesLayer extends BaseLayer {
   private _registerMapboxImages() {
     const map: Map | undefined = this.app.webMap.mapAdapter.map;
     if (map) {
-      map.loadImage(CityImg, (er, image) => {
-        if (image) {
-          map.addImage('city', image);
+      map.loadImage(CityImg).then((image) => {
+        if (image.data) {
+          map.addImage('city', image.data);
           this.emitter.emit('load-images');
         }
       });

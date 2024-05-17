@@ -1,5 +1,6 @@
 import layers from '../data/layers.json';
-import { LayersGroup } from '../interfaces';
+
+import type { LayersGroup } from '../interfaces';
 
 export function getLayers(callback: (layers: LayersGroup[]) => void): void {
   if (layers) {

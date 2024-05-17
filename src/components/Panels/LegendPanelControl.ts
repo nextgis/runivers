@@ -1,7 +1,11 @@
 import Color from 'color';
-import { Panel, PanelOptions } from './PanelControl';
+
+import { Panel } from './PanelControl';
+
+import type { PanelOptions } from './PanelControl';
 import './LegendPanelControl.css';
-import { LegendColor, LegendColorItem } from '../../interfaces';
+import type { LegendColor, LegendColorItem } from '../../interfaces';
+
 export interface LegendPanelOptions extends PanelOptions {
   colors?: LegendColor;
 }

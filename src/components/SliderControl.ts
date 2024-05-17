@@ -3,14 +3,14 @@ import 'nouislider/dist/nouislider.css';
 
 import { EventEmitter } from 'events';
 
-import noUiSlider, { API } from 'nouislider';
-
+import noUiSlider from 'nouislider';
 import wNumb from 'wnumb';
 
 import RewindNextImg from './Links/img/rewind_next.svg';
 import RewindPreviousImg from './Links/img/rewind_previous.svg';
 
 import type { WebMap } from '@nextgis/webmap';
+import type { API } from 'nouislider';
 
 type SliderValue = number | string | (number | string)[];
 

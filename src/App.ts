@@ -1,30 +1,30 @@
 import './App.css';
 
 import { EventEmitter } from 'events';
-import MapAdapter from '@nextgis/mapboxgl-map-adapter';
-import { WebMap } from '@nextgis/webmap';
-import { debounce } from '@nextgis/utils';
 
-import { SliderControl } from './components/SliderControl';
-import { getLayers } from './services/GetLayersService';
-import { getPoints } from './services/GetPointsService';
+import MapAdapter from '@nextgis/maplibre-gl-map-adapter';
+import { debounce } from '@nextgis/utils';
+import { WebMap } from '@nextgis/webmap';
+
+import { TimeMap } from './TimeMap/TimeMap';
 import {
   getAboutProjectLink,
   getAffiliatedLinks,
 } from './components/Links/Links';
+import { SliderControl } from './components/SliderControl';
 import { Controls } from './controls/Controls';
-import { TimeMap } from './TimeMap/TimeMap';
-
-import { urlParams } from './services/UrlParams';
-import { MarkerLayer } from './layers/MarkerLayer';
+import { BoundaryLayer } from './layers/BoundaryLayer';
 import { CitiesLayer } from './layers/CitiesLayer';
 import { LinesLayer } from './layers/LinesLayer';
-import { BoundaryLayer } from './layers/BoundaryLayer';
+import { MarkerLayer } from './layers/MarkerLayer';
+import { getLayers } from './services/GetLayersService';
+import { getPoints } from './services/GetPointsService';
+import { urlParams } from './services/UrlParams';
 
-import type { Map, StyleSpecification } from 'maplibre-gl';
-import type { Type } from '@nextgis/utils';
 import type { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 import type { AppOptions, AreaStat, LayersGroup } from './interfaces';
+import type { Type } from '@nextgis/utils';
+import type { Map, StyleSpecification } from 'maplibre-gl';
 
 export class App {
   options: AppOptions = {

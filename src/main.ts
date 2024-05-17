@@ -1,26 +1,21 @@
 // import 'reset-css';
 import 'maplibre-gl/dist/maplibre-gl.css';
-// polyfills
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 
 import { defined } from '@nextgis/utils';
-import { App } from './App';
+
 import config from '../config.json';
 import pkg from '../package.json';
-// @ts-ignore
-import periods from './data/periods.csv';
-// @ts-ignore
-import yearsStat from './data/years_stat.csv';
-// @ts-ignore
+
+import { App } from './App';
 import areaStat from './data/area_stat.csv';
-// @ts-ignore
+import periods from './data/periods.csv';
 import principalities01 from './data/principalities_01.csv';
-// @ts-ignore
 import principalities02 from './data/principalities_02.csv';
+import yearsStat from './data/years_stat.csv';
+
+import type { YearStat } from './components/Panels/YearsStatPanelControl';
 
 import './css/style.css';
-import { YearStat } from './components/Panels/YearsStatPanelControl';
 
 function prepareYearStat(): YearStat[] {
   const cacheByYear: { [year: string]: YearStat[] } = {};

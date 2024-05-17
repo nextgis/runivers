@@ -1,10 +1,10 @@
 import type { Feature } from 'geojson';
-import type { GeoJSONSource, GeoJSONFeature } from 'maplibre-gl';
+import type { GeoJSONSource } from 'maplibre-gl';
 
 export default function getFeaturesInCluster(
   source: GeoJSONSource,
-  feature: GeoJSONFeature | Feature,
-  _features: Array<Feature | GeoJSONFeature> = [],
+  feature: Feature,
+  _features: Array<Feature> = [],
 ): Promise<Feature[]> {
   return new Promise((resolve) => {
     const props = feature.properties && feature.properties;
@@ -13,7 +13,7 @@ export default function getFeaturesInCluster(
       if (isCluster) {
         const clusterId =
           props.cluster_id !== undefined ? props.cluster_id : false;
-        source.getClusterChildren(clusterId, (error, features) => {
+        source.getClusterChildren(clusterId).then((features) => {
           const promises = [];
           if (features) {
             for (const x of features) {

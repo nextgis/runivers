@@ -1,8 +1,12 @@
 import { defined } from '@nextgis/utils';
-import { Panel, PanelOptions } from './PanelControl';
-import './YearsStatPanelControl.css';
+
 import { formatArea } from '../../utils/utils';
-import { AreaStat } from '../../interfaces';
+
+import { Panel } from './PanelControl';
+
+import type { PanelOptions } from './PanelControl';
+import type { AreaStat } from '../../interfaces';
+import './YearsStatPanelControl.css';
 
 /**
  * @typedef {Object} YearStat - information about changes in territorial integrity

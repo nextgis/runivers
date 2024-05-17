@@ -1,20 +1,19 @@
-import { App } from '../App';
-import { Panel } from '../components/Panels/PanelControl';
+import { TimeMapLoadingControl } from '../TimeMap/TimeMapLoadingControl';
 import {
-  getSocialLinksPanel,
-  getSwitcherPanelControl,
   getHomeBtnControl,
   getLinkBtnControl,
+  getSocialLinksPanel,
+  getSwitcherPanelControl,
 } from '../components/Links/Links';
 import { LegendPanelControl } from '../components/Panels/LegendPanelControl';
 import { PeriodPanelControl } from '../components/Panels/PeriodPanelControl';
 import { YearsStatPanelControl } from '../components/Panels/YearsStatPanelControl';
 
-import './Controls.css';
-import { TimeMapLoadingControl } from '../TimeMap/TimeMapLoadingControl';
-
-import type { IControl } from 'maplibre-gl';
+import type { App } from '../App';
+import type { Panel } from '../components/Panels/PanelControl';
 import type { ControlPosition } from '@nextgis/webmap';
+import type { IControl } from 'maplibre-gl';
+import './Controls.css';
 
 interface ScreenSize {
   height: number;

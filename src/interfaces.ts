@@ -1,11 +1,10 @@
-import { Period } from './components/Panels/PeriodPanelControl';
-import { Principalities01 } from './data/Principalities01';
-import { Principalities02 } from './data/Principalities02';
-
-import type { Marker } from 'maplibre-gl';
-import type { LngLatBoundsArray } from '@nextgis/utils';
-import type { MapboxglMapAdapterOptions } from '@nextgis/mapboxgl-map-adapter';
+import type { Period } from './components/Panels/PeriodPanelControl';
 import type { YearStat } from './components/Panels/YearsStatPanelControl';
+import type { Principalities01 } from './data/Principalities01';
+import type { Principalities02 } from './data/Principalities02';
+import type { MaplibreGLMapAdapterOptions } from '@nextgis/maplibre-gl-map-adapter';
+import type { LngLatBoundsArray } from '@nextgis/utils';
+import type { Marker } from 'maplibre-gl';
 
 export interface AreaStat {
   year: number;
@@ -30,7 +29,7 @@ export type LegendColor = {
   [layerName: string]: LegendColorItem[];
 };
 
-export interface AppOptions extends MapboxglMapAdapterOptions {
+export interface AppOptions extends MaplibreGLMapAdapterOptions {
   baseUrl: string;
   target: string;
   fromYear?: number;

@@ -31,7 +31,7 @@
   "include": [
     "src/",
     "@nextgis/packages/global.d.ts",
-    "@nextgis/packages/mapboxgl-map-adapter/src/maplibregl.d.ts",
+    "@nextgis/packages/maplibre-gl-map-adapter/src/maplibregl.d.ts",
     "custom_typings/" /* added for image format types to be in project without submodule */
   ],
   "exclude": [

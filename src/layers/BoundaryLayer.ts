@@ -1,18 +1,18 @@
 import Color from 'color';
 
-import { TimeLayer } from '../TimeMap/TimeGroup';
+import findYearInDateStr from '../utils/findYearInDateStr';
+import { copyText, formatArea } from '../utils/utils';
 
-import {
+import { BaseLayer } from './BaseLayer';
+
+import type { TimeLayer } from '../TimeMap/TimeGroup';
+import type { Principalities01 } from '../data/Principalities01';
+import type { Principalities02 } from '../data/Principalities02';
+import type {
   GetFillColorOpt,
   HistoryLayerProperties,
   PopupContentField,
 } from '../interfaces';
-
-import { formatArea, copyText } from '../utils/utils';
-import { Principalities01 } from '../data/Principalities01';
-import { Principalities02 } from '../data/Principalities02';
-import findYearInDateStr from '../utils/findYearInDateStr';
-import { BaseLayer } from './BaseLayer';
 
 export class BoundaryLayer extends BaseLayer {
   filterIdField = 'fid';

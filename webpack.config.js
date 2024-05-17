@@ -1,21 +1,23 @@
 const path = require('path');
-const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const { EsbuildPlugin } = require('esbuild-loader');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
 const { baseUrl } = require('./config.json');
 
 let alias = {};
 try {
-  const { getAliases } = require('./@nextgis/scripts/aliases');
+  const getAliases = require('./@nextgis/packages/build-tools/lib/aliases.cjs');
   alias = getAliases();
-} catch (er) {
-  // ignore
+} catch {
+  console.log('Aliases not loaded');
 }
 
 module.exports = (env, argv) => {
@@ -33,6 +35,7 @@ module.exports = (env, argv) => {
     }),
     new ESLintPlugin({
       extensions: ['js', 'jsx', 'ts', 'tsx'],
+      fix: true,
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(argv.mode || 'development'),
@@ -77,7 +80,11 @@ module.exports = (env, argv) => {
           test: /\.(ts|js)x?$/i,
           exclude: /node_modules/,
           use: {
-            loader: 'babel-loader',
+            loader: 'esbuild-loader',
+            options: {
+              loader: 'ts', // Or 'ts' if you don't need tsx
+              target: 'es2015',
+            },
           },
         },
         {
@@ -140,14 +147,21 @@ module.exports = (env, argv) => {
       historyApiFallback: true,
       open: true,
       hot: true,
-      proxy: {
-        '/api': {
+      proxy: [
+        {
+          context: ['/api'],
           target: baseUrl,
         },
-      },
+      ],
     },
 
     optimization: {
+      minimize: isProd,
+      minimizer: [
+        new EsbuildPlugin({
+          target: 'es2015',
+        }),
+      ],
       runtimeChunk: 'single',
       splitChunks: {
         chunks: 'all',

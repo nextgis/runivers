@@ -1,4 +1,4 @@
-import { numberWithSpaces, Clipboard } from '@nextgis/utils';
+import { Clipboard, numberWithSpaces } from '@nextgis/utils';
 
 export function formatArea(area: number): string {
   return `${numberWithSpaces(Math.round(area))} км²`;

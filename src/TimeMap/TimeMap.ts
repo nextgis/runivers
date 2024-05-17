@@ -1,22 +1,22 @@
-import StrictEventEmitter from 'strict-event-emitter-types';
 import { EventEmitter } from 'events';
 
 import { TimeLayersGroup } from './TimeGroup';
 
-import type { Map } from 'maplibre-gl';
-import type {
-  WebMap,
-  MvtAdapterOptions,
-  VectorLayerAdapter,
-} from '@nextgis/webmap';
 import type { TimeLayersGroupOptions } from './TimeGroup';
 import type {
-  LayerMetaRecord,
-  LayerIdRecord,
-  LayersGroup,
   GroupsMeta,
+  LayerIdRecord,
   LayerMeta,
+  LayerMetaRecord,
+  LayersGroup,
 } from '../interfaces';
+import type {
+  MvtAdapterOptions,
+  VectorLayerAdapter,
+  WebMap,
+} from '@nextgis/webmap';
+import type { Map } from 'maplibre-gl';
+import type StrictEventEmitter from 'strict-event-emitter-types';
 
 type TLayer = string[];
 export type TimeLayer = VectorLayerAdapter<Map, TLayer, MvtAdapterOptions>;
@@ -119,9 +119,8 @@ export class TimeMap {
   }
 
   async updateLayers(layerIdRecord: LayerIdRecord): Promise<void> {
-    const updateLayersPromise = await this.getUpdateLayersPromise(
-      layerIdRecord,
-    );
+    const updateLayersPromise =
+      await this.getUpdateLayersPromise(layerIdRecord);
     return this.finishLoading(updateLayersPromise, layerIdRecord);
   }
 

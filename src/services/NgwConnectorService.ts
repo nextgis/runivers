@@ -1,4 +1,5 @@
 import NgwConnector from '@nextgis/ngw-connector';
+
 // @ts-ignore
 import config from '../../config.json';
 

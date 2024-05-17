@@ -1,10 +1,9 @@
-import {
-  TimeLayersGroupOptions,
+import type { App } from '../App';
+import type {
   TimeLayer,
   TimeLayersGroup,
+  TimeLayersGroupOptions,
 } from '../TimeMap/TimeGroup';
-
-import { App } from '../App';
 
 export abstract class BaseLayer implements TimeLayersGroupOptions {
   name!: string;
@@ -17,7 +16,10 @@ export abstract class BaseLayer implements TimeLayersGroupOptions {
   selectOnLayerClick = false;
   oldNgwMvtApi = false;
 
-  constructor(protected app: App, options: Partial<TimeLayersGroupOptions>) {
+  constructor(
+    protected app: App,
+    options: Partial<TimeLayersGroupOptions>,
+  ) {
     Object.assign(this, options);
   }
 

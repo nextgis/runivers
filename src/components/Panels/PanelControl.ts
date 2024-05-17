@@ -1,7 +1,10 @@
 import './PanelControl.css';
-import { WebMap } from '@nextgis/webmap';
-import Dialog, { DialogAdapterOptions } from '@nextgis/dialog';
 import { EventEmitter } from 'events';
+
+import Dialog from '@nextgis/dialog';
+
+import type { DialogAdapterOptions } from '@nextgis/dialog';
+import type { WebMap } from '@nextgis/webmap';
 
 export interface PanelOptions {
   headerText?: string;

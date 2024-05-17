@@ -3,18 +3,19 @@ import './img/nextgis.png';
 
 import Dialog from '@nextgis/dialog';
 import { Clipboard } from '@nextgis/utils';
+
 import pkg from '../../../package.json';
-
-import { App } from '../../App';
 import { Panel } from '../Panels/PanelControl';
-import { Toggler } from './Toggler';
-import { aboutShortRu } from './aboutRu';
-import { aboutShortEn } from './aboutEn';
 
-import type { IControl } from 'maplibre-gl';
-import type { DialogAdapterOptions } from '@nextgis/dialog';
-import type { SliderOptions } from '../SliderControl';
+import { Toggler } from './Toggler';
+import { aboutShortEn } from './aboutEn';
+import { aboutShortRu } from './aboutRu';
+
+import type { App } from '../../App';
 import type { Controls } from '../../controls/Controls';
+import type { SliderOptions } from '../SliderControl';
+import type { DialogAdapterOptions } from '@nextgis/dialog';
+import type { IControl } from 'maplibre-gl';
 
 function getBaseLayerToggler(controls: Controls) {
   const baseLayer = 'baselayer';
