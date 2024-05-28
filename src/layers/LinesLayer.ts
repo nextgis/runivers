@@ -47,16 +47,18 @@ export class LinesLayer extends BaseLayer {
     const legend = lineColorLegend && lineColorLegend['lines'];
     if (legend && legend) {
       legend.forEach((x) => {
-        const linksToLineColors = x[3];
-        linksToLineColors.forEach((y) => {
-          const paint = x[1];
-          const status = x[3];
-          status.forEach((z) => {
-            const color = typeof paint === 'string' ? paint : paint.color;
-            const width = (typeof paint !== 'string' && paint.width) || 1;
-            lineTypes[Number(z)] = { color, width };
+        const linksToLineColors = x.references;
+        if (linksToLineColors) {
+          linksToLineColors.forEach(() => {
+            const paint = x.paint;
+            const status = linksToLineColors;
+            status.forEach((z) => {
+              const color = typeof paint === 'string' ? paint : paint.color;
+              const width = (typeof paint !== 'string' && paint.width) || 1;
+              lineTypes[Number(z)] = { color, width };
+            });
           });
-        });
+        }
       });
     }
     return lineTypes;

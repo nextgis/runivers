@@ -14,6 +14,7 @@ import principalities02 from './data/principalities_02.csv';
 import yearsStat from './data/years_stat.csv';
 
 import type { YearStat } from './components/Panels/YearsStatPanelControl';
+import type { LegendColor } from './interfaces';
 
 import './css/style.css';
 
@@ -52,10 +53,7 @@ const app = new App({
   principalities01,
   principalities02,
   version: pkg.version,
-  // @ts-ignore
-  lineColor: config.lineColor,
-  // @ts-ignore
-  lineColorLegend: config.lineColorLegend,
+  lineColorLegend: config.lineColorLegend as LegendColor,
   // statusAliases: config.statusAliases,
 });
 

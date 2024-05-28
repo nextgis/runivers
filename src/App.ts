@@ -17,6 +17,7 @@ import { BoundaryLayer } from './layers/BoundaryLayer';
 import { CitiesLayer } from './layers/CitiesLayer';
 import { LinesLayer } from './layers/LinesLayer';
 import { MarkerLayer } from './layers/MarkerLayer';
+import { OstrogLayer } from './layers/OstrogLayer';
 import { getLayers } from './services/GetLayersService';
 import { getPoints } from './services/GetPointsService';
 import { urlParams } from './services/UrlParams';
@@ -55,6 +56,7 @@ export class App {
   } = {
     base: BoundaryLayer,
     cities: CitiesLayer,
+    ostrog: OstrogLayer,
     lines: LinesLayer,
     status1: BoundaryLayer,
     status2: BoundaryLayer,
@@ -174,7 +176,7 @@ export class App {
 
   private _setSelectedLayerFromUrl() {
     if (this.options.selectedFeatures?.length !== 0) {
-      const selectedFeature = this.options.selectedFeatures[0];
+      const selectedFeature = this.options.selectedFeatures?.[0];
       const group = this.timeMap.getTimeGroup('base');
       group.select(String(selectedFeature.fid));
     }
@@ -347,7 +349,7 @@ export class App {
           id: feature.id,
           fid: feature.properties?.fid,
         };
-        this.options.selectedFeatures.push(selectedFeatureIdenifier);
+        this.options.selectedFeatures?.push(selectedFeatureIdenifier);
       }
     });
   }

@@ -4,7 +4,7 @@ import { Panel } from './PanelControl';
 
 import type { PanelOptions } from './PanelControl';
 import './LegendPanelControl.css';
-import type { LegendColor, LegendColorItem } from '../../interfaces';
+import type { LegendColor, LegendItem } from '../../interfaces';
 
 export interface LegendPanelOptions extends PanelOptions {
   colors?: LegendColor;
@@ -58,15 +58,15 @@ export class LegendPanelControl extends Panel {
     return element;
   }
 
-  private _createLegendItem(c: LegendColorItem, interactive = false) {
+  private _createLegendItem(c: LegendItem, interactive = false) {
     const block = document.createElement('div');
     block.className = 'panel-body__legend--block';
 
-    const [id, paint, text] = c;
+    const { index, paint, description } = c;
     const color = typeof paint === 'string' ? paint : paint.color;
     const type = (typeof paint !== 'string' && paint.type) || 'fill';
     if (interactive) {
-      this._createInteractiveBlock(block, id, color, text);
+      this._createInteractiveBlock(block, index, color, description);
     } else {
       const _color = new Color(color);
 
@@ -80,7 +80,7 @@ export class LegendPanelControl extends Panel {
 
       const nameBlock = document.createElement('div');
       nameBlock.className = 'panel-body__legend--name';
-      nameBlock.innerHTML = `${text}`;
+      nameBlock.innerHTML = `${description}`;
       block.appendChild(nameBlock);
     }
     return block;
@@ -107,13 +107,13 @@ export class LegendPanelControl extends Panel {
     const allColors = this.options.colors;
     colorInput.onchange = () => {
       if (allColors) {
-        const colors: LegendColorItem[] = [];
+        const colors: LegendItem[] = [];
         Object.values(allColors).forEach((x) =>
           x.forEach((y) => colors.push(y)),
         );
-        const changedColor = colors.find((x) => x[0] === id);
+        const changedColor = colors.find((x) => x.index === id);
         if (changedColor) {
-          changedColor[1] = colorInput.value;
+          changedColor.paint = colorInput.value;
           nameBlock.innerHTML = getName(colorInput.value);
           this.emitter.emit('change', this.options.colors);
         }

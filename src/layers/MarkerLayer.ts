@@ -137,7 +137,7 @@ export class MarkerLayer {
 
       const coordEPSG4326 = proj4('EPSG:3857').inverse(coordinates);
       // add marker to map
-      const marker = new Marker(element);
+      const marker = new Marker({ element });
       const markerMem = { marker, element, properties };
       this._markers.push(markerMem);
       marker.setLngLat(coordEPSG4326);

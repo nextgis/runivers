@@ -18,16 +18,14 @@ export interface TimeStop {
   name: string;
 }
 
-export type LegendColorItem = [
-  number,
-  string | { color: string; width?: number; type?: 'line' | 'fill' },
-  string,
-  number[],
-];
+export interface LegendItem {
+  index: number;
+  paint: string | { color: string; width?: number; type?: 'line' | 'fill' };
+  description: string;
+  references?: number[];
+}
 
-export type LegendColor = {
-  [layerName: string]: LegendColorItem[];
-};
+export type LegendColor = Record<string, LegendItem[]>;
 
 export interface AppOptions extends MaplibreGLMapAdapterOptions {
   baseUrl: string;
@@ -44,11 +42,10 @@ export interface AppOptions extends MaplibreGLMapAdapterOptions {
   principalities02?: Principalities02[];
   timeStops: TimeStop[];
   version?: string;
-  lineColor?: [number | string, string][];
   /** self id, color, label, array of link to lineColor id */
   lineColorLegend?: LegendColor;
   statusAliases?: { [name: string]: string };
-  selectedFeatures: any[]; // TODO specify type
+  selectedFeatures?: any[]; // TODO specify type
 }
 
 export interface HistoryLayerProperties {
