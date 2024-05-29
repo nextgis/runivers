@@ -146,9 +146,8 @@ export function getSocialLinksPanel(): Panel {
   const block = document.createElement('div');
   block.innerHTML = `
     <div class="social-links">
-      <a href="http://twitter.com/runivers" class="social__logo twitter"></a>
-      <a href="http://www.facebook.com/Runiverse.ru" class="social__logo facebook"></a>
       <a href="http://vk.com/public35690973" class="social__logo vkontakte"></a>
+      <a href="https://t.me/runiversru" class="social__logo telegram"></a>
     </div>
   `;
   // <a href="http://runivers.livejournal.com/" class="social__logo livejournal"></a>
