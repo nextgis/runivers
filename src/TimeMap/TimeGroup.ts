@@ -40,6 +40,8 @@ export interface TimeLayersGroupOptions {
   removeFilter?: (id?: number | string) => void;
 }
 
+let clicked = false;
+
 export class TimeLayersGroup {
   name: string;
   currentLayerId?: string;
@@ -396,6 +398,8 @@ export class TimeLayersGroup {
     layerId: string,
     adapterId: string,
   ) {
+    if (clicked) return;
+    clicked = true;
     const map = this.webMap.mapAdapter.map;
     const point = e.point;
     const width = 5;
@@ -426,6 +430,9 @@ export class TimeLayersGroup {
         this.selectLayerFeature(feature, adapterId);
       }
     }
+    setTimeout(() => {
+      clicked = false;
+    }, 100);
   }
 
   private _removeLayerListeners(layerId: string) {
