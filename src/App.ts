@@ -25,7 +25,7 @@ import { urlParams } from './services/UrlParams';
 import type { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
 import type { AppOptions, AreaStat, LayersGroup } from './interfaces';
 import type { Type } from '@nextgis/utils';
-import type { Map, StyleSpecification } from 'maplibre-gl';
+import type { Map } from 'maplibre-gl';
 
 export class App {
   options: AppOptions = {
@@ -103,15 +103,16 @@ export class App {
 
   async createWebMap(): Promise<WebMap> {
     const options = { ...this.options };
-    const style: Partial<StyleSpecification> = {
-      // glyphs: '/fonts/{fontstack}/{range}.pbf',
-    };
+    // const style: Partial<StyleSpecification> = {
+    //   // glyphs: '/fonts/{fontstack}/{range}.pbf',
+    // };
+
     const webMap = new WebMap<Map>({
       mapAdapter: new MapAdapter(),
-      mapAdapterOptions: {
-        style,
-      },
       ...options,
+      // @ts-expect-error it is actually exist
+      style:
+        'https://geoservices.nextgis.com/config/osm/osm-bright/style.json?apikey=67f622354b0e6302cb2b59f4d1b634e8',
     });
     await webMap.onLoad();
 
@@ -128,9 +129,9 @@ export class App {
     if (this.options.currentYear) {
       this.timeMap.currentYear = this.options.currentYear;
     }
-    webMap.addBaseLayer('OSM', {
-      id: 'baselayer',
-    });
+    // webMap.addBaseLayer('OSM', {
+    //   id: 'baselayer',
+    // });
     this.webMap = webMap;
     return webMap;
   }
