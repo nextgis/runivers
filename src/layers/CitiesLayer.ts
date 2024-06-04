@@ -1,7 +1,3 @@
-import { EventEmitter } from 'events';
-
-import { Events } from '@nextgis/utils';
-
 import CityImg from '../img/city.png';
 
 import { BaseLayer } from './BaseLayer';
@@ -12,37 +8,41 @@ import type { TimeLayersGroupOptions } from '../TimeMap/TimeGroup';
 import type { Map } from 'maplibre-gl';
 
 export class CitiesLayer extends BaseLayer {
-  emitter = new EventEmitter();
-  private events: Events;
+  private imagesRegistered = false;
 
   constructor(
     protected app: App,
     options: Partial<TimeLayersGroupOptions>,
   ) {
     super(app, options);
-    this.events = new Events(this.emitter);
-    this.app.webMap.onLoad().then(() => this._registerMapboxImages());
+
+    this.app.webMap.onLoad().then(this._registerMapboxImages);
   }
 
   addLayers(url: string, id: string): Promise<TimeLayer>[] {
     return this._createTimeLayers(url, id);
   }
 
-  private _registerMapboxImages() {
-    const map: Map | undefined = this.app.webMap.mapAdapter.map;
-    if (map) {
-      map.loadImage(CityImg).then((image) => {
-        if (image.data) {
-          map.addImage('city', image.data);
-          this.emitter.emit('load-images');
-        }
-      });
-    }
+  private async _registerMapboxImages() {
+    if (this.imagesRegistered) return true;
+    return new Promise((resolve) => {
+      const map: Map | undefined = this.app.webMap.mapAdapter.map;
+      if (map) {
+        map.loadImage(CityImg).then((image) => {
+          if (image.data) {
+            map.addImage('city', image.data);
+
+            this.imagesRegistered = true;
+            resolve(true);
+          }
+        });
+      }
+    });
   }
 
   private _createTimeLayers(url: string, id: string): Promise<TimeLayer>[] {
     const sourceLayer = 'ngw:' + id;
-    const label = this.events.onLoad('load-images').then(() => {
+    const label = this._registerMapboxImages().then(() => {
       const layer = this.app.webMap.addLayer('MVT', {
         url,
         id,
