@@ -6,9 +6,16 @@ import type {
   VectorLayerAdapter,
   WebMap,
 } from '@nextgis/webmap';
-import type { Feature, FeatureCollection, Point, Polygon } from 'geojson';
+import type {
+  Feature,
+  FeatureCollection,
+  Point,
+  Polygon,
+  Position,
+} from 'geojson';
 import type {
   GeoJSONSource,
+  LngLatLike,
   Map,
   MapLayerMouseEvent,
   MapMouseEvent,
@@ -52,45 +59,36 @@ export class TimeLayersGroup {
   polygonFitMaxZoom = 12;
 
   private _filter?: PropertiesFilter;
-  private _visible = true;
+  private _visible: boolean;
   private _popup?: Popup;
-  private _timeLayers: { [layerId: string]: TimeLayer[] } = {};
-  private _layersLoaded: { [layerId: string]: boolean } = {};
-  private _onDataLoadEvents: Array<() => void> = [];
-  private _onLayerClickMem: {
-    [layerId: string]: {
-      [ev in UsedMapEvents]?: (ev: MapMouseEvent & MapLayerMouseEvent) => void;
-    };
-  } = {};
+  private _timeLayers: Record<string, TimeLayer[]> = {};
+  private _layersLoaded: Record<string, boolean> = {};
+  private _onDataLoadEvents: (() => void)[] = [];
+  private _onLayerClickMem: Record<
+    string,
+    Record<UsedMapEvents, (ev: MapMouseEvent & MapLayerMouseEvent) => void>
+  > = {};
 
   constructor(
     private webMap: WebMap<Map, TLayer>,
     public options: TimeLayersGroupOptions,
   ) {
-    this.name = this.options.name;
-    this._visible = this.options.visible ?? true;
+    this.name = options.name;
+    this._visible = options.visible ?? true;
+    this.order = options.order ?? this.webMap.reserveOrder();
+    this.opacity = options.opacity ?? this.opacity;
 
-    options.order = options.order ?? this.webMap.reserveOrder();
-    this.order = options.order;
-    if (options.opacity !== undefined) {
-      this.opacity = options.opacity;
-    }
     if (this._isWaitDataLoadedGroup()) {
-      webMap.mapAdapter.emitter.on('data-loaded', (data: any) =>
-        this._onData(data),
-      );
-      webMap.mapAdapter.emitter.on('data-error', (data: any) =>
-        this._onData(data),
-      );
+      webMap.mapAdapter.emitter.on('data-loaded', this._onData.bind(this));
+      webMap.mapAdapter.emitter.on('data-error', this._onData.bind(this));
     }
   }
 
   hide(): void {
     if (this._visible) {
-      const layersKeys = Object.keys(this._timeLayers);
-      for (const x of layersKeys) {
-        this._hideLayer(x);
-      }
+      Object.keys(this._timeLayers).forEach((layerId) =>
+        this._hideLayer(layerId),
+      );
       this._visible = false;
     }
   }
@@ -110,18 +108,13 @@ export class TimeLayersGroup {
 
   updateLayersColor(): void {
     const map = this.webMap.mapAdapter.map;
-    if (map) {
-      if (this.options.getFillColor) {
-        const fillColorDarken = this.options.getFillColor({ darken: 0.5 });
-        const fillColor = this.options.getFillColor();
-        for (const l in this._layersLoaded) {
-          if (l.indexOf('-bound') !== -1) {
-            map.setPaintProperty(l, 'line-color', fillColorDarken);
-          } else {
-            map.setPaintProperty(l, 'fill-color', fillColor);
-          }
-        }
-      }
+    if (map && this.options.getFillColor) {
+      const fillColorDarken = this.options.getFillColor({ darken: 0.5 });
+      const fillColor = this.options.getFillColor();
+      Object.keys(this._layersLoaded).forEach((layerId) => {
+        const color = layerId.includes('-bound') ? fillColorDarken : fillColor;
+        map.setPaintProperty(layerId, 'fill-color', color);
+      });
     }
   }
 
@@ -130,33 +123,29 @@ export class TimeLayersGroup {
   }
 
   fitToFilter(filter: any, timeLayer: TimeLayer): Feature[] | undefined {
-    // type of filter changed to any because of Maplibre questionable update.
-    // more info https://github.com/maplibre/maplibre-gl-js/issues/1380#issuecomment-1189041642
     const map = this.webMap.mapAdapter.map;
     if (map && typeof timeLayer.source === 'string') {
-      const isNgwGeoJson = timeLayer.source.startsWith('ngw:');
       let features: Feature[] = [];
-      if (isNgwGeoJson) {
+      if (timeLayer.source.startsWith('ngw:')) {
         const source = map.getSource(timeLayer.source) as GeoJSONSource;
-        const featureCollection: FeatureCollection =
-          source._data as FeatureCollection;
+        const featureCollection = source._data as FeatureCollection;
         const filterIdField = this.options.filterIdField || 'id';
-        features = featureCollection.features.filter((x) => {
+        features = featureCollection.features.filter((feature) => {
           const ids: number[] = [].concat(filter[2]);
           return (
-            x.properties && ids.indexOf(x.properties[filterIdField]) !== -1
+            feature.properties &&
+            ids.includes(feature.properties[filterIdField])
           );
         });
       } else {
-        const sourceLayer: string | undefined =
-          'ngw:' + (timeLayer.options.name || timeLayer.id);
-        const source: string | undefined = timeLayer.source;
-        features = map.querySourceFeatures(source, {
+        const sourceLayer = 'ngw:' + (timeLayer.options.name || timeLayer.id);
+        features = map.querySourceFeatures(timeLayer.source, {
           filter,
           sourceLayer,
         });
       }
-      if (features && features.length) {
+
+      if (features.length) {
         this._fitToFeatures(features);
         return features;
       }
@@ -179,9 +168,10 @@ export class TimeLayersGroup {
   }
 
   switchLayer(fromId: string, toId: string): Promise<string> {
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       this._removePopup();
       this._cleanDataLoadEvents();
+
       if (toId && fromId !== toId) {
         this.pushDataLoadEvent(resolve);
         this._showLayer(toId)
@@ -198,19 +188,14 @@ export class TimeLayersGroup {
                 this._onSourceIsLoaded();
               }
             } else {
-              reject(`Not current id`);
+              reject('Not current id');
             }
           })
-          .catch((er) => {
-            reject(er);
-          });
+          .catch(reject);
       } else {
         resolve('');
       }
-    });
-    return promise.then(() => {
-      return toId;
-    });
+    }).then(() => toId);
   }
 
   hideLayer(layerId: string): void {
@@ -224,12 +209,13 @@ export class TimeLayersGroup {
     }
   }
 
-  forEachTimeLayer(layerId: string, fun: (timeLayer: TimeLayer) => void): void {
+  forEachTimeLayer(
+    layerId: string,
+    callback: (timeLayer: TimeLayer) => void,
+  ): void {
     const timeLayer = this._timeLayers[layerId];
     if (timeLayer) {
-      for (const x of timeLayer) {
-        fun(x);
-      }
+      timeLayer.forEach(callback);
     }
   }
 
@@ -239,7 +225,7 @@ export class TimeLayersGroup {
       const filterIdField = this.options.filterIdField;
       const fid = prop[filterIdField];
       const adapter = this._getWebMapLayer(adapterId);
-      if (adapter && adapter.select) {
+      if (adapter?.select) {
         adapter.select([[filterIdField, 'eq', Number(fid)]]);
       }
     }
@@ -247,28 +233,28 @@ export class TimeLayersGroup {
 
   select(fids: string, id?: string, fit = false): Feature[] | undefined {
     id = id ?? this.currentLayerId;
-
     if (id) {
-      const ids: number[] = fids.split(',').map((x) => Number(x));
+      const ids = fids.split(',').map(Number);
       const layers = this._timeLayers[id];
       const filterIdField = this.options.filterIdField;
-      const mapLayers: TimeLayer[] = [];
-      for (const x of layers) {
-        const mapLayer = x && x.layer && x.layer[0];
-        if (ids && mapLayer && filterIdField) {
-          if (x && x.select) {
-            x.select([[filterIdField, 'in', ids]]);
-            mapLayers.push(x);
-          }
-        }
-      }
+
+      const mapLayers = layers.filter((x) => {
+        const mapLayer = x?.layer?.[0];
+        return (
+          mapLayer &&
+          filterIdField &&
+          x.select &&
+          x.select([[filterIdField, 'in', ids]])
+        );
+      });
+
       if (fit) {
         for (const timeLayer of mapLayers) {
           const features = this.fitToFilter(
             ['in', filterIdField, ...ids],
             timeLayer,
           );
-          if (features && features.length) {
+          if (features?.length) {
             return features;
           }
         }
@@ -277,11 +263,7 @@ export class TimeLayersGroup {
   }
 
   setFilter(filter: PropertiesFilter): void {
-    if (filter && filter.length) {
-      this._filter = filter;
-    } else {
-      this._filter = undefined;
-    }
+    this._filter = filter?.length ? filter : undefined;
     if (this.options.setFilter) {
       this.options.setFilter(this._filter || [], this.currentLayerId);
     } else {
@@ -290,25 +272,24 @@ export class TimeLayersGroup {
   }
 
   hideNotCurrentLayers(): void {
-    const layersKeys = Object.keys(this._timeLayers);
-    for (const id of layersKeys) {
-      if (id !== this.currentLayerId) {
-        this._hideLayer(id);
+    Object.keys(this._timeLayers).forEach((layerId) => {
+      if (layerId !== this.currentLayerId) {
+        this._hideLayer(layerId);
       }
-    }
+    });
   }
 
-  private _cleanDataLoadEvents() {
+  private _cleanDataLoadEvents(): void {
     this._onDataLoadEvents = [];
   }
 
-  private makeOpacity() {
+  private makeOpacity(): void {
     if (this.currentLayerId) {
       this._setLayerOpacity(this.currentLayerId, this.opacity);
     }
   }
 
-  private _getWebMapLayerId(id?: string) {
+  private _getWebMapLayerId(id?: string): string {
     return String(id);
   }
 
@@ -318,28 +299,26 @@ export class TimeLayersGroup {
     ) as VectorLayerAdapter;
   }
 
-  private _isWaitDataLoadedGroup() {
+  private _isWaitDataLoadedGroup(): boolean {
     return this.options.dataLoaded !== undefined
       ? this.options.dataLoaded
       : true;
   }
 
-  private _setLayerOpacity(id: string, value: number) {
+  private _setLayerOpacity(id: string, value: number): void {
     const dataLoaded = this._isWaitDataLoadedGroup();
     this.forEachTimeLayer(id, (dataLayerId) => {
       if (dataLoaded) {
-        return this.webMap.setLayerOpacity(dataLayerId, value);
+        this.webMap.setLayerOpacity(dataLayerId, value);
       } else {
-        if (value === 0) {
-          return this.webMap.hideLayer(dataLayerId);
-        } else {
-          return this.webMap.showLayer(dataLayerId);
-        }
+        value === 0
+          ? this.webMap.hideLayer(dataLayerId)
+          : this.webMap.showLayer(dataLayerId);
       }
     });
   }
 
-  private _removePopup() {
+  private _removePopup(): void {
     if (this._popup) {
       this._popup.remove();
       this._popup = undefined;
@@ -348,20 +327,18 @@ export class TimeLayersGroup {
 
   private _isCurrentDataLayer(layerId: string): boolean {
     const currentLayers =
-      this.currentLayerId !== undefined &&
-      this._timeLayers[this.currentLayerId];
+      this.currentLayerId && this._timeLayers[this.currentLayerId];
     return currentLayers
-      ? currentLayers.some((x) => {
-          return (
+      ? currentLayers.some(
+          (x) =>
             x.id === layerId ||
             x.options.name === layerId ||
-            (x.layer && x.layer.some((y) => y === layerId))
-          );
-        })
+            x.layer?.includes(layerId),
+        )
       : false;
   }
 
-  private _getLayerIdFromSource(target: string) {
+  private _getLayerIdFromSource(target: string): string | undefined {
     if (this._timeLayers[target]) {
       return target;
     }
@@ -379,33 +356,32 @@ export class TimeLayersGroup {
     }
   }
 
-  private _onData(data: { target: string }) {
+  private _onData(data: { target: string }): void {
     const layerId = this._getLayerIdFromSource(data.target);
-    if (layerId) {
-      const loadedYet = this._layersLoaded[layerId];
-      const isCurrentLayer = this._isCurrentDataLayer(layerId);
-      const isHistoryLayer = this._isHistoryLayer(layerId);
-      if (!loadedYet && isHistoryLayer && isCurrentLayer) {
-        this._layersLoaded[layerId] = true;
-        this._onSourceIsLoaded();
-      }
+    if (
+      layerId &&
+      !this._layersLoaded[layerId] &&
+      this._isHistoryLayer(layerId) &&
+      this._isCurrentDataLayer(layerId)
+    ) {
+      this._layersLoaded[layerId] = true;
+      this._onSourceIsLoaded();
     }
   }
-
-  // TODO get selected feature from here for link building //////////////////
+  // TODO: get selected feature from here for link building //////////////////
   private _onLayerClick(
     e: MapMouseEvent & MapLayerMouseEvent,
     layerId: string,
     adapterId: string,
-  ) {
+  ): void {
     if (clicked) return;
     clicked = true;
     const map = this.webMap.mapAdapter.map;
-    const point = e.point;
-    const width = 5;
-    const height = 5;
     // Find all features within a bounding box around a point
     if (map) {
+      const point = e.point;
+      const width = 5;
+      const height = 5;
       const features = map.queryRenderedFeatures(
         [
           [point.x - width / 2, point.y - height / 2],
@@ -414,9 +390,8 @@ export class TimeLayersGroup {
         { layers: [layerId] },
       );
       const feature = features[0];
-      const prop = feature.properties;
-      if (this.options.createPopupContent) {
-        const html = this.options.createPopupContent(prop);
+      if (feature && this.options.createPopupContent) {
+        const html = this.options.createPopupContent(feature.properties);
         if (html) {
           this._removePopup();
           this._popup = new Popup()
@@ -425,8 +400,7 @@ export class TimeLayersGroup {
             .addTo(map);
         }
       }
-      const selectOnLayerClick = this.options.selectOnLayerClick ?? true;
-      if (selectOnLayerClick) {
+      if (this.options.selectOnLayerClick ?? true) {
         this.selectLayerFeature(feature, adapterId);
       }
     }
@@ -435,63 +409,58 @@ export class TimeLayersGroup {
     }, 100);
   }
 
-  private _removeLayerListeners(layerId: string) {
+  private _removeLayerListeners(layerId: string): void {
     const map = this.webMap.mapAdapter.map;
-    // map.off('click', layerId);
-
     const memEvents = this._onLayerClickMem[layerId];
     if (memEvents && map) {
-      for (const ev in memEvents) {
-        const memEvent = memEvents[ev as UsedMapEvents];
-        if (memEvent) {
-          map.off(ev, memEvent);
-        }
-      }
+      Object.entries(memEvents).forEach(([ev, memEvent]) => {
+        map.off(ev as UsedMapEvents, memEvent);
+      });
     }
     this._removePopup();
   }
 
-  private _addLayerListeners(id: string) {
+  private _addLayerListeners(id: string): void {
     const map = this.webMap.mapAdapter.map;
     if (map) {
       this._forEachDataLayer(id, (layerId) => {
         const layerClickBind = (ev: MapMouseEvent & MapLayerMouseEvent) =>
           this._onLayerClick(ev, layerId, id);
-        const layerMouseEnterBind = () =>
-          (map.getCanvas().style.cursor = 'pointer');
-        const layerMouseLeaveBind = () => (map.getCanvas().style.cursor = '');
+        const layerMouseEnterBind = () => {
+          map.getCanvas().style.cursor = 'pointer';
+        };
+        const layerMouseLeaveBind = () => {
+          map.getCanvas().style.cursor = '';
+        };
 
         map.on('click', layerId, layerClickBind);
-        // Change the cursor to a pointer when the mouse is over the places layer.
         map.on('mouseenter', layerId, layerMouseEnterBind);
-        // Change it back to a pointer when it leaves.
         map.on('mouseleave', layerId, layerMouseLeaveBind);
 
-        this._onLayerClickMem[layerId] = this._onLayerClickMem[layerId] || {};
-
-        this._onLayerClickMem[layerId].click = layerClickBind;
-        this._onLayerClickMem[layerId].mouseenter = layerClickBind;
-        this._onLayerClickMem[layerId].mouseleave = layerClickBind;
+        this._onLayerClickMem[layerId] = {
+          click: layerClickBind,
+          mouseenter: layerMouseEnterBind,
+          mouseleave: layerMouseLeaveBind,
+        };
       });
     }
   }
 
-  private _isHistoryLayer(layerId: string) {
+  private _isHistoryLayer(layerId: string): boolean {
     return !this.webMap.isBaseLayer(layerId);
   }
 
-  private _isAllDataLayerLoaded(layer: string) {
+  private _isAllDataLayerLoaded(layer: string): boolean {
     if (this._isWaitDataLoadedGroup()) {
       const timeLayer = this._timeLayers[layer];
-      if (timeLayer) {
-        return timeLayer.every((x) => {
-          return (
-            x.id === layer ||
-            x.options.name === layer ||
-            (x.layer && x.layer.some((y) => this._layersLoaded[y]))
-          );
-        });
-      }
+      return timeLayer
+        ? timeLayer.every(
+            (x) =>
+              x.id === layer ||
+              x.options.name === layer ||
+              x.layer?.some((y) => this._layersLoaded[y]),
+          )
+        : false;
     } else {
       return true;
     }
@@ -500,18 +469,13 @@ export class TimeLayersGroup {
   private _forEachDataLayer(
     layerId: string,
     fun: (dataLayerId: string) => void,
-  ) {
-    this.forEachTimeLayer(
-      layerId,
-      (timeLayer) =>
-        timeLayer.layer &&
-        timeLayer.layer.forEach((y) => {
-          fun(y);
-        }),
+  ): void {
+    this.forEachTimeLayer(layerId, (timeLayer) =>
+      timeLayer.layer?.forEach(fun),
     );
   }
 
-  private _onSourceIsLoaded() {
+  private _onSourceIsLoaded(): void {
     if (
       this.currentLayerId &&
       this._isAllDataLayerLoaded(this.currentLayerId)
@@ -523,11 +487,8 @@ export class TimeLayersGroup {
     }
   }
 
-  private _executeDataLoadEvents() {
-    for (let fry = 0; fry < this._onDataLoadEvents.length; fry++) {
-      const event = this._onDataLoadEvents[fry];
-      event();
-    }
+  private _executeDataLoadEvents(): void {
+    this._onDataLoadEvents.forEach((event) => event());
     this._onDataLoadEvents = [];
   }
 
@@ -538,15 +499,14 @@ export class TimeLayersGroup {
     const layers = await this.options.addLayers(url, id);
     if (layers) {
       this._timeLayers[id] = [];
-      for (const l of layers) {
-        const layer = await l;
-        this._timeLayers[id].push(layer);
+      for (const layer of layers) {
+        this._timeLayers[id].push(await layer);
       }
       return this._timeLayers[id];
     }
   }
 
-  private _toggleLayer(id: string, status: boolean) {
+  private _toggleLayer(id: string, status: boolean): void {
     this._forEachDataLayer(id, (l) => {
       this._layersLoaded[l] = false;
     });
@@ -561,7 +521,7 @@ export class TimeLayersGroup {
     }
   }
 
-  private _hideLayer(layerId: string) {
+  private _hideLayer(layerId: string): void {
     this._toggleLayer(layerId, false);
   }
 
@@ -580,20 +540,18 @@ export class TimeLayersGroup {
               resourceId: id,
             })
           : this.options.oldNgwMvtApi
-            ? this.options.baseUrl + '/api/resource/' + id + '/{z}/{x}/{y}.mvt'
+            ? `${this.options.baseUrl}/api/resource/${id}/{z}/{x}/{y}.mvt`
             : this.newNgwMvtUrl({
                 baseUrl: this.options.baseUrl,
                 resourceId: id,
               });
 
-        return this._addLayer(url, id).then(() => {
-          return toggle();
-        });
+        return this._addLayer(url, id).then(toggle);
       } else {
         return Promise.resolve(toggle());
       }
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         this._executeDataLoadEvents();
         resolve(id);
@@ -601,40 +559,28 @@ export class TimeLayersGroup {
     });
   }
 
-  private newNgwMvtUrl(opt: { baseUrl: string; resourceId: string }) {
-    return (
-      opt.baseUrl +
-      '/api/component/feature_layer/mvt?x={x}&y={y}&z={z}&' +
-      'resource=' +
-      opt.resourceId
-    );
+  private newNgwMvtUrl(opt: { baseUrl: string; resourceId: string }): string {
+    return `${opt.baseUrl}/api/component/feature_layer/mvt?x={x}&y={y}&z={z}&resource=${opt.resourceId}`;
   }
 
-  private _fitToFeatures(features: Feature[]) {
+  private _fitToFeatures(features: Feature[]): void {
     const bounds = new LngLatBounds();
     const types: string[] = [];
-    const extendCoords = (coords: any[]) => {
+    const extendCoords = (coords: unknown[]) => {
       if (coords.length === 2) {
-        try {
-          // @ts-ignore
-          bounds.extend(coords);
-        } catch (er) {
-          // ignore
-        }
+        bounds.extend(coords as LngLatLike);
       } else {
-        coords.forEach((c) => {
-          extendCoords(c);
-        });
+        (coords as Position[][]).forEach(extendCoords);
       }
     };
 
-    for (const feature of features) {
-      const geometry: Polygon | Point = feature.geometry as Polygon | Point;
-      extendCoords(geometry.coordinates);
+    features.forEach((feature) => {
+      extendCoords((feature.geometry as Polygon | Point).coordinates);
       types.push(feature.geometry.type);
-    }
+    });
+
     if (this.webMap.mapAdapter.map) {
-      const onlyPoint = types.every((x) => x === 'Point');
+      const onlyPoint = types.every((type) => type === 'Point');
       this.webMap.mapAdapter.map.fitBounds(bounds, {
         padding: 20,
         maxZoom: onlyPoint ? this.pointFitMaxZoom : this.polygonFitMaxZoom,
@@ -642,17 +588,15 @@ export class TimeLayersGroup {
     }
   }
 
-  private _updateFilter() {
+  private _updateFilter(): void {
     if (this.currentLayerId) {
       const layers = this._timeLayers[this.currentLayerId];
       const filterIdField = this.options.filterIdField;
-      for (const x of layers) {
-        if (filterIdField) {
-          if (x && x.propertiesFilter) {
-            x.propertiesFilter(this._filter || []);
-          }
+      layers.forEach((x) => {
+        if (filterIdField && x?.propertiesFilter) {
+          x.propertiesFilter(this._filter || []);
         }
-      }
+      });
     }
   }
 }
