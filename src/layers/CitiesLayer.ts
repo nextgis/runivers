@@ -16,7 +16,9 @@ export class CitiesLayer extends BaseLayer {
   ) {
     super(app, options);
 
-    this.app.webMap.onLoad().then(this._registerMapboxImages);
+    this.app.webMap.onLoad().then(() => {
+      this._registerMapboxImages();
+    });
   }
 
   addLayers(url: string, id: string): Promise<TimeLayer>[] {

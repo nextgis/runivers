@@ -17,22 +17,22 @@ import type { SliderOptions } from '../SliderControl';
 import type { DialogAdapterOptions } from '@nextgis/dialog';
 import type { IControl } from 'maplibre-gl';
 
-// function getBaseLayerToggler(controls: Controls) {
-//   const baseLayer = 'baselayer';
-//   const baseLayerToggler = new Toggler({
-//     className: 'baselayer__toggler',
-//     title: 'Скрыть подложку',
-//     titleOff: 'Показать подложку',
-//     toggleAction: (status) => {
-//       if (status) {
-//         controls.app.webMap.showLayer(baseLayer);
-//       } else {
-//         controls.app.webMap.hideLayer(baseLayer);
-//       }
-//     },
-//   });
-//   return baseLayerToggler;
-// }
+function getBaseLayerToggler(controls: Controls) {
+  const baseLayer = 'baselayer';
+  const baseLayerToggler = new Toggler({
+    className: 'baselayer__toggler',
+    title: 'Скрыть подложку',
+    titleOff: 'Показать подложку',
+    toggleAction: (status) => {
+      if (status) {
+        controls.app.webMap.showLayer(baseLayer);
+      } else {
+        controls.app.webMap.hideLayer(baseLayer);
+      }
+    },
+  });
+  return baseLayerToggler;
+}
 
 function openDialog(options: DialogAdapterOptions) {
   const dialog = new Dialog(options);
@@ -130,7 +130,7 @@ export function getSwitcherPanelControl(controls: Controls): Panel {
     getLegendToggler(controls),
     getPeriodToggler(controls),
     getYearsToggler(controls),
-    // getBaseLayerToggler(controls),
+    getBaseLayerToggler(controls),
   ];
 
   toggles.forEach((t) => t && block.appendChild(t.getContainer()));
