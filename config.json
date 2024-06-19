@@ -1,5 +1,8 @@
 {
   "baseUrl": "https://map.runivers.ru",
+  "geoservice": {
+    "url": "https://geoservices.nextgis.com/config/osm/osm-bright/style.json?apikey=67f622354b0e6302cb2b59f4d1b634e8"
+  },
   "sourceGroups": [
     {
       "name": "base",

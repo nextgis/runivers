@@ -32,14 +32,6 @@ import type { Map, StyleSpecification } from 'maplibre-gl';
 export class App {
   options: AppOptions = {
     target: '#app',
-    style: {
-      transition: {
-        duration: 0,
-        delay: 0,
-      },
-      glyphs:
-        location.origin + location.pathname + 'font/{fontstack}/{range}.pbf',
-    },
   } as AppOptions;
   controls!: Controls;
   slider!: SliderControl;
@@ -105,15 +97,32 @@ export class App {
 
   async createWebMap(): Promise<WebMap> {
     const options = { ...this.options };
-    const style: Partial<StyleSpecification> = {
-      // glyphs: '/fonts/{fontstack}/{range}.pbf',
+    let style: Partial<StyleSpecification> = {
+      glyphs:
+        location.origin + location.pathname + 'font/{fontstack}/{range}.pbf',
     };
+    let geoservice: Partial<StyleSpecification> | undefined = undefined;
+
+    try {
+      const resp = await fetch(appConfig.geoservice.url);
+      geoservice = (await resp.json()) as StyleSpecification;
+      style = geoservice;
+    } catch {
+      //
+    }
+
     const webMap = new WebMap<Map>({
       mapAdapter: new MapAdapter(),
-      mapAdapterOptions: {
-        style,
-      },
       ...options,
+      mapAdapterOptions: {
+        style: {
+          transition: {
+            duration: 0,
+            delay: 0,
+          },
+          ...style,
+        },
+      },
     });
     await webMap.onLoad();
 
@@ -130,9 +139,12 @@ export class App {
     if (this.options.currentYear) {
       this.timeMap.currentYear = this.options.currentYear;
     }
-    webMap.addBaseLayer('OSM', {
-      id: 'baselayer',
-    });
+
+    if (!geoservice) {
+      webMap.addBaseLayer('OSM', {
+        id: 'baselayer',
+      });
+    }
     this.webMap = webMap;
     return webMap;
   }
