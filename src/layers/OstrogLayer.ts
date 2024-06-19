@@ -1,3 +1,5 @@
+import { createColoredSquare } from '../utils/createColorSquare';
+
 import { BaseLayer } from './BaseLayer';
 
 import type { App } from '../App';
@@ -56,34 +58,6 @@ export class OstrogLayer extends BaseLayer {
     return block;
   }
 
-  private async _createColoredSquare(color: string, strokeColor = '#691812') {
-    const size = 6;
-    const strokeSize = 1;
-    const canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    const context = canvas.getContext('2d');
-    if (context) {
-      context.fillStyle = color;
-      context.fillRect(
-        strokeSize,
-        strokeSize,
-        size - 2 * strokeSize,
-        size - 2 * strokeSize,
-      );
-
-      context.strokeStyle = strokeColor;
-      context.lineWidth = strokeSize;
-      context.strokeRect(
-        strokeSize / 2,
-        strokeSize / 2,
-        size - strokeSize,
-        size - strokeSize,
-      );
-    }
-    return createImageBitmap(canvas);
-  }
-
   private async _registerMapboxImages() {
     const map: Map | undefined = this.app.webMap.mapAdapter.map;
     if (map) {
@@ -94,7 +68,7 @@ export class OstrogLayer extends BaseLayer {
         [0, 'gray'],
       ];
       for (const [accuracy, color] of accuracyList) {
-        const img = await this._createColoredSquare(color);
+        const img = await createImageBitmap(createColoredSquare(color));
         if (img) {
           map.addImage(`square-icon-${accuracy}`, img);
         }

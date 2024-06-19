@@ -57,6 +57,13 @@
   border-radius: 0px;
 }
 
+.panel-body__legend--color.square {
+  width: 15px;
+  height: 15px;
+  border-radius: 0px;
+  border-color: #691812 !important;
+}
+
 .panel.panel-body {
   width: auto;
 }

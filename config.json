@@ -119,17 +119,26 @@
     "points": [
       {
         "index": 9,
-        "paint": "rgba(0, 128, 0, 1)",
+        "paint": {
+          "color": "#71514e",
+          "type": "square"
+        },
         "description": "Точное расположение объекта"
       },
       {
         "index": 10,
-        "paint": "rgba(255, 255, 0, 1)",
+        "paint": {
+          "color": "#ce9c4a",
+          "type": "square"
+        },
         "description": "Объект расположен в радиусе нескольких километров"
       },
       {
         "index": 11,
-        "paint": "rgba(255, 0, 0, 1)",
+        "paint": {
+          "color": "#ddd8a1",
+          "type": "square"
+        },
         "description": "Объект расположен в радиусе нескольких десятков или сотен километров"
       }
     ]
