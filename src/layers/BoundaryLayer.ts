@@ -13,6 +13,8 @@ import type {
   HistoryLayerProperties,
   PopupContentField,
 } from '../interfaces';
+import type { MvtAdapterOptions } from '@nextgis/webmap';
+import type { Feature, Polygon } from 'geojson';
 
 export class BoundaryLayer extends BaseLayer {
   filterIdField = 'fid';
@@ -45,19 +47,22 @@ export class BoundaryLayer extends BaseLayer {
   private _createTimeLayers(url: string, id: string): Promise<TimeLayer>[] {
     const timeGroup = this.groupLayer;
     if (timeGroup) {
-      const paint = {
+      const paint: Record<string, unknown> = {
         'fill-opacity': timeGroup.opacity,
         'fill-opacity-transition': {
           duration: 0,
         },
         'fill-color': this._getFillColor(),
       };
-      const selectedPaint = {
+      const selectedPaint: Record<string, unknown> = {
         ...paint,
         'fill-color': this._getFillColor({ darken: 0.5 }),
       };
       const sourceLayer = 'ngw:' + id;
-      const fillLayer = this.app.webMap.addLayer('MVT', {
+
+      const options: MvtAdapterOptions<
+        Feature<Polygon, HistoryLayerProperties>
+      > = {
         url,
         id,
         name: id,
@@ -65,11 +70,27 @@ export class BoundaryLayer extends BaseLayer {
         order: this.order,
         selectedPaint,
         selectable: true,
+        interactive: true,
+        unselectOnClick: true,
+        unselectOnSecondClick: true,
         type: 'polygon',
         nativePaint: true,
         labelField: 'name',
         sourceLayer,
-      }) as Promise<TimeLayer>;
+        popup: true,
+        popupOnSelect: true,
+        popupOptions: {
+          unselectOnClose: true,
+          createPopupContent: ({ feature }) => {
+            return this.createPopupContent(feature.properties);
+          },
+        },
+      };
+
+      const fillLayer = this.app.webMap.addLayer(
+        'MVT',
+        options,
+      ) as Promise<TimeLayer>;
 
       return [fillLayer];
     }

@@ -147,7 +147,6 @@ module.exports = (env, argv) => {
 
     devServer: {
       historyApiFallback: true,
-      open: true,
       hot: true,
       proxy: [
         {

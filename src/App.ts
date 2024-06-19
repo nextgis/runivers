@@ -6,6 +6,8 @@ import MapAdapter from '@nextgis/maplibre-gl-map-adapter';
 import { debounce } from '@nextgis/utils';
 import { WebMap } from '@nextgis/webmap';
 
+import appConfig from '../config.json';
+
 import { TimeMap } from './TimeMap/TimeMap';
 import {
   getAboutProjectLink,
@@ -55,11 +57,11 @@ export class App {
     [groupName: string]: Type<TimeLayersGroupOptions>;
   } = {
     base: BoundaryLayer,
-    cities: CitiesLayer,
-    ostrog: OstrogLayer,
     lines: LinesLayer,
     status1: BoundaryLayer,
     status2: BoundaryLayer,
+    cities: CitiesLayer,
+    ostrog: OstrogLayer,
   };
 
   private _markers: MarkerLayer;
@@ -205,12 +207,13 @@ export class App {
   }
 
   private _getStatusLayer(config: LayersGroup) {
+    const sourceGroups = appConfig.sourceGroups as unknown as LayersGroup[];
+    const groupOptions = sourceGroups.find((g) => g.name === config.name);
     const options: Partial<TimeLayersGroupOptions> = {
+      ...groupOptions,
       name: config.name,
       baseUrl: this.options.baseUrl,
-      opacity: config.opacity,
       manualOpacity: true,
-      filterIdField: 'fid',
     };
     const StatusLayer: Type<TimeLayersGroupOptions> | undefined =
       this.statusLayers[config.name];

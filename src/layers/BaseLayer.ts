@@ -13,7 +13,6 @@ export abstract class BaseLayer implements TimeLayersGroupOptions {
   order?: number;
   opacity = 1;
   simplification = 8;
-  selectOnLayerClick = false;
   oldNgwMvtApi = false;
 
   constructor(
