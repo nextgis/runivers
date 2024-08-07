@@ -2,10 +2,10 @@ import layers from '../data/layers.json';
 
 import type { LayersGroup } from '../interfaces';
 
-export function getLayers(callback: (layers: LayersGroup[]) => void): void {
-  if (layers) {
-    setTimeout(() => {
-      callback(layers as LayersGroup[]);
-    });
-  }
+export function getLayers(): Promise<LayersGroup[]> {
+  return new Promise((resolve) => {
+    if (layers) {
+      resolve(layers as LayersGroup[]);
+    }
+  });
 }

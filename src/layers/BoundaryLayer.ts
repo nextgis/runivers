@@ -189,7 +189,7 @@ export class BoundaryLayer extends BaseLayer {
     }
 
     if (_props[headerField]) {
-      const showLink = false;
+      const showLink = true;
       block.appendChild(
         this._createPropElement(
           `<h2>${_props[headerField]}
@@ -223,9 +223,16 @@ export class BoundaryLayer extends BaseLayer {
     )[0] as HTMLElement;
     if (featureLink) {
       featureLink.addEventListener('click', () => {
+        const selected = [props.fid, this.name].join('__');
+        const year = this.app.timeMap.currentYear;
         let url = document.location.origin + document.location.pathname;
-        url += `?year=${this.app.timeMap.currentYear}&id=${props.fid}`;
-        this.app.urlParams.set('id', String(props.fid));
+        url += `?year=${year}&selected=${selected}`;
+
+        this.app.urlParams.update({
+          selected,
+          year,
+        });
+
         copyText(url);
       });
     }

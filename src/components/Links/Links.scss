@@ -1,5 +1,5 @@
 .panel.panel-links {
-  width: auto;
+	width: auto;
 	background: transparent;
 }
 
@@ -8,46 +8,46 @@
 }
 
 .transneft__logo {
-  vertical-align: middle;
-  display: inline-block;
-  background: url(./img/Transneft_logo1.png) no-repeat;
-  width: 176px;
-  height: 18px;
+	vertical-align: middle;
+	display: inline-block;
+	background: url(./img/Transneft_logo1.png) no-repeat;
+	width: 176px;
+	height: 18px;
 }
 
 .laboratory__logo {
-  vertical-align: middle;
-  display: inline-block;
-  // background: url(./img/laboratory.png) no-repeat;
-  background: url(./img/geolab.png) no-repeat;
-  width: 81px;
-  height: 26px;
+	vertical-align: middle;
+	display: inline-block;
+	// background: url(./img/laboratory.png) no-repeat;
+	background: url(./img/geolab.png) no-repeat;
+	width: 81px;
+	height: 26px;
 }
 
 .resource__link {
-  color: rgba(0, 0, 0, 0.75);
-  padding: 0 5px;
-  background-color: rgba(255, 255, 255, 0.5);
+	color: rgba(0, 0, 0, 0.75);
+	padding: 0 5px;
+	background-color: rgba(255, 255, 255, 0.5);
 	margin: 0;
 	text-decoration: none;
 }
 
 .partner_logos {
-  border-radius: 10px;
-  background-color: #fff;
-  padding: 10px;
+	border-radius: 10px;
+	background-color: #fff;
+	padding: 10px;
 }
 
 .partner_logos a {
-  display: inline-block;
-  width: 24%;
-  height: auto;
-  vertical-align: middle;
+	display: inline-block;
+	width: 24%;
+	height: auto;
+	vertical-align: middle;
 }
 
 .partner_logos a img {
-  vertical-align: middle;
-  width: 90%;
+	vertical-align: middle;
+	width: 90%;
 }
 
 .resource__link:hover {
@@ -55,39 +55,39 @@
 }
 
 .about_icon {
-  background: rgba(49, 49, 49, 0.8);
-  border-radius: 30px;
-  width: 20px;
-  height: 20px;
-  text-align: center;
-  font-size: 15px;
-  display: block;
-  outline: none;
-  border: 0;
-  box-sizing: border-box;
-  cursor: pointer;
-  text-shadow: none;
-  padding: 3px;
-  color: #fff;
-  text-decoration: none!important;
-  display: inline-block;
-  margin-left: 10px;
+	background: rgba(49, 49, 49, 0.8);
+	border-radius: 30px;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	font-size: 15px;
+	display: block;
+	outline: none;
+	border: 0;
+	box-sizing: border-box;
+	cursor: pointer;
+	text-shadow: none;
+	padding: 3px;
+	color: #fff;
+	text-decoration: none !important;
+	display: inline-block;
+	margin-left: 10px;
 }
 
 .runiver__logo {
-  vertical-align: middle;
-  display: inline-block;
-  background: url(./img/Runivers-Logo-color.svg) no-repeat;
-  height: 18px;
-  width: 63px;
-  margin-right: 4px;
+	vertical-align: middle;
+	display: inline-block;
+	background: url(./img/Runivers-Logo-color.svg) no-repeat;
+	height: 18px;
+	width: 63px;
+	margin-right: 4px;
 }
 
 .affiliated-logo {
-  vertical-align: middle;
+	vertical-align: middle;
 	display: inline-block;
 	margin: 3px 12px 3px 0;
-	opacity: .55;
+	opacity: 0.55;
 }
 
 .affiliated-logo:hover {
@@ -95,50 +95,50 @@
 }
 
 .author_name {
-  font-size: 10px;
-  font-weight: bold;
-  color: black;
-  text-decoration: none;
-  margin-bottom: 4px;
-  margin-right: 8px;
-  line-height: 0;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	text-decoration: none;
+	margin-bottom: 4px;
+	margin-right: 8px;
+	line-height: 0;
 }
 
 .runiver__logo__min {
-  background: url(./img/bw_min/runivers.png) no-repeat;
-  width: 56px;
-  height: 16px;
+	background: url(./img/bw_min/runivers.png) no-repeat;
+	width: 56px;
+	height: 16px;
 }
 
 .laboratory__logo__min {
-  background: url(./img/bw_min/istGeoLab.png) no-repeat;
-  width: 49px;
-  height: 16px;
+	background: url(./img/bw_min/istGeoLab.png) no-repeat;
+	width: 49px;
+	height: 16px;
 }
 
 .transneft__logo__min {
-  background: url(./img/bw_min/transneft.png) no-repeat;
-  width: 98px;
-  height: 10px;
+	background: url(./img/bw_min/transneft.png) no-repeat;
+	width: 98px;
+	height: 10px;
 }
 
 .nextgis__logo__min {
-  background: url(./img/bw_min/nextgis_min.png) no-repeat;
-  width: 59px;
-  height: 8px;
+	background: url(./img/bw_min/nextgis_min.png) no-repeat;
+	width: 59px;
+	height: 8px;
 }
 
 .settings__logo__min {
-  background: url(./img/bw_min/settings.png) no-repeat;
-  width: 7px;
-  height: 7px;
-  margin-bottom: 4px;
+	background: url(./img/bw_min/settings.png) no-repeat;
+	width: 7px;
+	height: 7px;
+	margin-bottom: 4px;
 }
 
 .graph_logo {
 	background: url(./img/graph.svg) no-repeat;
-  background-size: contain;
-  opacity: 1!important;
+	background-size: contain;
+	opacity: 1 !important;
 }
 
 // .social-links {
@@ -146,47 +146,63 @@
 // }
 
 .share_link__box {
-  margin: 80px 20px;
+	margin: 20px;
 }
 
-.share_link__input {
-  padding: 5px;
-  width: 400px;
-  border: 0;
-  border-radius: 5px;
-  background-color: #e9e9e9;
+.share_link__input,
+.iframe_link__input {
+	padding: 5px;
+
+	width: 100%;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: #f9f9f9;
+	resize: none;
+	white-space: pre-wrap;
+	overflow-y: auto;
 }
 
-.share_link__button {
-  padding: 5px;
-  margin-left: 5px;
-  border: 0;
-  border-radius: 5px;
-  background-color: #e9e9e9;
+.share_link__input[readonly],
+.iframe_link__input[readonly] {
+	background-color: #e9e9e9;
+	cursor: not-allowed;
 }
 
-.share_link__button:hover {
-  background-color: #c7c7c7;
+.share_link__button,
+.iframe_link__button {
+	padding: 5px 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: none;
+	border-radius: 5px;
+	background-color: #e9e9e9;
+	cursor: pointer;
 }
 
-.share_link__button:active {
-  background-color: #a1a1a1;
+.share_link__button:hover,
+.iframe_link__button:hover {
+	background-color: #d8d8d8;
+}
+
+.share_link__button:active,
+.iframe_link__button:active {
+	background-color: #c7c7c7;
 }
 
 .share_link__menu_button {
-  // background: url(./img/years.png) no-repeat;
-  background: url(./img/share-2.svg) no-repeat !important; 
-  border-radius: 0 !important;
+	// background: url(./img/years.png) no-repeat;
+	background: url(./img/share-2.svg) no-repeat !important;
+	border-radius: 0 !important;
 }
 
 .social__logo {
 	display: block;
-  height: 20px;
-  width: 20px;
-  margin-left: 3px;
-  margin-top: 10px;
-  opacity: 0.7;
-  // vertical-align: middle;
+	height: 20px;
+	width: 20px;
+	margin-left: 3px;
+	margin-top: 10px;
+	opacity: 0.7;
+	// vertical-align: middle;
 }
 
 .mobile .social__logo {
@@ -194,41 +210,41 @@
 }
 
 .social__logo:hover {
-  opacity: 1;
+	opacity: 1;
 }
 
 .twitter {
-  background: url(./img/twitter.svg) no-repeat;
+	background: url(./img/twitter.svg) no-repeat;
 }
 
 .facebook {
-  background: url(./img/facebook.svg) no-repeat;
+	background: url(./img/facebook.svg) no-repeat;
 }
 
 .livejournal {
-  background: url(./img/livejournal.svg) no-repeat;
+	background: url(./img/livejournal.svg) no-repeat;
 }
 
 .vkontakte {
-  background: url(./img/vk.svg) no-repeat;
+	background: url(./img/vk.svg) no-repeat;
 }
 
 .telegram {
-  background: url(./img/telegram.svg) no-repeat;
+	background: url(./img/telegram.svg) no-repeat;
 }
 
 .panel__toggler {
-  opacity: 0.4;
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  &.active {
-    opacity: 1;
-  }
-  // &:hover {
-  //   opacity: 1;
-  // }
+	opacity: 0.4;
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
+	&.active {
+		opacity: 1;
+	}
+	// &:hover {
+	//   opacity: 1;
+	// }
 }
 
 .switcher-panel-control {
@@ -254,16 +270,16 @@
 }
 
 .period__toggler {
-  background: url(./img/rulers.svg) no-repeat;
+	background: url(./img/rulers.svg) no-repeat;
 }
 
 .years__toggler {
-  // background: url(./img/years.png) no-repeat;
-  background: url(./img/graph.svg) no-repeat;
+	// background: url(./img/years.png) no-repeat;
+	background: url(./img/graph.svg) no-repeat;
 }
 
 .baselayer__toggler {
-  background: url(./img/baselayer.svg) no-repeat;
+	background: url(./img/baselayer.svg) no-repeat;
 }
 
 .legend__toggler {

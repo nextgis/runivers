@@ -1,3 +1,5 @@
 import UrlParams from '@nextgis/url-runtime-params';
 
-export const urlParams = new UrlParams();
+import type { AppUrlParams } from '../interfaces';
+
+export const urlParams = new UrlParams<AppUrlParams>();

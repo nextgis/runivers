@@ -25,7 +25,12 @@ import { getPoints } from './services/GetPointsService';
 import { urlParams } from './services/UrlParams';
 
 import type { TimeLayersGroupOptions } from './TimeMap/TimeGroup';
-import type { AppOptions, AreaStat, LayersGroup } from './interfaces';
+import type {
+  AppOptions,
+  AreaStat,
+  LayersGroup,
+  SelectedFeature,
+} from './interfaces';
 import type { Type } from '@nextgis/utils';
 import type { Map, StyleSpecification } from 'maplibre-gl';
 
@@ -57,6 +62,7 @@ export class App {
   };
 
   private _markers: MarkerLayer;
+  private selectedFeatures: SelectedFeature[] = [];
 
   constructor(options: AppOptions) {
     this.options = { ...this.options, ...options };
@@ -74,11 +80,10 @@ export class App {
       this.options.zoom = Number(urlZoom);
     }
 
-    this.options.selectedFeatures = [];
-    const urlSelectedFeatures = this.urlParams.get('selectedFeatures');
+    const urlSelectedFeatures = this.urlParams.get('selected');
     if (urlSelectedFeatures) {
-      const selectedFeatures = JSON.parse(urlSelectedFeatures);
-      this.options.selectedFeatures = selectedFeatures;
+      const [fid, groupName] = urlSelectedFeatures.split('__');
+      this.selectedFeatures = [{ fid: Number(fid), groupName }];
     }
 
     const { fromYear, currentYear } = this.options;
@@ -163,12 +168,12 @@ export class App {
   getMapParams() {
     const { zoom, center } = this.webMap.getState();
     const year = this.options.currentYear;
-    const selectedFeatures = this.options.selectedFeatures;
+    const selectedFeatures = this.selectedFeatures;
     return { zoom, center, year, selectedFeatures };
   }
 
-  clearSelecredFeatures() {
-    this.options.selectedFeatures = [];
+  clearSelectedFeatures() {
+    this.selectedFeatures = [];
   }
 
   updateLayersColor(): void {
@@ -189,33 +194,33 @@ export class App {
   }
 
   private _setSelectedLayerFromUrl() {
-    if (this.options.selectedFeatures?.length !== 0) {
-      const selectedFeature = this.options.selectedFeatures?.[0];
-      const group = this.timeMap.getTimeGroup('base');
-      group.select(String(selectedFeature.fid));
+    if (this.selectedFeatures?.length !== 0) {
+      const { groupName, fid } = this.selectedFeatures[0];
+      const group = this.timeMap.getTimeGroup(groupName);
+      if (group) {
+        group.select(String(fid));
+      }
     }
   }
 
-  private _buildApp() {
-    getLayers((data) => {
-      this.timeMap.buildTimeMap(data);
+  private async _buildApp() {
+    const data = await getLayers();
+    this.timeMap.buildTimeMap(data);
 
-      this.slider = this._createSlider();
+    this.slider = this._createSlider();
 
-      this._createHeader();
-      this._createAffiliatedLogos();
-      this.controls = new Controls(this);
-      this.controls.updateControls();
+    this._createHeader();
+    this._createAffiliatedLogos();
+    this.controls = new Controls(this);
+    this.controls.updateControls();
 
-      this.webMap.onMapLoad(() => {
-        this.timeMap.updateByYear(this.timeMap.currentYear);
-      });
-      this.emitter.emit('build');
-      this._addEventsListeners();
+    this.webMap.onMapLoad(() => {
+      this.timeMap.updateByYear(this.timeMap.currentYear);
     });
-    getPoints().then((points) => {
-      this._markers.setPoints(points);
-    });
+    this.emitter.emit('build');
+    this._addEventsListeners();
+    const points = await getPoints();
+    this._markers.setPoints(points);
   }
 
   private _getStatusLayer(config: LayersGroup) {
@@ -311,11 +316,11 @@ export class App {
   private _findPeriodByYear(year: number) {
     const periods = this.options.periods || [];
     const period = periods.find((x) => {
-      let finded = year >= x.years_from;
-      if (finded && x.years_to) {
-        finded = year <= x.years_to;
+      let found = year >= x.years_from;
+      if (found && x.years_to) {
+        found = year <= x.years_to;
       }
-      return finded;
+      return found;
     });
     return period;
   }
@@ -352,19 +357,26 @@ export class App {
         },
       );
     }
-    this.webMap.emitter.on('preclick', (e) => {
-      this.clearSelecredFeatures();
+    this.webMap.emitter.on('preclick', () => {
+      this.clearSelectedFeatures();
       this.timeMap.unselect();
     });
     this.webMap.emitter.on('layer:click', (e) => {
-      this.clearSelecredFeatures();
-      if (e.feature) {
-        const feature = e.feature;
-        const selectedFeatureIdenifier = {
-          id: feature.id,
-          fid: feature.properties?.fid,
-        };
-        this.options.selectedFeatures?.push(selectedFeatureIdenifier);
+      this.clearSelectedFeatures();
+      if (e.layer.id) {
+        const group = this.timeMap.getTimeGroupByAdapterId(e.layer.id);
+        const groupName = group && group.timeGroup.name;
+        if (groupName) {
+          if (e.feature) {
+            const feature = e.feature;
+            const selectedFeature: SelectedFeature = {
+              fid: feature.properties?.fid,
+              groupName,
+            };
+
+            this.selectedFeatures.push(selectedFeature);
+          }
+        }
       }
     });
   }

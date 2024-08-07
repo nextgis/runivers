@@ -346,6 +346,7 @@ export function getLinkBtnControl(control: Controls): Promise<IControl> {
             value=""
             readonly
           >`;
+
   const input = linkElement.getElementsByClassName(
     'share_link__input',
   )[0] as HTMLInputElement;
@@ -356,13 +357,34 @@ export function getLinkBtnControl(control: Controls): Promise<IControl> {
 
   const successMessage = document.createElement('div');
   successMessage.innerText = 'Ссылка скопирована';
-
   linkElement.appendChild(copyButton);
+
+  // Add iframe input and copy button
+  const iframeInput = document.createElement('textarea');
+  iframeInput.rows = 3;
+  iframeInput.className = 'iframe_link__input';
+  iframeInput.value = '';
+  iframeInput.readOnly = true;
+
+  const iframeCopyButton = document.createElement('button');
+  iframeCopyButton.innerText = 'Копировать код';
+  iframeCopyButton.classList.add('iframe_link__button');
+
+  linkElement.appendChild(iframeInput);
+  linkElement.appendChild(iframeCopyButton);
+
   copyButton.onclick = () => {
     Clipboard.copy(input.value);
     linkElement.appendChild(successMessage);
-    // because I didn't find onClose method or something like that
     setTimeout(() => successMessage.remove(), 3000);
+  };
+
+  iframeCopyButton.onclick = () => {
+    Clipboard.copy(iframeInput.value);
+    const iframeSuccessMessage = document.createElement('div');
+    iframeSuccessMessage.innerText = 'Код скопирован';
+    linkElement.appendChild(iframeSuccessMessage);
+    setTimeout(() => iframeSuccessMessage.remove(), 3000);
   };
 
   const _control = control.app.webMap.createButtonControl({
@@ -374,7 +396,7 @@ export function getLinkBtnControl(control: Controls): Promise<IControl> {
         year: String(year),
         zoom: String(zoom),
         center: center.join(','),
-        selectedFeatures: selectedFeatures
+        selected: selectedFeatures
           ? `[${selectedFeatures.map((f) => JSON.stringify(f)).join(',')}]`
           : '',
       };
@@ -382,10 +404,10 @@ export function getLinkBtnControl(control: Controls): Promise<IControl> {
       const linkUrlParams = new URLSearchParams(urlParamsObj);
       const linkUrl = new URL(
         `?${linkUrlParams.toString()}`,
-        window.location.href, // ???
-        // control.app.options.baseUrl, - will not work in some real situations
+        window.location.href,
       );
       input.value = linkUrl.toString();
+      iframeInput.value = `<iframe src="${linkUrl.toString()}" height="600" width="800"></iframe>`;
       openDialog({ template: linkElement });
     },
   });

@@ -27,6 +27,11 @@ export interface LegendItem {
 
 export type LegendColor = Record<string, LegendItem[]>;
 
+export interface SelectedFeature {
+  fid: number;
+  groupName: string;
+}
+
 export interface AppOptions extends MaplibreGLMapAdapterOptions {
   baseUrl: string;
   target: string;
@@ -45,7 +50,6 @@ export interface AppOptions extends MaplibreGLMapAdapterOptions {
   /** self id, color, label, array of link to lineColor id */
   lineColorLegend?: LegendColor;
   statusAliases?: { [name: string]: string };
-  selectedFeatures?: any[]; // TODO specify type
 }
 
 export interface HistoryLayerProperties {
@@ -137,6 +141,13 @@ export interface LayersGroup {
   opacity?: number;
   order?: number;
   items: HistoryLayerResource[];
+}
+
+export interface AppUrlParams {
+  year?: number;
+  center?: number;
+  zoom?: number;
+  selected?: string;
 }
 
 export interface LayerMetaRecord {

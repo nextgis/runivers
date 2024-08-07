@@ -34,9 +34,7 @@ export interface TimeLayersGroupOptions {
   ) => Promise<TimeLayer>[] | Promise<Promise<TimeLayer>[]> | undefined;
   setUrl?: (opt: { baseUrl: string; resourceId: string }) => string;
   getFillColor?: (...args: any[]) => any;
-  createPopupContent?: (props: any) => HTMLElement | undefined;
   setFilter?: (properties: PropertiesFilter, id?: number | string) => void;
-  removeFilter?: (id?: number | string) => void;
 }
 
 export class TimeLayersGroup {
