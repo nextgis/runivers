@@ -147,6 +147,7 @@ export interface AppUrlParams {
   year?: number;
   center?: number;
   zoom?: number;
+  bounds?: number[];
   selected?: string;
 }
 

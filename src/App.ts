@@ -74,7 +74,10 @@ export class App {
 
     const urlCenter = this.urlParams.get('center');
     const urlZoom = this.urlParams.get('zoom');
-    if (urlCenter && urlZoom) {
+    const bounds = this.urlParams.get('bounds');
+    if (bounds) {
+      this.options.bounds = bounds.split('_').map(Number);
+    } else if (urlCenter && urlZoom) {
       const center = urlCenter.split(',').map(Number);
       this.options.center = center;
       this.options.zoom = Number(urlZoom);
@@ -166,10 +169,10 @@ export class App {
   }
 
   getMapParams() {
-    const { zoom, center } = this.webMap.getState();
+    const { bounds, zoom, center } = this.webMap.getStateAsString();
     const year = this.options.currentYear;
     const selectedFeatures = this.selectedFeatures;
-    return { zoom, center, year, selectedFeatures };
+    return { zoom, center, year, bounds, selectedFeatures };
   }
 
   clearSelectedFeatures() {

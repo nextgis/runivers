@@ -390,12 +390,10 @@ export function getLinkBtnControl(control: Controls): Promise<IControl> {
   const _control = control.app.webMap.createButtonControl({
     addClass: 'maplibregl-ctrl-icon share_link__menu_button',
     onClick: () => {
-      const { zoom, center, year, selectedFeatures } =
-        control.app.getMapParams();
+      const { bounds, year, selectedFeatures } = control.app.getMapParams();
       const urlParamsObj = {
         year: String(year),
-        zoom: String(zoom),
-        center: center.join(','),
+        bounds,
         selected: selectedFeatures
           ? `[${selectedFeatures.map((f) => JSON.stringify(f)).join(',')}]`
           : '',
