@@ -3,7 +3,7 @@ import 'nouislider/dist/nouislider.css';
 
 import { EventEmitter } from 'events';
 
-import noUiSlider from 'nouislider';
+import noUiSlider, { PipsMode } from 'nouislider';
 import wNumb from 'wnumb';
 
 import RewindNextImg from './Links/img/rewind_next.svg';
@@ -101,7 +101,6 @@ export class SliderControl {
   _createValueInput(): HTMLElement {
     const inputObj = this._createLabeledInput({
       type: 'number',
-      // label: 'value',
       value: this.options.value,
     });
     const input = inputObj.input;
@@ -151,15 +150,6 @@ export class SliderControl {
     span.className = 'slider-control-range';
     const range = document.createElement('div');
     span.appendChild(range);
-    // range.className = 'slider-control-range';
-    // set input attributes
-    // const allowed = ['min', 'max', 'value', 'step', 'type'];
-    // for (let fry = 0; fry < allowed.length; fry++) {
-    //   const option = this.options[allowed[fry]];
-    //   if (option) {
-    //     range.setAttribute(allowed[fry], option);
-    //   }
-    // }
 
     const { min, max, step } = this.options;
     const slider = noUiSlider.create(range, {
@@ -174,7 +164,7 @@ export class SliderControl {
         this.options.pips !== undefined
           ? this.options.pips
           : {
-              mode: 'steps',
+              mode: PipsMode.Steps,
               density: 3,
               filter: this.options.filterPips,
             },
@@ -199,7 +189,51 @@ export class SliderControl {
 
     this._sliderContainer = span;
     this._slider = slider;
+
+    this._handleResize();
+    window.addEventListener('resize', this._handleResize.bind(this));
+
     return span;
+  }
+  _handleResize(): void {
+    if (this._slider) {
+      const screenWidth = window.innerWidth;
+
+      const screenWidthIntervals = [
+        { maxWidth: 300, majorInterval: 500, minorInterval: 200 },
+        { maxWidth: 600, majorInterval: 200, minorInterval: 100 },
+        { maxWidth: 1000, majorInterval: 100, minorInterval: 50 },
+        { maxWidth: Infinity, majorInterval: 50, minorInterval: 10 },
+      ];
+
+      const interval = screenWidthIntervals.find(
+        ({ maxWidth }) => screenWidth < maxWidth,
+      );
+
+      if (interval) {
+        const { majorInterval, minorInterval } = interval;
+
+        this._slider.updateOptions(
+          {
+            pips: {
+              mode: PipsMode.Steps,
+              density: 3,
+              filter: (value, piptype) => {
+                if (piptype === 1) {
+                  return 1;
+                }
+                return value % majorInterval === 0
+                  ? 1
+                  : value % minorInterval === 0
+                    ? 0
+                    : -1;
+              },
+            },
+          },
+          false, // If you want to update immediately without destroying the slider, set this to false
+        );
+      }
+    }
   }
 
   _createPlayerContainer(): HTMLElement {
@@ -207,7 +241,6 @@ export class SliderControl {
     player.className = 'slider-control-block slider-control-player';
     const playerControl = document.createElement('button');
     playerControl.className = 'player-button';
-    // playerControl.innerHTML = this._getPlayerControlLabel();
     playerControl.onclick = () => {
       this._toggleAnimation();
     };
@@ -219,7 +252,6 @@ export class SliderControl {
   _createPlayerButton(): HTMLElement {
     const playerControl = document.createElement('button');
     playerControl.className = 'player-button';
-    // playerControl.innerHTML = this._getPlayerControlLabel();
     playerControl.onclick = () => {
       this._toggleAnimation();
     };
@@ -267,7 +299,6 @@ export class SliderControl {
     };
     this._playerControlPrevBtn = createStepBtn(true);
     this._playerControlNextBtn = createStepBtn();
-    // playerControl.innerHTML = this._getPlayerControlLabel();
 
     return playerSteps;
   }

@@ -24,14 +24,14 @@
   height: 24px;
 }
 
-
 .player-button {
   border: 0;
   background: transparent;
   box-sizing: border-box;
   width: 0;
   height: 24px;
-  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0,0,0, 0.7);
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)
+    rgba(0, 0, 0, 0.7);
   transition: 100ms all ease;
   cursor: pointer;
   border-style: solid;
@@ -50,7 +50,8 @@
 }
 
 .player-button:hover {
-  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0,0,0, 1);
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)
+    rgba(0, 0, 0, 1);
 }
 
 .slider-control-steps {
@@ -73,7 +74,7 @@
 
 .slider-control-steps-btn.disabled {
   cursor: default;
-  opacity: .3;
+  opacity: 0.3;
 }
 
 .slider-control-steps-btn.next {
