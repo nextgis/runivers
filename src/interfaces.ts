@@ -149,6 +149,7 @@ export interface AppUrlParams {
   zoom?: number;
   bounds?: number[];
   selected?: string;
+  controls?: 'min';
 }
 
 export interface LayerMetaRecord {

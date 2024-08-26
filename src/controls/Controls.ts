@@ -20,6 +20,10 @@ interface ScreenSize {
   width: number;
 }
 
+interface ControlsOptions {
+  minimize?: boolean;
+}
+
 export class Controls {
   periodsPanelControl?: PeriodPanelControl;
   yearsStatPanelControl?: YearsStatPanelControl;
@@ -44,19 +48,22 @@ export class Controls {
     onMapClick: () => null,
   };
 
-  private _mobSizeConst: ScreenSize = {
+  private readonly _mobSizeConst: ScreenSize = {
     height: 700,
     width: 650,
   };
 
   private _togglerEvents: Array<[Panel, () => void]> = [];
+  private readonly _minimize;
 
-  constructor(public app: App) {
+  constructor(
+    public app: App,
+    options: ControlsOptions = {},
+  ) {
     this._eventBindings.onMapClick = () => this._onMapClick();
-
+    this._minimize = options.minimize ?? false;
     this.checkMobile();
     this.initControls();
-    this._updateTimeSlider();
     this._updateMapEvents();
     this._addEventsListeners();
   }
@@ -92,17 +99,22 @@ export class Controls {
   }
 
   private async initControls() {
-    this.periodsPanelControl = new PeriodPanelControl({
-      webMap: this.app.webMap,
-    });
-    this.yearsStatPanelControl = new YearsStatPanelControl({
-      webMap: this.app.webMap,
-    });
+    if (!this._minimize) {
+      this.periodsPanelControl = new PeriodPanelControl({
+        webMap: this.app.webMap,
+      });
+      this.yearsStatPanelControl = new YearsStatPanelControl({
+        webMap: this.app.webMap,
+      });
 
-    this.legendPanel = new LegendPanelControl({
-      // colors: this.options.lineColor,
-      colors: this.app.options.lineColorLegend,
-    });
+      this.legendPanel = new LegendPanelControl({
+        colors: this.app.options.lineColorLegend,
+      });
+      this._mobileTogglePanels = [
+        this.periodsPanelControl,
+        this.yearsStatPanelControl,
+      ];
+    }
 
     this._socialLinksPanel = getSocialLinksPanel();
     this._switchersPanel = getSwitcherPanelControl(this);
@@ -114,10 +126,6 @@ export class Controls {
     });
     this._attributions = this.app.webMap.getControl('ATTRIBUTION');
 
-    this._mobileTogglePanels = [
-      this.periodsPanelControl,
-      this.yearsStatPanelControl,
-    ];
     if (this.legendPanel) {
       this._mobileTogglePanels.push(this.legendPanel);
       this.legendPanel.emitter.on('change', (colors) =>
@@ -209,34 +217,6 @@ export class Controls {
     }
   }
 
-  private _updateTimeSlider() {
-    // remove intermediate pips from slider on mobile
-    const pipsNodes = document.querySelectorAll<HTMLElement>(
-      '.noUi-marker.noUi-marker-horizontal.noUi-marker-normal',
-    );
-    let hideElements: HTMLElement[] = Array.from(pipsNodes);
-
-    const labelNodes = document.querySelectorAll<HTMLElement>(
-      '.noUi-value.noUi-value-horizontal.noUi-value-large',
-    );
-    // leave labels for minimum and maximum
-    // no check for second and second last signature, admit that they are always
-    hideElements = hideElements.concat([
-      labelNodes[0 + 1],
-      labelNodes[labelNodes.length - 2],
-    ]);
-
-    if (window.innerWidth <= this._mobSizeConst.width) {
-      hideElements.forEach((x) => {
-        x.style.visibility = 'hidden';
-      });
-    } else {
-      hideElements.forEach((x) => {
-        x.style.visibility = '';
-      });
-    }
-  }
-
   private _onPanelToggle(panel: Panel) {
     this._removePanelToggleListener();
     const isHide = panel.isHide;
@@ -278,7 +258,6 @@ export class Controls {
     if (isMobile !== this.isMobile) {
       this.updateControls();
     }
-    this._updateTimeSlider();
     this._updateMapEvents();
   }
 

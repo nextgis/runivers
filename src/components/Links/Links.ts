@@ -224,36 +224,47 @@ export function openSettingsDialog(app: App): void {
   template.appendChild(header);
 
   // settings input
-  const s = app.slider;
-  const settings: SliderSettings[] = [
-    { name: 'animationDelay', label: 'Задержка анимации, мс', type: 'number' },
-    { name: 'step', label: 'Шаг изменения года', type: 'number' },
-    {
-      name: 'animationStep',
-      label: 'Шаг изменения года (анимация)',
-      type: 'number',
-    },
-  ];
+  const slider = app.slider;
+  if (slider) {
+    const settings: SliderSettings[] = [
+      {
+        name: 'animationDelay',
+        label: 'Задержка анимации, мс',
+        type: 'number',
+      },
+      { name: 'step', label: 'Шаг изменения года', type: 'number' },
+      {
+        name: 'animationStep',
+        label: 'Шаг изменения года (анимация)',
+        type: 'number',
+      },
+    ];
 
-  settings.forEach((x) => {
-    const id = x.name + '-' + Math.round(Math.random() * 10000);
-    const inputBlock = document.createElement('label');
-    inputBlock.className = 'settings-dialog__input-block';
-    inputBlock.innerHTML = `<div class="settings-dialog__input-block--label">${
-      x.label
-    }: </div>
-      <input class="${id}" class=type=${x.type} value=${s.options[x.name]}>
+    settings.forEach((x) => {
+      const id = x.name + '-' + Math.round(Math.random() * 10000);
+      const inputBlock = document.createElement('label');
+      inputBlock.className = 'settings-dialog__input-block';
+      inputBlock.innerHTML = `<div class="settings-dialog__input-block--label">${
+        x.label
+      }: </div>
+      <input class="${id}" class=type=${x.type} value=${slider.options[x.name]}>
       </input>
     `;
-    const input = inputBlock.getElementsByClassName(id)[0] as HTMLInputElement;
-    input.addEventListener('input', () => {
-      const value =
-        x.type === 'number' ? parseInt(input.value, 10) : input.value;
-      Object.defineProperty(s.options, x.name, { value, enumerable: true });
-    });
+      const input = inputBlock.getElementsByClassName(
+        id,
+      )[0] as HTMLInputElement;
+      input.addEventListener('input', () => {
+        const value =
+          x.type === 'number' ? parseInt(input.value, 10) : input.value;
+        Object.defineProperty(slider.options, x.name, {
+          value,
+          enumerable: true,
+        });
+      });
 
-    template.appendChild(inputBlock);
-  });
+      template.appendChild(inputBlock);
+    });
+  }
 
   // editable legend
   const legend =
@@ -394,6 +405,7 @@ export function getLinkBtnControl(control: Controls): Promise<IControl> {
       const urlParamsObj = {
         year: String(year),
         bounds,
+        controls: 'min',
         selected: selectedFeatures
           ? `[${selectedFeatures.map((f) => JSON.stringify(f)).join(',')}]`
           : '',

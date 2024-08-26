@@ -39,12 +39,14 @@ export class App {
     target: '#app',
   } as AppOptions;
   controls!: Controls;
-  slider!: SliderControl;
+  slider?: SliderControl;
   webMap!: WebMap<Map, string[]>;
 
   urlParams = urlParams;
 
   emitter = new EventEmitter();
+
+  readonly minimize = this.urlParams.get('controls') === 'min';
 
   timeMap!: TimeMap;
 
@@ -209,12 +211,15 @@ export class App {
   private async _buildApp() {
     const data = await getLayers();
     this.timeMap.buildTimeMap(data);
-
-    this.slider = this._createSlider();
+    if (!this.minimize) {
+      this.slider = this._createSlider();
+    }
 
     this._createHeader();
     this._createAffiliatedLogos();
-    this.controls = new Controls(this);
+    this.controls = new Controls(this, {
+      minimize: this.minimize,
+    });
     this.controls.updateControls();
 
     this.webMap.onMapLoad(() => {
