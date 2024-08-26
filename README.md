@@ -31,9 +31,9 @@ In this case, the @nextgis libraries will be used from the submodule, not from t
 ## Docker
 
 ```bash
-docker build -t registry.gitlab.com/nextgis/ngwdocker/runivers:6.2.1 -f ./docker/Dockerfile .
+docker build -t registry.gitlab.com/nextgis/ngwdocker/runivers:6.3.0 -f ./docker/Dockerfile .
 
-docker run -it -p 8080:8080 --rm --name runivers registry.gitlab.com/nextgis/ngwdocker/runivers:6.2.1
+docker run -it -p 8080:8080 --rm --name runivers registry.gitlab.com/nextgis/ngwdocker/runivers:6.3.0
 
-docker push registry.gitlab.com/nextgis/ngwdocker/runivers:6.2.1
+docker push registry.gitlab.com/nextgis/ngwdocker/runivers:6.3.0
 ```
